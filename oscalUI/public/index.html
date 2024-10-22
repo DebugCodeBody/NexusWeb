@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.13.42/dingtalk.open.js"></script>
+    <script src="https://cdn.staticfile.org/element-plus/2.2.6/index.full.min.mjs"></script>
+    
+    
+    <% if(process.env.NODE_ENV == "production")  {%>
+
+
+      <link href="https://cddgd.cn/ding/media/static/element-plus/2.2.6/index.css" rel="stylesheet">
+      <script src="https://cddgd.cn/ding/media/static/axios/0.27.2/axios.min.js"></script>
+      <script src="https://cddgd.cn/ding/media/static/vue/3.2.37/vue.global.prod.min.js"></script>
+      <script src="https://cddgd.cn/ding/media/static/element-plus/2.2.6/index.full.js"></script>
+
+    <% } %>
+    
+
+      
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

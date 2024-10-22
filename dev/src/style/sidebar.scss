@@ -1,0 +1,170 @@
+@import "./variables.module.scss";
+
+#app {
+    .sidebar-container {
+        .el-scrollbar {
+            height: 100%;
+        }
+
+        .el-menu {
+            width: 100%;
+        }
+
+        // element-plus 专用，因为它默认使用了 flex 布局。在收缩
+        .el-sub-menu__title,
+        .el-menu-item {
+            display: block;
+        }
+
+        // 鼠标移动到菜单时候的背景颜色
+        .submenu-title-noDropdown,
+        .el-submenu__title,
+        .el-sub-menu__title {
+            &:hover {
+                background-color: $menuHover !important;
+            }
+        }
+
+        // 选中菜单的颜色
+        .is-active {
+
+            &>.el-submenu__title,
+            &>.el-sub-menu__title {
+                color: $subMenuActiveText !important;
+            }
+        }
+
+        // 鼠标移动到子菜单时候的背景颜色
+        & .nest-menu .el-submenu>.el-submenu__title,
+        & .el-submenu .el-menu-item,
+        & .nest-menu .el-sub-menu>.el-sub-menu__title,
+        & .el-sub-menu .el-menu-item {
+            min-width: $sideBarWidth !important;
+            background-color: $subMenuBg !important;
+
+            &:hover {
+                background-color: $subMenuHover !important;
+            }
+        }
+
+        // 最上面的那个图标
+        &.has-logo {
+            .el-scrollbar {
+                height: calc(100% - 50px);
+            }
+        }
+
+        // elemetnUI 底下的宽度滚动条
+        .is-horizontal {
+            display: none;
+        }
+
+    }
+
+
+    // 菜单收缩的时候
+    .hideSidebar {
+
+        // 左边菜单宽度变动
+        .sidebar-container {
+            width: $sideHideWidth !important;
+        }
+
+        // 右边内容左边距变动
+        .main-container {
+            margin-left: $sideHideWidth !important;
+        }
+
+
+
+        // // // 这个是我之前写的
+        // .el-submenu__title {
+        //     span,
+        //     .el-icon-arrow-right {
+        //         display: none;
+        //     }
+        // }
+
+        .submenu-title-noDropdown {
+            padding: 0 !important;
+            position: relative;
+
+            .el-tooltip {
+                padding: 0 !important;
+            }
+
+            .svg-icon {
+                margin-left: 20px;
+            }
+
+            span {
+                display: none;
+            }
+
+
+        }
+
+
+        // 在收缩的时候，需要把右边箭头和标题给隐藏
+        // 刚开始的时候我是直接用 diaplay:none 来进行隐藏
+        // 但是经过百度，如果直接隐藏的话会进行回流重绘两个操作
+        // 但是直接通过 overflow 来进行隐藏的话只会造成重绘
+        .el-submenu,
+        .el-sub-menu {
+            overflow: hidden;
+
+            &>.el-submenu__title,
+            &>.el-sub-menu__title {
+                padding: 0 !important;
+
+                .svg-icon {
+                    margin-left: 20px;
+                }
+
+                .el-submenu__icon-arrow,
+                .el-sub-menu__icon-arrow {
+                    display: none;
+                }
+            }
+        }
+
+        .el-menu--collapse {
+
+            .el-submenu,
+            .el-sub-menu {
+
+                &>.el-submenu__title,
+                &>.el-sub-menu__title {
+                    &>span {
+                        height: 0;
+                        width: 0;
+                        overflow: hidden;
+                        visibility: hidden;
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+
+    }
+
+
+
+    // 如果不需要过渡效果的话
+    .withoutAnimation {
+
+        .main-container,
+        .sidebar-container {
+            transition: none !important;
+        }
+    }
+
+}
+
+
+.sidebar-container,
+.nest-menu {
+    .svg-icon {
+        margin-right: $sideIconMarginRight;
+    }
+}

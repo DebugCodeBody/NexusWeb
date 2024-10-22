@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.13.42/dingtalk.open.js"></script>
+    <style>
+        html,
+        body,
+        #app{
+            height: 100%;
+            width: 100%;
+        }
+        #app{
+            display: flex;
+            justify-content: center;
+
+        }
+        button{
+            width: 100px;
+            height: 35px;
+            margin-top: 30px;
+        }
+    </style>
+
+    <script>
+        window.addEventListener("load", function () {
+            try {
+                const params = new URLSearchParams(location.search);
+                const sndlocate = params.get("sndlocate");
+                if (!sndlocate) {
+                    alert("请通过扫描二维码进入本页面！")
+                } else {
+                    const split = sndlocate.split(",");
+                    const ael = document.createElement("a");
+                    ael.href = "amapuri://route/plan/?dlat=" + split[0] + "&dlon=" + split[1] + "&dev=0&t=0";
+                    ael.click();
+                }
+            } catch (err) {
+                alert("页面错误：" + err.message);
+            }
+        })
+        function closeWindow() {
+            try {
+                dd.biz.navigation.close();
+                window.close();
+            } catch {
+                
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <button onclick="closeWindow()">返回钉钉</button>
+    </div>
+</body>
+
+</html>

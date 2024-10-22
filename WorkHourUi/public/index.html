@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.13.42/dingtalk.open.js"></script>
+
+    <% if(process.env.NODE_ENV == "production")  {%>
+      
+      <script src="https://cddgd.cn/ding/media/static/moment.js/2.29.4/moment.min.js"></script>
+      <link href="https://cddgd.cn/ding/media/static/vant/3.6.2/index.min.css" rel="stylesheet">
+      <script src="https://cddgd.cn/ding/media/static/axios/0.27.2/axios.min.js"></script>
+      <script src="https://cddgd.cn/ding/media/static/vue/3.2.37/vue.global.prod.min.js"></script>
+      <script src="https://cddgd.cn/ding/media/static/vant/3.6.2/vant.min.js"></script>
+
+    <% } %>
+
+    <title>工时核对</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

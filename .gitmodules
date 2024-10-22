@@ -1,0 +1,3 @@
+[submodule "GroupMettingUi"]
+	path = GroupMettingUi
+	url = ./GroupMettingUi

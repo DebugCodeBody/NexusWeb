@@ -1,0 +1,97 @@
+@import "./elementui.scss";
+@import "./sidebar.scss";
+@import "./transition.scss";
+@import "./variables.module.scss";
+
+* {
+    margin: 0;
+}
+
+html,
+body,
+#app,
+#app .main-wrap,
+#app .main-content,
+#app .app-content {
+    width: 100%;
+    height: 100%;
+}
+
+#app {
+    .main-content {
+
+        // 左边菜单
+        .sidebar-container {
+            width: $sideBarWidth;
+            transition: width 0.28s;
+            background-color: #304156;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        // 右边内容
+        .main-container {
+            transition: margin-left 0.28s;
+            height: 100%;
+            margin-left: $sideBarWidth;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+
+            .app-main {
+                flex: 1;
+                overflow: auto;
+
+                .el-scrollbar,
+                .el-scrollbar__view {
+                    height: 100%;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+a {
+    text-decoration: none;
+}
+
+// 优化滚动条
+.the-scrollbar * {
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track-piece {
+        background-color: white;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        height: 50px;
+        border-radius: 100px;
+        background-color: rgb(221, 222, 224);
+
+        &:hover {
+            background-color: rgba(144, 147, 153, .5)
+        }
+    }
+
+    &::-webkit-scrollbar-button,
+    &::-webkit-scrollbar-corner {
+        display: none;
+    }
+}
+
+
+// 在 miniblink 内核上面，如果同时使用了 绝对定位和flex布局的话。align-center 纵轴居中会失效
+// 所以需要在这里使用这个实现垂直居中
+.is-miniblink .flex-abs-vertical {
+    top: 50%;
+    transform: translateY(-50%);
+}

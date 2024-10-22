@@ -1,0 +1,17 @@
+.el-message-box__wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  align-items: center;
+
+  .el-message-box {
+    max-width: 360px;
+  }
+
+  @media only screen and (max-width: 375px) {
+    .el-message-box {
+      max-width: 90%;
+    }
+  }
+}
+

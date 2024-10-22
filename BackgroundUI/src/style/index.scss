@@ -1,0 +1,64 @@
+@import "./sidebar.scss";
+@import "./variables.scss";
+
+* {
+    margin: 0;
+}
+
+html,
+body,
+#app,
+#app .main-wrap,
+#app .main-content,
+#app .app-content {
+
+    width: 100%;
+    height: 100%;
+}
+
+#app {
+    .main-content {
+
+        // 左边菜单
+        .sidebar-container {
+
+            width: $sideBarWidth;
+            transition: width 0.28s;
+            background-color: #304156;
+            height: 100%;
+            position: fixed;
+            font-size: 0;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        // 右边内容
+        .app-wrapper {
+            transition: margin-left 0.28s;
+
+            height: 100%;
+            margin-left: $sideBarWidth;
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+
+            .app-header {
+                height: 90px;
+                background-color: antiquewhite;
+            }
+
+            .app-main {
+                flex: 1;
+                overflow: auto;
+
+            }
+
+        }
+
+    }
+
+}

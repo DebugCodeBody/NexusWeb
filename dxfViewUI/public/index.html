@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.13.42/dingtalk.open.js"></script>
+    
+    <script src="https://unpkg.com/dxf-parser@1.0.2/dist/dxf-parser.js"></script>
+    <script src="https://unpkg.com/three@0.132.2/build/three.min.js"></script>
+    <script src="https://unpkg.com/three-dxf@1.3.1/dist/three-dxf.js"></script>
+
+
+    <% if(process.env.NODE_ENV == "production")  {%>
+      
+      <link href="https://unpkg.com/element-plus@2.2.6/dist/index.css" rel="stylesheet">
+      <script src="https://unpkg.com/axios@0.27.2/dist/axios.min.js"></script>
+      <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.js"></script>
+      <script src="https://unpkg.com/element-plus@2.2.6/dist/index.full.js"></script>
+
+    <% } %>
+    
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

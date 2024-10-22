@@ -1,0 +1,18 @@
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+
+
+
+const dialogTail = ref(false);
+const tailForm = ref();
+const tailing = ref()
+const tailerror = ref("")
+
+export default function () {
+
+    return {
+        dialogTail,
+        tailForm,
+        tailing,
+        tailerror
+    }
+}

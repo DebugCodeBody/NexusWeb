@@ -1,0 +1,9 @@
+// 这个文件是暴露一下全局css变量
+
+
+/** 左边导航条的宽度 */
+$sideBarWidth: 210px;
+
+:export {
+  sideBarWidth: $sideBarWidth;
+}

@@ -1,0 +1,26 @@
+// 这里放着覆盖 elementUI 的样式
+
+
+// 因为element-ui里面的滚动条，在用的时候会出现两个负17的边距，主要是用来遮盖浏览器自带的滚动条。
+// 而不用伪类来控制的话，可能是为了兼容低版本或者其他内核浏览器吧？
+// 但是我用的时候是百分百在最新浏览器或者谷歌内核浏览器上面，所以直接用伪类来消除掉浏览器的滚动条并且删除掉自带的负边距
+.el-scrollbar__wrap {
+    margin-left: 0 !important;
+    margin-bottom: 0 !important;
+
+    &::-webkit-scrollbar,
+    &::-webkit-scrollbar-track-piece,
+    &::-webkit-scrollbar-thumb,
+    &::-webkit-scrollbar-thumb:hover,
+    &::-webkit-scrollbar-button,
+    &::-webkit-scrollbar-corner {
+        display: none;
+
+    }
+
+    // 这里不知道为什么有1像素的边框
+    .el-scrollbar__view .el-menu {
+        border: 0;
+    }
+
+}
