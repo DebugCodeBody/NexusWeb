@@ -111,7 +111,7 @@
                             <collapse-list :data="list">
 
                                 <template #item="{ item }">
-                                    <meet-item :item="item" :type="nowActive" :refresh="refresh" :cancel="cancelUser"
+                                    <meet-item :item="item" :type="nowActive" :refresh="refresh" :cancel="cancelUser" :optimize="optimizeUser"
                                         @click-track-user="onClickTrackUser">
                                     </meet-item>
                                 </template>
@@ -192,6 +192,7 @@ import exportData from "@/store/data"
 
 
 let cancelUser = $ref(false);
+let optimizeUser = $ref(false);
 
 
 
@@ -944,7 +945,8 @@ onMounted(async () => {
 
     }
 
-    cancelUser = data && data.cancel == 1;
+    cancelUser = data && data.cancel;
+    optimizeUser = data && data.optimize;
 
 
     HammerInit();

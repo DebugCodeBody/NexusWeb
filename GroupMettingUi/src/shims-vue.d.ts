@@ -127,7 +127,11 @@ type mettItem = {
   create_group: string,
   
   /** 下一次任务的时间 */
-  next_time: string
+  next_time: string,
+
+  /** 工艺优化 */
+  is_optimize: boolean
+
 };
 
 type mettItems = mettItem[];

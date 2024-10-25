@@ -127,8 +127,9 @@
                 <div>
 
                 </div>
-                <div>
+                <div class="flex">
                     <!-- <el-button size="default" @click="onClickLinkView" v-if="!isLink && ( Props.type != 9 && Props.type != 10 )">关联会议</el-button> -->
+                    <el-checkbox v-model="item.is_optimize" :border="true" size="default" class="optimize-check" @change="onCheckOptimize" :disabled="disabledOptimize">工艺优化</el-checkbox>
                     <el-button type="success" size="default" @click="onClickAdd" v-if="Props.type != 9">留言</el-button>
                     <el-button size="default" @click.stop="onClickStart(item)" v-if="showStart">转已开</el-button>
                     <el-button size="default" @click.stop="onClickToHandle(item)" v-if="isFdHandle">转待处理</el-button>
@@ -252,6 +253,7 @@ import dayjs from "dayjs"
 import to from "await-to-js"
 import { getStep, addStep, getEditorUserList, setEditorUserList, startMeeting, resourceAdd, resourceDel, delEditorUserList, editTrackUser, openSceneGroups, sceneGroupsMessage, editMark, cacelEnd, toAbout, tohandle } from "@/api"
 import { followAdd, followDel } from "@/api"
+import { setOptimize } from "@/api/optimize"
 import { sendMessage } from "@/api/message";
 
 
@@ -281,12 +283,14 @@ const Props = withDefaults(defineProps<{
     item: mettItem,
     refresh: any,
     cancel?: boolean,
+    optimize?: boolean,
 
     /** 是否关联会议 */
     isLink?: boolean
 }>(), {
     cancel: false,
-    isLink: false
+    isLink: false,
+    optimize: false,
 });
 
 
@@ -493,6 +497,11 @@ const isShowCreateGroup = computed(() => {
 
 })
 
+const disabledOptimize = computed(() => {
+
+    return Props.type == 2 ||  !Props.optimize;
+
+});
 
 
 
@@ -501,6 +510,18 @@ function onClickItem(item: mettItem) {
     // exportData.item = item as any;
 
     // window.movePath("memo")
+
+}
+
+
+async function onCheckOptimize(value:boolean) {
+    
+
+    
+    await to(setOptimize(Props.item.id,value));
+
+
+    Props.refresh();
 
 }
 
@@ -680,7 +701,7 @@ async function onClickTissueDialog() {
 
 
     } catch {
-        return;
+        return; 
     }
 
 
@@ -708,6 +729,8 @@ async function onClickTrackDialog() {
 async function onClickSendMessage() {
 
     const [err] =  await to(sendMessage(Props.item.id))
+
+    
 
 
 
@@ -1079,6 +1102,10 @@ export default {
 
     .el-form-item--large .el-form-item__label {
         height: auto !important;
+    }
+
+    .optimize-check{
+        margin-right: 10px !important;
     }
 
 

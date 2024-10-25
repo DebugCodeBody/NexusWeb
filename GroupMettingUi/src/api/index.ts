@@ -373,8 +373,9 @@ export function isSettingAdmin() {
     return request({
         url: "/setting/isadmin"
     }) as any as Promise<{
-        setting: number,
-        cancel: number
+        setting: boolean,
+        cancel: boolean,
+        optimize: boolean
     }>
 
 }
