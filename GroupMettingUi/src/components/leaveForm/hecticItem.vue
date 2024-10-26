@@ -117,17 +117,19 @@ function init() {
 }
 
 
-init();
+
 
 
 defineExpose({
     set(value: any[]) {
 
-        const ymdTime = dayjs().format("YYYY-MM-DD")
+
+        selectList.length = 0;
+        init();
+
+        const ymdTime = dayjs().format("YYYY-MM-DD");
 
         value.forEach((item) => {
-
-
 
             const findItem = banList.find((elem) => elem.id == item.id)!;
 

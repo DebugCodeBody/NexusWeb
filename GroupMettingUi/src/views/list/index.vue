@@ -5,8 +5,18 @@
             <div class="relative flex-1">
                 <div class="wh-full overflow-hidden flex flex-col" ref="tabEl">
                     <div class="w-full mb-10px flex ">
-                        <div class="mr-5px show-all">
-                            <el-button class="show-this" @click="onClickShowThis">只显示自己的</el-button>
+                        <div class="mr-5px show-all w-70px">
+                            <div class="flex flex-wrap h-full">
+                                <div>
+                                    <el-button class="show-this" @click="onClickShowThis">只显示自己的</el-button>
+                                </div>
+                                <div>
+                                    <el-button class="show-this" @click="onClickShowHectic">显示繁忙清单</el-button>
+                                </div>
+                            </div>
+
+
+
                         </div>
                         <div class="flex-1">
                             <div class="w-full">
@@ -65,13 +75,13 @@
                             <div class="w-full mt-10px">
                                 <div class="flex flex-1">
                                     <el-checkbox v-model="dialogSearch.isFollow" label="只显示关注" value="只显示关注"
-                                        @change="refresh" v-if="!isNowProView"/>
+                                        @change="refresh" v-if="!isNowProView" />
                                     <el-checkbox v-model="dialogSearch.isTenDay" label="只显示十天前" value="只显示十天前"
                                         @change="refresh" v-if="isHandleView" />
 
                                     <el-checkbox v-model="dialogSearch.isGroup" label="显示有会议群" value="显示有会议群"
                                         @change="refresh" v-if="isHandleView || isToStartView" />
-                           
+
                                     <el-checkbox v-model="dialogSearch.isNoGroup" label="显示无会议群" value="显示无会议群"
                                         @change="refresh" v-if="isHandleView || isToStartView" />
 
@@ -83,8 +93,8 @@
                                     <el-checkbox v-model="dialogSearch.isOutNextTime" label="只显示超时或未处理"
                                         value="只显示超出执行时间" @change="refresh" v-if="isNowProView" />
 
-                                    <el-checkbox v-model="dialogSearch.isHectic" label="只显示非繁忙人员"
-                                        value="只显示非繁忙人员" @change="refresh" v-if="isVerifyView || isHandleView" />
+                                    <el-checkbox v-model="dialogSearch.isHectic" label="只显示非繁忙人员" value="只显示非繁忙人员"
+                                        @change="refresh" v-if="isVerifyView || isHandleView" />
                                 </div>
                             </div>
 
@@ -111,8 +121,8 @@
                             <collapse-list :data="list">
 
                                 <template #item="{ item }">
-                                    <meet-item :item="item" :type="nowActive" :refresh="refresh" :cancel="cancelUser" :optimize="optimizeUser"
-                                        @click-track-user="onClickTrackUser">
+                                    <meet-item :item="item" :type="nowActive" :refresh="refresh" :cancel="cancelUser"
+                                        :optimize="optimizeUser" :hectic="hectic" @click-track-user="onClickTrackUser" >
                                     </meet-item>
                                 </template>
                             </collapse-list>
@@ -145,8 +155,8 @@
         <py-select-name :userList="exportData.userData" />
         <pop-editr-tag :refresh="refresh" />
         <pop-set-next-time :refresh="refresh" />
+        <pop-hectic-list :refresh="refresh" ref="hecticListEl"/>
         <!-- <pop-edit-view :refresh="refresh"> -->
-
 
     </div>
 </template>
@@ -162,6 +172,7 @@ import popEditTrack from "@/components/popEditTrack.vue"
 import popEditrTag from "@/components/popEditrTag.vue"
 import pySelectName from "@/components/pySelectName.vue"
 import popSetNextTime from "@/components/popSetNextTime.vue"
+import popHecticList from "@/components/popHecticList/index.vue"
 
 // import popEditView  from "@/components/popEditView.vue"
 
@@ -197,8 +208,14 @@ let optimizeUser = $ref(false);
 
 
 const tabEl = $ref<HTMLElement>();
+const hecticListEl = $ref<any>();
+
 
 const list = $ref<mettItems>([]);
+const hectic = $ref<string[]>([]);
+
+
+
 let activeName = $ref(0);
 let nowActive = $ref(0);
 let loading = $ref(false);
@@ -209,7 +226,7 @@ let settingId = $ref<number>();
 let thisName = $ref(getUserName());
 
 let viewChange = false;
-let viewId = $ref( getSearch("id"));
+let viewId = $ref(getSearch("id"));
 
 
 let all = $ref(true);
@@ -281,7 +298,7 @@ let dialogSearch = $ref({
     /** 只显示超出时间的 */
     isOutNextTime: false,
 
-    /** 过滤请假人员 */  
+    /** 过滤请假人员 */
     isLeave: false,
 
     /** 只显示非繁忙人员 */
@@ -486,7 +503,7 @@ async function getData(value: number) {
         isFollow: dialogSearch.isFollow,
         isTenDay: dialogSearch.isTenDay,
         filterLong: dialogSearch.filterLong,
-        
+
         noGroup: dialogSearch.isNoGroup,
         haveGroup: dialogSearch.isGroup,
 
@@ -509,17 +526,20 @@ async function getData(value: number) {
     const [err, result] = await to(tag.event(sendData));
     if (err) {
         loading = false
-        
+
         return;
     }
 
 
     list.length = 0;
+    hectic.length = 0;
     dialogSearch.syncList.length = 0;
 
 
 
     list.push(...result.data);
+    hectic.push(...result.hectic);
+    
     dialogSearch.syncList.push(...result.filter);
 
 
@@ -534,9 +554,6 @@ async function getData(value: number) {
 
 /** 搜索内容 */
 function onSearchValue() {
-
-
-
 
     if (!dialogSearch.value) {
         return;
@@ -592,6 +609,15 @@ function onClickShowThis() {
 
 }
 
+function onClickShowHectic() {
+
+    hecticListEl.open();
+
+}
+
+
+
+
 function onChangeShowHandle(value: boolean) {
 
     if (!value) {
@@ -645,7 +671,7 @@ function toSearchView() {
 async function onTabChange(value: number) {
 
 
-    if(viewChange){
+    if (viewChange) {
         viewChange = false
         return;
     }
@@ -675,7 +701,7 @@ async function onTabChange(value: number) {
         isFollow: false,
         isTenDay: false,
 
-        
+
         filterLong: false,
 
         noGroup: true,
@@ -688,7 +714,7 @@ async function onTabChange(value: number) {
         isLeave: (value === 4 || value === 10),
 
 
-        isHectic:  (value === 4 || value === 6)
+        isHectic: (value === 4 || value === 6)
     };
 
 
@@ -870,7 +896,7 @@ async function onSyncFilteConfirm() {
 
 }
 
-async function getIdView(){
+async function getIdView() {
 
     const { data, label } = await getView(viewId);
 
@@ -881,7 +907,7 @@ async function getIdView(){
     list.length = 0;
 
     list.push(...data);
-    
+
     viewChange = true;
 
 }
@@ -892,9 +918,9 @@ async function getIdView(){
 
 function refresh() {
 
-    if(viewId){
+    if (viewId) {
         getIdView();
-    }else{
+    } else {
         getData(nowActive);
     }
 

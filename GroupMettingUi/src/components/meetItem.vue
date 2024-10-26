@@ -54,8 +54,12 @@
                     <el-popover ref="popover" placement="bottom" trigger="click" :width="popover.width"
                         :visible="popover.name == name">
                         <template #reference>
-                            <el-tag class="actor-name" size="default" effect="plain"
-                                @click.capture="onClickPopoverActor(name)">{{ name }}</el-tag>
+
+                            <div class="actor-name cursor-pointer" @click.capture="onClickPopoverActor(name)">
+                                <el-tag size="default" effect="plain" type="danger" v-if="hectic.includes(name)" >{{ name }}</el-tag>
+                                <el-tag size="default" effect="plain" v-else>{{ name }}</el-tag>
+                            </div>
+
                         </template>
                         <div>
                             <div>是否设置成执行者？</div>
@@ -286,7 +290,9 @@ const Props = withDefaults(defineProps<{
     optimize?: boolean,
 
     /** 是否关联会议 */
-    isLink?: boolean
+    isLink?: boolean,
+    /** 繁忙人员名单 */
+    hectic: string[]
 }>(), {
     cancel: false,
     isLink: false,

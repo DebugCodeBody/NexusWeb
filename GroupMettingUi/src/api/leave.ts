@@ -29,3 +29,24 @@ export function setLeave(data: any) {
 
 }
 
+
+
+export function getLeaveList() {
+
+    return request({
+        url: "/leave/list"
+    }) as any as Promise<{
+        name: string,
+        data: {
+            name: string,
+            value: {
+                id: string,
+                start: string,
+                end: string
+            }[]
+        }[]
+
+    }[]>
+
+}
+

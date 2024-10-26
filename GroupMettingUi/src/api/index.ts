@@ -90,7 +90,8 @@ export function getList(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 }
 
@@ -102,7 +103,8 @@ export function getMark(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 }
 
@@ -114,7 +116,8 @@ export function getAbout(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 }
 
@@ -128,7 +131,8 @@ export function getApt(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 }
 
@@ -140,7 +144,8 @@ export function getStart(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[],
     }>
 }
 
@@ -153,7 +158,8 @@ export function getProdu(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 
 }
@@ -166,7 +172,8 @@ export function getScene(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 
 }
@@ -180,7 +187,8 @@ export function getFollow(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 
 }
@@ -195,7 +203,8 @@ export function getEnd(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[],
     }>
 
 }
@@ -208,7 +217,8 @@ export function getSuggest(data: any) {
         data
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 
 }
@@ -221,7 +231,8 @@ export function getMyFollow() {
         url: "/my/getFollow"
     }) as any as Promise<{
         data: mettItem[],
-        filter: string[]
+        filter: string[],
+        hectic: string[]
     }>
 
 }
