@@ -714,7 +714,7 @@ async function onTabChange(value: number) {
         isLeave: (value === 4 || value === 10),
 
 
-        isHectic: (value === 4 || value === 6)
+        isHectic: (value === 4)
     };
 
 
