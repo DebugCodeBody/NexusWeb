@@ -11,7 +11,6 @@
 <script setup lang="ts">
 import declare from "@/views/declare/index.vue";
 import preview from "@/views/preview/index.vue"
-import mySession from "@/views/mySession/index.vue"
 import list from "@/views/list/index.vue"
 import memo from "@/views/memo/index.vue"
 import share from "@/views/share/index.vue"
@@ -30,7 +29,6 @@ import { getPathSearch } from "@/utils/urlSearch"
 const tabs: any = {
 	declare,
 	preview,
-	mySession,
 	list,
 	memo,
 	share,

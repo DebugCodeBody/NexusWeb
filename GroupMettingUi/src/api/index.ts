@@ -223,6 +223,19 @@ export function getSuggest(data: any) {
 
 }
 
+export function getLately(data: any) {
+    
+    return request({
+        url: "/getLately",
+        method: "post",
+        data
+    }) as any as Promise<{
+        data: mettItem[],
+        filter: string[],
+        hectic: string[],
+    }>
+
+}
 
 
 export function getMyFollow() {
@@ -283,6 +296,8 @@ export function getMyProdu() {
 
 
 }
+
+
 
 
 
@@ -466,7 +481,7 @@ export function getAllActorUser() {
 }
 
 
-export function editTrackUser(id: string | number, user: string, memo?: string, comm?: string, type?: string, result?:string) {
+export function editTrackUser(id: string | number, user: string, memo?: string, comm?: string, type?: string, result?: string) {
 
     return request({
         url: "/edit/trackuser",
@@ -620,7 +635,7 @@ export function tohandle(id: number) {
 }
 
 
-export function followAdd(id:number) {
+export function followAdd(id: number) {
 
     return request({
         url: "/follow/add",
@@ -632,7 +647,9 @@ export function followAdd(id:number) {
     })
 
 }
-export function followDel(id:number) {
+
+
+export function followDel(id: number) {
 
     return request({
         url: "/follow/del",
@@ -644,3 +661,6 @@ export function followDel(id:number) {
     })
 
 }
+
+
+

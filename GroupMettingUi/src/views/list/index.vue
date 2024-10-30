@@ -85,8 +85,9 @@
                                     <el-checkbox v-model="dialogSearch.isNoGroup" label="显示无会议群" value="显示无会议群"
                                         @change="refresh" v-if="isHandleView || isToStartView" />
 
-                                    <el-checkbox v-model="dialogSearch.filterLong" label="过滤二人会议" value="过滤二人会议"
-                                        @change="refresh" v-if="isVerifyView" />
+                                    <!-- <el-checkbox v-model="dialogSearch.filterLong" label="过滤二人会议" value="过滤二人会议"
+                                        @change="refresh" v-if="isVerifyView" /> -->
+
                                     <el-checkbox v-model="dialogSearch.isLeave" label="过滤请假人员" value="过滤请假人员"
                                         @change="refresh" v-if="isVerifyView || isPrepareStartView" />
 
@@ -182,11 +183,12 @@ import { isDing } from "@/utils/auth"
 
 
 
+
 import to from "await-to-js"
 
 import getSearch, { getCorpId } from "@/utils/urlSearch"
 import { MessageBoxWarning } from "@/utils/elementLib"
-import { getList, getStart, getEnd, startMeeting, getApt, getMark, isSettingAdmin, getAllActorUser, getProdu, getFollow, getScene, editMark, getSuggest, diySearch, holidayGet, holidaySet, getAbout, getView } from "@/api"
+import { getList, getStart, getEnd, startMeeting, getApt, getMark, isSettingAdmin, getAllActorUser, getProdu, getFollow, getScene, editMark, getSuggest, diySearch, holidayGet, holidaySet, getAbout, getView, getLately } from "@/api"
 
 import popDialog from "global@/popDialog/index.vue"
 import editTrackUser from "./editTrackUser.vue"
@@ -407,6 +409,11 @@ const tagList = $ref([
         label: "已开",
         event: getStart
 
+    },
+    {
+        id: 102,
+        label: "最近操作",
+        event: getLately
     },
     {
         id: 2,

@@ -32,13 +32,13 @@
                             }}</el-tag>
                     </el-form-item>
                 </el-col>
-                
+
                 <el-col :span="12" v-if="isNowProView">
-                    <el-form-item label="执行时间" >
-                        
+                    <el-form-item label="执行时间">
+
                         <div class="cursor-pointer" @click="onClickSetNextTime">
                             <el-tag type="warning" size="small" v-if="!item.next_time">未设置时间</el-tag>
-                            <el-tag size="small" v-else >{{ item.next_time }}</el-tag>
+                            <el-tag size="small" v-else>{{ item.next_time }}</el-tag>
                         </div>
 
                     </el-form-item>
@@ -56,7 +56,8 @@
                         <template #reference>
 
                             <div class="actor-name cursor-pointer" @click.capture="onClickPopoverActor(name)">
-                                <el-tag size="default" effect="plain" type="danger" v-if="hectic.includes(name)" >{{ name }}</el-tag>
+                                <el-tag size="default" effect="plain" type="danger" v-if="hectic.includes(name)">{{ name
+                                    }}</el-tag>
                                 <el-tag size="default" effect="plain" v-else>{{ name }}</el-tag>
                             </div>
 
@@ -127,14 +128,15 @@
         </el-form>
         <div class="w-full font-16px title-line">
 
-            <div class="flex-1 text-right mb-5px flex justify-between items-center" v-if="type != 2">
+            <div class="flex-1 text-right mb-5px flex justify-between items-center" v-if="type != 2 && type != 102">
                 <div>
 
                 </div>
                 <div class="flex">
                     <!-- <el-button size="default" @click="onClickLinkView" v-if="!isLink && ( Props.type != 9 && Props.type != 10 )">关联会议</el-button> -->
-                    <el-checkbox v-model="item.is_optimize" :border="true" size="default" class="optimize-check" @change="onCheckOptimize" :disabled="disabledOptimize">工艺优化</el-checkbox>
-                    <el-button type="success" size="default" @click="onClickAdd" v-if="Props.type != 9">留言</el-button>
+                    <el-checkbox v-model="item.is_optimize" :border="true" size="default" class="optimize-check"
+                        @change="onCheckOptimize" :disabled="disabledOptimize">工艺优化</el-checkbox>
+                    <el-button type="success" size="default" @click="onClickAdd" v-if="isShowMemo">留言</el-button>
                     <el-button size="default" @click.stop="onClickStart(item)" v-if="showStart">转已开</el-button>
                     <el-button size="default" @click.stop="onClickToHandle(item)" v-if="isFdHandle">转待处理</el-button>
 
@@ -381,14 +383,22 @@ const showToAbout = computed(() => {
 })
 
 
+/** 是否显示编辑会议 */
 const showEditor = computed(() => {
 
-    return !Props.isLink && Props.type != 2 && Props.type != 9
+    return !Props.isLink && Props.type != 2 && Props.type != 9 && Props.type != 102
 
 })
 
+/** 是否显示撤销结案 */
 const showCancelEnd = computed(() => {
-    return Props.type == 2;
+
+    const { type } = Props;
+
+
+    // type  == 102 &&  Props.item.status == 3 最近操作 且 已经结案
+
+    return type == 2 || (type == 102 && Props.item.status == 3);
 })
 
 
@@ -496,16 +506,23 @@ const isFdHandle = computed(() => {
 
 })
 
+
+const isShowMemo = computed(() => {
+    const { type } = Props;
+    return ![9, 102].includes(type)
+})
+
 /** 是否显示创建群会议 */
 const isShowCreateGroup = computed(() => {
 
-    return [0,4, 5, 6, 10].includes(Props.type-0);
+    return [0, 4, 5, 6, 10].includes(Props.type - 0);
 
 })
 
+/** 是否禁用工艺优化 */
 const disabledOptimize = computed(() => {
 
-    return Props.type == 2 ||  !Props.optimize;
+    return [2, 102].includes(Props.type) || !Props.optimize;
 
 });
 
@@ -520,11 +537,11 @@ function onClickItem(item: mettItem) {
 }
 
 
-async function onCheckOptimize(value:boolean) {
-    
+async function onCheckOptimize(value: boolean) {
 
-    
-    await to(setOptimize(Props.item.id,value));
+
+
+    await to(setOptimize(Props.item.id, value));
 
 
     Props.refresh();
@@ -707,7 +724,7 @@ async function onClickTissueDialog() {
 
 
     } catch {
-        return; 
+        return;
     }
 
 
@@ -734,9 +751,9 @@ async function onClickTrackDialog() {
 /** 给参与人员和群发送消息 */
 async function onClickSendMessage() {
 
-    const [err] =  await to(sendMessage(Props.item.id))
+    const [err] = await to(sendMessage(Props.item.id))
 
-    
+
 
 
 
@@ -1021,7 +1038,7 @@ async function onClickDelFollow() {
 }
 
 
-function onClickSetNextTime(){
+function onClickSetNextTime() {
 
     window.onSetNextTime(Props.item);
 
@@ -1110,7 +1127,7 @@ export default {
         height: auto !important;
     }
 
-    .optimize-check{
+    .optimize-check {
         margin-right: 10px !important;
     }
 
