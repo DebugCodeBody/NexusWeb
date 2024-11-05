@@ -76,6 +76,7 @@ const searchPane = $ref<any>();
 let selectTag = $ref(parseInt(localActive.get()));
 let activeName = $ref(selectTag);
 let loadError = $ref(false);
+let tagIndex = 0;
 
 const tabList = $ref([
     {
@@ -150,8 +151,34 @@ function onClickExtract(item: any, all: boolean) {
 }
 
 
+function onSwipe(value: number) {
+
+    tagIndex += value;
+
+    if (tagIndex >= tabList.length) {
+        tagIndex = 0
+    } else if (tagIndex < 0) {
+        tagIndex = tabList.length - 1;
+    }
+
+    activeName = tabList[tagIndex].id;
+
+
+}
+
+
+
 
 onMounted(() => {
+
+    tagIndex = tabList.findIndex((item) => item.id == activeName);
+    if (tagIndex == -1) {
+        tagIndex = 0;
+        activeName = tabList[0].id;
+    }
+
+
+
 
     onTabsChange(activeName);
 
@@ -163,19 +190,19 @@ onMounted(() => {
 
     // @ts-ignore
     const hammertime = new Hammer(el);
-    function switchTag(name: number) {
+    function switchTag(value: number) {
 
         return () => {
-            if (activeName != name) {
-                activeName = name
-            }
+
+            onSwipe(value);
+
         }
 
     }
 
 
-    hammertime.on('swiperight', switchTag(10));
-    hammertime.on('swipeleft', switchTag(20));
+    hammertime.on('swiperight', switchTag(-1));
+    hammertime.on('swipeleft', switchTag(1));
 
 
 
