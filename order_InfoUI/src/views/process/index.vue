@@ -1,5 +1,7 @@
 <template>
-    <el-row :gutter="10" style="height: 100%;" class="tab_process" v-loading="loading" element-loading-text="正在加载">
+    <el-row :gutter="10" style="height: 100%;" class="tab_process" v-loading="loading" element-loading-text="正在加载" :class="{
+        'is-beiliao': isBeiliao
+    }">
         <template v-if="loadErr">
             <el-col :span="24" class="error">
                 <el-result icon="error" title="获取失败" :sub-title="errorSubTitle">
@@ -17,10 +19,11 @@
                     </keep-alive>
                 </router-view>
             </el-col>
+
             <el-col :span="rightSpan" :xs="24" class="right">
 
                 <beiliao-log v-if="isBeiliao" />
-                <process-info-el v-else/>
+                <process-info-el v-else />
 
             </el-col>
 
@@ -52,7 +55,6 @@ import beiliaoLog from "@/layout/beiliaoLog.vue"
 const { order } = orderStore();
 
 const orderPath = order.split("-")[0]
-const orderImg = $ref<HTMLDivElement>()
 const topOrderImg = $ref<HTMLDivElement>()
 
 const route = useRoute();
@@ -84,7 +86,7 @@ provide("orderPath", orderPath);
 
 
 
-const isBeiliao = $computed(()=>{
+const isBeiliao = $computed(() => {
 
     return route.path == "/process/beiliao"
 
@@ -141,7 +143,7 @@ getProcess(order).then((data) => {
     // })
 
 }).catch((error: any) => {
-    
+
     loadErr = true;
 
     errorSubTitle = error.msg || error.message || "其他错误，请联系管理员";
@@ -159,10 +161,13 @@ getProcess(order).then((data) => {
 
 
 function onResizeEvent() {
-    
+
     if (window.innerWidth > 768 || !("ontouchend" in document)) {
         return;
     }
+
+
+    const orderImg = document.querySelector("div.order-img")!;
 
 
     topOrderImg.appendChild(orderImg);
@@ -216,10 +221,19 @@ export default {
 
 .tab_process {
 
+    flex-direction: row-reverse;
+
     .left,
     .right {
         height: 100%;
     }
+
+    &.is-beiliao{
+
+        flex-direction: row;
+
+    }
+    
 }
 
 
@@ -231,76 +245,76 @@ export default {
     height: 100%;
 
 
-   
+
 }
 
 
 .tab_process .order-img {
+    box-sizing: border-box;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+
+    .el-card {
         box-sizing: border-box;
-        flex: 1;
+    }
+
+    .el-card,
+    .el-card__body {
         height: 100%;
-        overflow: hidden;
+    }
 
-        .el-card {
-            box-sizing: border-box;
-        }
+    .el-card__body {
+        padding: 0;
+        min-width: 300px;
+        min-height: 300px;
+    }
 
-        .el-card,
-        .el-card__body {
-            height: 100%;
-        }
-
-        .el-card__body {
-            padding: 0;
-            min-width: 300px;
-            min-height: 300px;
-        }
-
-        img {
-            width: 100%;
-            height: auto;
-        }
+    img {
+        width: 100%;
+        height: auto;
+    }
 
 
-        .el-image {
-            height: 100%;
-
-        }
-
-        .el-image__wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 0;
-            text-align: center;
-            border-right: solid 1px var(--el-border-color);
-            width: 100%;
-            box-sizing: border-box;
-            vertical-align: top;
-        }
-
-        .image-slot {
-            width: 150px;
-            height: 150px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: var(--el-fill-color-light);
-            color: var(--el-text-color-secondary);
-            font-size: 30px;
-        }
-
-        .load-slot {
-            font-size: 20px;
-        }
-
-        .error-slot {
-            margin-top: 10px;
-        }
-
-
+    .el-image {
+        height: 100%;
 
     }
+
+    .el-image__wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 0;
+        text-align: center;
+        border-right: solid 1px var(--el-border-color);
+        width: 100%;
+        box-sizing: border-box;
+        vertical-align: top;
+    }
+
+    .image-slot {
+        width: 150px;
+        height: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: var(--el-fill-color-light);
+        color: var(--el-text-color-secondary);
+        font-size: 30px;
+    }
+
+    .load-slot {
+        font-size: 20px;
+    }
+
+    .error-slot {
+        margin-top: 10px;
+    }
+
+
+
+}
 
 @media only screen and (max-width: 768px) {
     .preview_tab_view .el-tabs .el-tabs__header {

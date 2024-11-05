@@ -6,6 +6,8 @@
                 <el-input v-model="data.actorPy" size="default" placeholder="用户搜索" clearable @clear="onActorClear"></el-input>
             </div>
             <div>
+                
+                <div class="mt-50px" v-show="data.pyValue"></div>
                 <div v-if="!data.pyValue">
                     <div>热度：</div>
                     <el-checkbox-group v-model="data.hot" size="small" @change="onHotChange">
@@ -50,6 +52,8 @@
             </template>
         </el-form-item>
 
+.3
+
         <slot>
         </slot>
 
@@ -57,7 +61,9 @@
 </template>
 
 <script setup lang="ts">
+
 import { pySearch } from "@/utils/other"
+
 
 
 const Emit = defineEmits<{

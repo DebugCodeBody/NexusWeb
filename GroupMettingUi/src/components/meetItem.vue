@@ -103,7 +103,9 @@
                 <div>{{ item.result }}</div>
             </el-form-item>
             <el-form-item label="开会内容" prop="content">
-                <div>{{ item.content }}</div>
+                <div>
+                    <order-text :value="item.content" />
+                </div>
             </el-form-item>
             <el-form-item label="图片" v-if="item.img.length">
                 <template v-if="item.img.length">
@@ -115,7 +117,7 @@
             <el-form-item label="留言" prop="content" v-if="stepList.length" class="label-top">
                 <div>
                     <div v-for="(item, index) in stepList" :key="index">
-                        <div>{{ item.createdate }} {{ item.fname }} {{ item.memo }}</div>
+                        <div>{{ item.createdate }} {{ item.fname }}  <order-text :value="item.memo" /></div>
                         <template v-if="item.img.length">
                             <img-list v-for="(imgIten, index) in item.img" :img="item.img" :index="index" :key="index">
                             </img-list>
@@ -251,6 +253,7 @@ import popDialog from "global@/popDialog/index.vue";
 import actorUser from "@/components/actorUser.vue";
 import imgList from "@/components/imgList.vue";
 import endButton from "@/components/endPopup/button.vue"
+import orderText from "@/components/orderText.vue"
 
 
 import { MessageBoxWarning, messageSuccess } from "@/utils/elementLib"
@@ -275,6 +278,8 @@ import resultRadio from "@/components/resultRadio.vue"
 import { onOpenEd, onCloseEd } from "@/utils/popKey";
 
 import { isDing } from "@/utils/auth"
+
+
 
 
 

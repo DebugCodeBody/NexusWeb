@@ -423,8 +423,14 @@ const tagList = $ref([
     {
         id: 101,
         label: "搜索"
+    },
 
-    }
+    // {
+    //     id: 103,
+    //     label: "OKR"
+    // }
+
+
 ])
 
 
@@ -661,9 +667,9 @@ function onSearchConfirm() {
     refresh();
 }
 
-function toSearchView() {
+function toSearchView(toPath:string) {
 
-    const newUrl = location.href.replace("path=list", "path=search");
+    const newUrl = location.href.replace("path=list", `path=${toPath}`);
 
     if (isDing()) {
         location.href = newUrl;
@@ -684,10 +690,20 @@ async function onTabChange(value: number) {
     }
 
     viewId = "";
+    
+    const toPath = ({
+
+        "101":  "search",
+        "103": "okrsearch"
+            
+    } as any)[value];
+
 
     /** 搜索页签的不话 */
-    if (value == 101) {
-        toSearchView();
+    if (toPath) {
+
+        toSearchView(toPath);
+        
         nextTick(() => {
             activeName = nowActive;
         })

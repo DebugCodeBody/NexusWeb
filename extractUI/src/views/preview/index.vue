@@ -1,25 +1,28 @@
 <template>
     <div id="preview">
         <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="onTabsChange" ref="tabsEl">
-            <el-tab-pane label="待提货" name="1"></el-tab-pane>
-            <el-tab-pane label="已提货" name="2"></el-tab-pane>
-            <el-tab-pane label="卸货仓库" name="3"></el-tab-pane>
+
+            <el-tab-pane v-for="item in tabList" :label="item.name" :name="item.id" :key="item.id"></el-tab-pane>
 
             <el-scrollbar>
 
                 <template v-if="!loadError">
                     <template v-if="presentData.length || selectTag == 3">
 
-                        <template v-if="selectTag == 1">
+                        <template v-if="selectTag == 10">
                             <extract :data="presentData" />
                         </template>
 
-                        <template v-else-if="selectTag == 2">
+                        <template v-else-if="selectTag == 20">
                             <undo :data="presentData" @clickItem="onClickExtract" />
                         </template>
 
-                        <template v-else>
+                        <template v-else-if="selectTag == 3">
                             <cddun :tableData="cddunData"></cddun>
+                        </template>
+
+                        <template v-else>
+                            <out :data="presentData" />
                         </template>
 
                     </template>
@@ -49,6 +52,7 @@ import { Search } from '@element-plus/icons-vue'
 
 import extract from "./extract/index.vue"
 import undo from "./undo/index.vue"
+import out from "./out/index.vue"
 
 import extractDialog from "./extractDialog.vue"
 import allExtractDialog from "./allExtractDialog.vue"
@@ -56,6 +60,7 @@ import cddun from "./cddun.vue"
 
 // @ts-ignore
 import Hammer from "hammerjs";
+
 
 
 import { localActive } from "@/store/data"
@@ -66,13 +71,38 @@ const el = $ref(useCurrentElement());
 const tabsEl = $ref<any>();
 const searchPane = $ref<any>();
 
-let selectTag = $ref(localActive.get());
+
+
+let selectTag = $ref(parseInt(localActive.get()));
 let activeName = $ref(selectTag);
 let loadError = $ref(false);
 
+const tabList = $ref([
+    {
+        name: "待提货",
+        id: 10
+    },
+    {
+        name: "已提货",
+        id: 20
+    },
+    {
+        name: "未到期",
+        id: 40
+    },
+    {
+        name: "缺货",
+        id: 50
+    },
+    {
+        name: "卸货仓库",
+        id: 3
+    }
+])
+
 const cddunData = $computed(() => {
 
-    if (selectTag == "3") {
+    if (`${selectTag}` == "3") {
 
         const tableData = presentData.value.map((elem: any) => {
             return elem.value.map((item: any) => {
@@ -96,15 +126,15 @@ const cddunData = $computed(() => {
 })
 
 const isExtract = $computed(() => {
-    return selectTag == "1";
+    return `${selectTag}` == "10";
 })
 
 
-function onTabsChange(value: string) {
+function onTabsChange(value: string | number) {
     localActive.set(value);
     getData(value).then(() => {
         loadError = false;
-        selectTag = value;
+        selectTag = value as any;
     }).catch(() => {
         loadError = true;
     })
@@ -133,7 +163,7 @@ onMounted(() => {
 
     // @ts-ignore
     const hammertime = new Hammer(el);
-    function switchTag(name: string) {
+    function switchTag(name: number) {
 
         return () => {
             if (activeName != name) {
@@ -144,8 +174,8 @@ onMounted(() => {
     }
 
 
-    hammertime.on('swiperight', switchTag("1"));
-    hammertime.on('swipeleft', switchTag("2"));
+    hammertime.on('swiperight', switchTag(10));
+    hammertime.on('swipeleft', switchTag(20));
 
 
 

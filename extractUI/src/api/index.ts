@@ -12,7 +12,7 @@ export function getAllOrder(type: number | string) {
     })
 }
 
-export function getUn(name:string) {
+export function getUn(name: string) {
 
     return request({
         url: "./btk/getUn",
@@ -47,7 +47,7 @@ export function orderExtract(order: string, data?: FormData) {
     return request({
         url: "./btk/extract",
         method: "post",
-        params:{
+        params: {
             order
         },
         data
@@ -55,3 +55,16 @@ export function orderExtract(order: string, data?: FormData) {
 }
 
 
+
+
+export function setOut(order: string[]) {
+
+    return request({
+        url: "./btk/setout",
+        method: "post",
+        data: {
+            order
+        }
+    })
+
+}

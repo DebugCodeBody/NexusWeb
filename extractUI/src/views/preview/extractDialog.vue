@@ -1,5 +1,10 @@
 <template>
-    <popDialog :title="title" v-model="extractDialogShow" v-if="goDialog" @confirm="onDiaLogconfirm" ref="extractDialogEl">
+    <popDialog 
+        :title="title" 
+        v-model="extractDialogShow" 
+        v-if="goDialog" 
+        @confirm="onDiaLogconfirm" 
+        ref="extractDialogEl">
         <el-form :model="selectItem" :rules="rules" label-width="auto" ref="formEl">
 
             <el-form-item label="订单号：">

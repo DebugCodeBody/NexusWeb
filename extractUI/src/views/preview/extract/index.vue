@@ -9,12 +9,19 @@
             <template #default="{ data: itemChild }">
                 <el-form size='default'>
                     <el-form-item class="oirder-item">
-                        <el-form-item class="order" v-if="itemChild.orderid">
-                            <span>{{ itemChild.orderid }}</span>
-                        </el-form-item>
-                        <el-form-item>
-                            <span>{{ itemChild.mat_name }}</span>
-                        </el-form-item>
+                        <div class="content">
+                            <el-form-item class="order" v-if="itemChild.orderid">
+                                <span>{{ itemChild.orderid }}</span>
+                            </el-form-item>
+
+                            <el-form-item>
+                                <span>{{ itemChild.mat_name }}</span>
+                            </el-form-item>
+
+                            <div class="out-buttom">
+                                <el-button type="danger" size="small" @click="onClickOut(itemChild)">缺货</el-button>
+                            </div>
+                        </div>
                     </el-form-item>
                     <el-form-item>
                         <el-form-item label="规格：" style="width: 60%">
@@ -22,8 +29,8 @@
                         </el-form-item>
                         <el-form-item label="交期：" style="width: 40%">
                             <el-tag type="warning" v-if="!gtNowDate(itemChild.delivery)">{{
-                                getFormatTime(itemChild.delivery)
-                            }}</el-tag>
+            getFormatTime(itemChild.delivery)
+        }}</el-tag>
                             <el-tag type="success" v-else>{{ getFormatTime(itemChild.delivery) }}</el-tag>
                         </el-form-item>
                     </el-form-item>
@@ -47,11 +54,18 @@
             @confirm="onClickConfirm">
 
             <el-form label-width="auto" :hide-required-asterisk="true">
-                <el-form-item label="订单">
+                <el-form-item label="订单" class="order-list">
                     <el-checkbox-group v-model="selectOrder">
-                        <el-checkbox border v-for="item in selectData.value" :key="item.orderid" :label="item.seq">
-                                <span>{{ item.mat_name }}  {{ item.bspec }}x{{ item.bcount}}</span>
-                        </el-checkbox>
+
+                        <div v-for="item in selectData.value" :key="item.orderid" class="item-col">
+                            <el-checkbox border  :label="item.seq">
+                                <span>{{ item.mat_name }} {{ item.bspec }}x{{ item.bcount }}</span>
+                            </el-checkbox>
+                            <el-button type="danger" size="small" class="out-button" @click="onClickOut(item)">缺货</el-button>
+
+                        </div>
+
+       
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="图片">
@@ -73,7 +87,7 @@ import uploadFile from "global@/uploadFile/index.vue"
 
 import listCard from "../listCard.vue"
 import { gtNowDate } from "@/utils/other"
-import { orderExtract } from "@/api"
+import { orderExtract, setOut } from "@/api"
 import dayjs from "dayjs"
 import to from "await-to-js"
 import { ElMessageBox } from 'element-plus'
@@ -86,6 +100,7 @@ import { selectItem, extractDialogShow, allExtractDialogShow, getData, presentDa
 
 const Emits = defineEmits<{
     (e: 'clickItem', value: any, all: boolean): void;
+    (e: 'setOut', value: any): void;
 }>();
 
 
@@ -138,7 +153,7 @@ async function onClickConfirm() {
         sendImg.append("file", (fileList as any).file[0], "file.jpg");
     }
 
-    
+
     const [senderr] = await to(orderExtract(selectOrder.join(";"), sendImg));
     if (senderr) {
 
@@ -162,6 +177,19 @@ async function onClickConfirm() {
 
 }
 
+async function onClickOut(item: any) {
+
+    const { seq } = item;
+
+    try {
+        await setOut([seq])
+    } finally {
+        getData();
+    }
+
+
+}
+
 
 
 </script>
@@ -175,9 +203,45 @@ export default {
 <style lang="scss">
 .extract-dialog {
 
+    .el-form {
+        display: block;
+        .order-list{
+            display: block;
+        }
+    }
+
     .el-checkbox {
         margin-bottom: 5px;
     }
+
+    .item-col{
+        display: flex;
+        align-items: center;
+        
+        .out-button{
+            margin-left: 10px;
+        }
+    }
+
+
+}
+
+.oirder-item {
+
+    .content {
+        width: 100%;
+        display: flex;
+
+        .out-buttom {
+
+            width: auto;
+
+            margin-left: auto;
+
+        }
+    }
+
+
 
 }
 </style>

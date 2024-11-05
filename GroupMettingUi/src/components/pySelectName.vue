@@ -19,6 +19,8 @@
             <el-input v-model="popParams.search" size="default" placeholder="用户搜索" clearable @clear="onPyClear" ref="pyInputEl" ></el-input>
         </div>
 
+        <div class="mt-50px" v-show="popParams.pyValue"></div>
+
         <el-checkbox-group v-model="popParams.selectList" @change="onChange">
             <el-checkbox 
                 v-for="item in popParams.showUserList" 
@@ -140,6 +142,7 @@ function onSearchConfirm() {
 function onPyInput(event: Event) {
 
     const { value }  = inputEl;
+    
 
 
     /** 
@@ -185,7 +188,7 @@ function onPyKeyDown(event: KeyboardEvent){
     if(showUserList.length == 1){
 
         const { name } = showUserList[0];
-
+        
         selectList.push(name);
 
         onChange(name);
