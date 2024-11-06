@@ -51,9 +51,6 @@
                 <el-tag type="danger" v-else>暂无人员可选</el-tag>
             </template>
         </el-form-item>
-
-.3
-
         <slot>
         </slot>
 

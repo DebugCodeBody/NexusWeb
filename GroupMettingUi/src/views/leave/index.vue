@@ -10,7 +10,7 @@
 
                     <leave-form ref="leaveFormEl">
                         <el-form-item label="申请人" prop="name">
-                            <el-tag>{{ form.username }}</el-tag>
+                            <el-tag @click="onClickLeaveName" class="cursor-pointer">{{ form.username }}</el-tag>
                         </el-form-item>
                     </leave-form>
 
@@ -33,7 +33,7 @@
 
     </div>
 
-    <py-select-name />
+    <py-select-name :userList="exportData.userData" />
 
 </template>
 
@@ -46,8 +46,9 @@ import { getUserName } from "@/store/user"
 
 import { getLeave, setLeave } from "@/api/leave"
 
-
 import leaveForm from "@/components/leaveForm/index.vue"
+
+import exportData from "@/store/data"
 
 
 
@@ -126,6 +127,35 @@ async function onClickSubmit() {
     } finally {
         loading = false;
     }
+
+
+}
+
+async function onClickLeaveName() {
+
+    try {
+
+
+
+
+        const selectName = await window.openNameSelect({
+
+            title: "选择操作人员",
+            isOne: true,
+
+        });
+
+        await getLeveStatus(selectName);
+        form.username = selectName;
+
+        
+
+
+    } catch {
+        return;
+    }
+
+
 
 
 }
@@ -326,7 +356,7 @@ export default {
     }
 
 
- 
+
 
 }
 </style>

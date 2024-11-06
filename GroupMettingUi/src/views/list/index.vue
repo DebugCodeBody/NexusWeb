@@ -5,7 +5,7 @@
             <div class="relative flex-1">
                 <div class="wh-full overflow-hidden flex flex-col" ref="tabEl">
                     <div class="w-full mb-10px flex ">
-                        <div class="mr-5px show-all w-70px">
+                        <div class="mr-5px show-all w-70px " >
                             <div class="flex flex-wrap h-full">
                                 <div>
                                     <el-button class="show-this" @click="onClickShowThis">只显示自己的</el-button>
@@ -18,8 +18,9 @@
 
 
                         </div>
-                        <div class="flex-1">
-                            <div class="w-full">
+
+                        <div class="flex-1 filter-content">
+                            <div class="w-full conditions" >
                                 <div class="flex flex-1 ">
 
                                     <div class="ml-5px" v-if="isCommView">
@@ -206,6 +207,8 @@ import exportData from "@/store/data"
 
 let cancelUser = $ref(false);
 let optimizeUser = $ref(false);
+
+
 
 
 
@@ -863,7 +866,8 @@ function onOpenTrackUser() {
 
 function onOpenResult() {
 
-    const { filterList, userList, dataList, actorList } = dialogSearch;
+    const { filterList, userList, actorList } = dialogSearch;
+    const dataList = exportData.userData;
 
     userList.length = 0;
 
@@ -893,7 +897,8 @@ function onOpenResult() {
 function onFilterSearch() {
 
 
-    const { searchList, userList, dataList } = dialogSearch;
+    const { searchList, userList } = dialogSearch;
+    const dataList = exportData.userData;
 
     userList.length = 0;
 
@@ -958,22 +963,29 @@ async function init() {
         onTabChange(activeName);
     }
 
-    const username = await getAllActorUser();
-
-    dialogSearch.dataList.push(...username);
-
-    exportData.userData.push(...username);
-
-
-
-
-
 }
 
 
 
 
 init();
+
+const watchUserData = watch(()=>exportData.userData.length, ()=>{
+
+    watchUserData();
+
+    dialogSearch.userList.length = 0;
+
+    dialogSearch.userList.push(...exportData.userData);
+
+
+    
+    dialogSearch.dataList.length = 0;
+    dialogSearch.dataList.push(...exportData.userData);
+
+
+
+} )
 
 
 onMounted(async () => {
@@ -1146,6 +1158,8 @@ export default {
     }
 
     .show-all {
+
+        z-index: 99;
         .el-checkbox__label {
 
             width: 40px;
