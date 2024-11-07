@@ -68,3 +68,15 @@ export function setOut(order: string[]) {
     })
 
 }
+
+export function cancelout(order: string[]) {
+
+    return request({
+        url: "./btk/cancelout",
+        method: "post",
+        data: {
+            order
+        }
+    })
+
+}

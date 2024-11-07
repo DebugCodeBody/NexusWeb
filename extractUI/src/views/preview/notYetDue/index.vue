@@ -9,42 +9,32 @@
             <template #default="{ data: itemChild }">
                 <el-form size='default'>
                     <el-form-item class="oirder-item">
-                        <div class="content">
-                            <el-form-item class="order" v-if="itemChild.orderid">
-                                <span>{{ itemChild.orderid }}</span>
-                            </el-form-item>
-
-                            <el-form-item>
-                                <span>{{ itemChild.mat_name }}</span>
-                            </el-form-item>
-                        </div>
+                        <el-form-item class="order" v-if="itemChild.orderid">
+                            <span>{{ itemChild.orderid }}</span>
+                        </el-form-item>
+                        <el-form-item>
+                            <span>{{ itemChild.mat_name }}</span>
+                        </el-form-item>
                     </el-form-item>
                     <el-form-item>
-                        <el-form-item label="规格：" style="width: 60%">
-                            <span>{{ itemChild.bspec }} x {{ itemChild.bcount }}</span>
+                        <el-form-item label="规格：">
+                            <span>{{ itemChild.bspec }}</span>
                         </el-form-item>
-                        <el-form-item label="交期：" style="width: 40%">
+                        <el-form-item label="数量：">
+                            <span>{{ itemChild.bcount }}</span>
+                        </el-form-item>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-form-item label="交期：">
                             <el-tag type="warning" v-if="!gtNowDate(itemChild.delivery)">{{
-            getFormatTime(itemChild.delivery)
-        }}</el-tag>
+                                getFormatTime(itemChild.delivery)
+                            }}</el-tag>
                             <el-tag type="success" v-else>{{ getFormatTime(itemChild.delivery) }}</el-tag>
                         </el-form-item>
                     </el-form-item>
-
-                    <!-- <el-form-item>
-                        <el-form-item label="取货：">
-                            <el-tag v-if="itemChild.btaketime">{{ getFormatTime(itemChild.btaketime) }}</el-tag>
-                            <el-tag type="danger" v-else>未取货</el-tag>
-                        </el-form-item>
-                    </el-form-item> -->
-
                     <el-form-item label="备注：" v-if="itemChild.bremark">
                         <span>{{ itemChild.bremark }}</span>
                     </el-form-item>
-                    
-                    <div class="operation">
-                        <el-button type="danger" size="small" @click="onClickOut(itemChild)">缺货</el-button>
-                    </div>
                 </el-form>
             </template>
 
@@ -61,8 +51,6 @@
                             <el-checkbox border  :label="item.seq">
                                 <span>{{ item.mat_name }} {{ item.bspec }}x{{ item.bcount }}</span>
                             </el-checkbox>
-                            <el-button type="danger" size="small" class="out-button" @click="onClickOut(item)">缺货</el-button>
-
                         </div>
 
        

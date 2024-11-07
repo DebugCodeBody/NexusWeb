@@ -5,7 +5,7 @@
             <div class="relative flex-1">
                 <div class="wh-full overflow-hidden flex flex-col" ref="tabEl">
                     <div class="w-full mb-10px flex ">
-                        <div class="mr-5px show-all w-70px " >
+                        <div class="mr-5px show-all w-70px ">
                             <div class="flex flex-wrap h-full">
                                 <div>
                                     <el-button class="show-this" @click="onClickShowThis">只显示自己的</el-button>
@@ -14,13 +14,10 @@
                                     <el-button class="show-this" @click="onClickShowHectic">显示繁忙清单</el-button>
                                 </div>
                             </div>
-
-
-
                         </div>
 
                         <div class="flex-1 filter-content">
-                            <div class="w-full conditions" >
+                            <div class="w-full conditions">
                                 <div class="flex flex-1 ">
 
                                     <div class="ml-5px" v-if="isCommView">
@@ -72,7 +69,6 @@
                                         @click="onClickClearSearch">清除</el-button>
                                 </div>
                             </div>
-
                             <div class="w-full mt-10px">
                                 <div class="flex flex-1">
                                     <el-checkbox v-model="dialogSearch.isFollow" label="只显示关注" value="只显示关注"
@@ -99,6 +95,13 @@
                                         @change="refresh" v-if="isVerifyView || isHandleView" />
                                 </div>
                             </div>
+                            <div class="mobile">
+                                
+                                <el-button class="ml-5px"  @click="onClickOpenDrawer">展开搜索</el-button>
+                                
+                                <el-button class="ml-5px" :disabled="clearSearchDisabled" @click="onClickClearSearch">清除</el-button>
+
+                            </div>
 
                         </div>
                         <div>
@@ -124,7 +127,7 @@
 
                                 <template #item="{ item }">
                                     <meet-item :item="item" :type="nowActive" :refresh="refresh" :cancel="cancelUser"
-                                        :optimize="optimizeUser" :hectic="hectic" @click-track-user="onClickTrackUser" >
+                                        :optimize="optimizeUser" :hectic="hectic" @click-track-user="onClickTrackUser">
                                     </meet-item>
                                 </template>
                             </collapse-list>
@@ -157,8 +160,99 @@
         <py-select-name :userList="exportData.userData" />
         <pop-editr-tag :refresh="refresh" />
         <pop-set-next-time :refresh="refresh" />
-        <pop-hectic-list :refresh="refresh" ref="hecticListEl"/>
+        <pop-hectic-list :refresh="refresh" ref="hecticListEl" />
         <!-- <pop-edit-view :refresh="refresh"> -->
+
+
+        <el-drawer v-model="drawer" title="过滤条件" direction="rtl" > 
+
+            <div class="flex-1 filter-content">
+                <div class="w-full conditions">
+                    <div class="ml-5px" v-if="isCommView">
+                        <name-select v-model="dialogSearch.commList" title="搜索沟通人"
+                            :user-list="dialogSearch.userList" :disabled="loading" placeholder="沟通人"
+                            @confirm="onSearchConfirm" @open="onFilterSearch" />
+                    </div>
+
+                    <div class="ml-5px" v-else>
+                        <name-select v-model="dialogSearch.trackList" title="搜索执行人"
+                            :user-list="dialogSearch.userList" :disabled="loading" placeholder="执行人"
+                            @confirm="onSearchConfirm" @open="onOpenTrackUser" />
+                    </div>
+
+                    <div class="ml-5px">
+                        <name-select v-model="dialogSearch.createList" title="搜索创建人"
+                            :user-list="dialogSearch.userList" :disabled="loading" placeholder="创建人"
+                            @confirm="onSearchConfirm" @open="onOpenCreate" />
+                    </div>
+                    <div class="ml-5px">
+                        <name-select v-model="dialogSearch.filterList" title="搜索排除参与"
+                            :user-list="dialogSearch.userList" :disabled="loading" placeholder="排除参与"
+                            @confirm="onSearchConfirm" @open="onOpenSearch" />
+                    </div>
+                    <div class="ml-5px">
+                        <name-select v-model="dialogSearch.searchList" title="搜索参与人"
+                            :user-list="dialogSearch.userList" :disabled="loading" placeholder="参与人"
+                            @confirm="onSearchConfirm" @open="onOpenSearch" />
+                    </div>
+                    <div class="ml-5px" v-if="false">
+                        <name-select v-model="dialogSearch.syncList" title="同步过滤人员"
+                            :user-list="dialogSearch.userList" :disabled="loading" placeholder="同步过滤人员"
+                            @confirm="onSyncFilteConfirm" @open="onFilterSearch" />
+                    </div>
+                    <div class="ml-5px">
+                        <name-select v-model="dialogSearch.result" title="过滤结果" :user-list="dialogSearch.userList"
+                            :disabled="loading" :showCount="false" placeholder="过滤结果" @confirm="onSearchConfirm"
+                            @open="onOpenResult" v-if="isHandleView" />
+                    </div>
+                    <div class="ml-5px flex flex-1">
+                        <el-input v-model="dialogSearch.value" placeholder="内容搜索" clearable :disabled="loading"
+                            @keydown.enter="onSearchValue"></el-input>
+
+                    </div>
+                    <div class="buttun-div">
+                        <el-button class="ml-5px" :disabled="!dialogSearch.value || loading"
+                                @click="onSearchValue">搜索</el-button>
+                        <el-button class="ml-5px" :disabled="clearSearchDisabled"
+                            @click="onClickClearSearch">清除</el-button>
+                    </div>
+                </div>
+
+                <div class="w-full mt-10px">
+                    <div class="">
+                        <el-checkbox v-model="dialogSearch.isFollow" label="只显示关注" value="只显示关注" @change="refresh"
+                            v-if="!isNowProView" />
+                        <el-checkbox v-model="dialogSearch.isTenDay" label="只显示十天前" value="只显示十天前" @change="refresh"
+                            v-if="isHandleView" />
+
+                        <el-checkbox v-model="dialogSearch.isGroup" label="显示有会议群" value="显示有会议群" @change="refresh"
+                            v-if="isHandleView || isToStartView" />
+
+                        <el-checkbox v-model="dialogSearch.isNoGroup" label="显示无会议群" value="显示无会议群" @change="refresh"
+                            v-if="isHandleView || isToStartView" />
+
+                        <!-- <el-checkbox v-model="dialogSearch.filterLong" label="过滤二人会议" value="过滤二人会议"
+                                        @change="refresh" v-if="isVerifyView" /> -->
+
+                        <el-checkbox v-model="dialogSearch.isLeave" label="过滤请假人员" value="过滤请假人员" @change="refresh"
+                            v-if="isVerifyView || isPrepareStartView" />
+
+                        <el-checkbox v-model="dialogSearch.isOutNextTime" label="只显示超时或未处理" value="只显示超出执行时间"
+                            @change="refresh" v-if="isNowProView" />
+
+                        <el-checkbox v-model="dialogSearch.isHectic" label="只显示非繁忙人员" value="只显示非繁忙人员" @change="refresh"
+                            v-if="isVerifyView || isHandleView" />
+                    </div>
+                </div>
+
+            </div>
+
+            <template #footer>
+                <div style="flex: auto">
+                    <el-button @click="onClickCloseDrawer">关闭</el-button>
+                </div>
+            </template>
+        </el-drawer>
 
     </div>
 </template>
@@ -209,6 +303,8 @@ let cancelUser = $ref(false);
 let optimizeUser = $ref(false);
 
 
+let drawer = $ref(false);
+
 
 
 
@@ -232,6 +328,7 @@ let thisName = $ref(getUserName());
 
 let viewChange = false;
 let viewId = $ref(getSearch("id"));
+
 
 
 let all = $ref(true);
@@ -555,7 +652,7 @@ async function getData(value: number) {
 
     list.push(...result.data);
     hectic.push(...result.hectic);
-    
+
     dialogSearch.syncList.push(...result.filter);
 
 
@@ -666,11 +763,11 @@ function onClickEditMask(item: mettItem) {
 
 
 function onSearchConfirm() {
-
+    onClickCloseDrawer();
     refresh();
 }
 
-function toSearchView(toPath:string) {
+function toSearchView(toPath: string) {
 
     const newUrl = location.href.replace("path=list", `path=${toPath}`);
 
@@ -693,12 +790,12 @@ async function onTabChange(value: number) {
     }
 
     viewId = "";
-    
+
     const toPath = ({
 
-        "101":  "search",
+        "101": "search",
         "103": "okrsearch"
-            
+
     } as any)[value];
 
 
@@ -706,7 +803,7 @@ async function onTabChange(value: number) {
     if (toPath) {
 
         toSearchView(toPath);
-        
+
         nextTick(() => {
             activeName = nowActive;
         })
@@ -940,6 +1037,18 @@ async function getIdView() {
 
 }
 
+/** 关闭右边抽屉 */
+function onClickCloseDrawer() {
+
+    drawer = false;
+
+}
+
+function onClickOpenDrawer() {
+    
+    drawer = true;
+
+}
 
 
 
@@ -970,22 +1079,26 @@ async function init() {
 
 init();
 
-const watchUserData = watch(()=>exportData.userData.length, ()=>{
+const watchUserData = watch(() => exportData.userData.length, () => {
 
-    watchUserData();
+
+    if(exportData.userData.length == 0){
+        return;
+    }
 
     dialogSearch.userList.length = 0;
-
     dialogSearch.userList.push(...exportData.userData);
 
 
-    
     dialogSearch.dataList.length = 0;
     dialogSearch.dataList.push(...exportData.userData);
 
+    watchUserData();
 
 
-} )
+
+
+})
 
 
 onMounted(async () => {
@@ -1013,6 +1126,7 @@ onMounted(async () => {
     HammerInit();
 
 })
+
 
 
 
@@ -1160,6 +1274,7 @@ export default {
     .show-all {
 
         z-index: 99;
+
         .el-checkbox__label {
 
             width: 40px;
@@ -1179,6 +1294,14 @@ export default {
         width: 60px;
         padding: 10px;
         white-space: inherit;
+    }
+
+    .filter-content{
+
+        .mobile{
+            display: none;
+        }
+
     }
 
 }
@@ -1216,4 +1339,43 @@ export default {
         margin-bottom: 5px;
     }
 }
+
+.el-overlay .el-drawer{
+    width: 90% !important;
+
+    .conditions {
+        & > div{
+            margin-bottom: 10px;
+
+            .el-select{
+                width: 100% !important;
+            }
+
+           
+        }
+
+        .buttun-div{
+            text-align: end;
+        }
+
+    }
+}
+
+@media screen and (max-width: 920px) {
+
+    #list .declare-view .filter-content {
+
+        width: auto;
+
+        & > div{
+            display: none;
+        }
+
+        .mobile{
+            display: block;
+        }
+        
+    }
+}
+
 </style>

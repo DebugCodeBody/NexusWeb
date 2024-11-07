@@ -1,7 +1,7 @@
 <template>
     <pop-dialog 
         class="pop-set_next_time" 
-        title="设置执行时间" 
+        title="设置期待时间" 
         v-model="popValue" 
         v-if="renderValur" 
         @confirm="onConfirm"
@@ -10,7 +10,7 @@
 
         <el-form :model="formData" label-width="auto" :rules="formRules" :hide-required-asterisk="true" ref="formEl">
 
-            <el-form-item label="日期" prop="date">
+            <el-form-item label="日期" prop="date" v-show="false">
                 <div>
                     <div><el-date-picker v-model="formData.date" type="date" placeholder="请选择日期" /></div>
                     <!-- <div class="mt-10px">
@@ -19,18 +19,17 @@
                     </div> -->
                 </div>
             </el-form-item>
+
             <el-form-item label="时间" prop="time">
                 <div>
                     <div>
-                        <el-time-picker v-model="formData.time" placeholder="请选择时间" />
+                        <el-time-picker v-model="formData.time" placeholder="请选择时间" :disabled="true"/>
                     </div>
                     <div class="mt-10px">
-                        <el-button size="small" @click="onClickAddMinutes(30)">半小时后</el-button>
-                        <el-button size="small" @click="onClickAddMinutes(60)">1小时</el-button>
-                        <el-button size="small" @click="onClickAddMinutes(120)">2小时</el-button>
-                        <el-button size="small" @click="onClickSetHour(9)">上午</el-button>
-                        <el-button size="small" @click="onClickSetHour(13, 30)">下午</el-button>
-                        <el-button size="small" @click="onClickSetHour(17, 30)">晚上</el-button>
+                        <el-button size="small" @click="onClickAddMinutes(30)">半小时内</el-button>
+                        <el-button size="small" @click="onClickAddMinutes(60)">当班次</el-button>
+                        <el-button size="small" @click="onClickAddMinutes(120)">两班次</el-button>
+                        <el-button size="small" @click="onClickSetHour(9)">三班次</el-button>
                     </div> 
                 </div>
                 

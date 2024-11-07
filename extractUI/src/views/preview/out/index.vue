@@ -7,14 +7,19 @@
 
             <template #default="{ data: itemChild }">
                 <el-form size='default'>
+
                     <el-form-item class="oirder-item">
-                        <el-form-item class="order" v-if="itemChild.orderid">
-                            <span>{{ itemChild.orderid }}</span>
-                        </el-form-item>
-                        <el-form-item>
-                            <span>{{ itemChild.mat_name }}</span>
-                        </el-form-item>
+                        <div class="content">
+                            <el-form-item class="order" v-if="itemChild.orderid">
+                                <span>{{ itemChild.orderid }}</span>
+                            </el-form-item>
+                            <el-form-item>
+                                <span>{{ itemChild.mat_name }}</span>
+                            </el-form-item>
+
+                        </div>
                     </el-form-item>
+
                     <el-form-item>
                         <el-form-item label="规格：">
                             <span>{{ itemChild.bspec }}</span>
@@ -26,19 +31,17 @@
                     <el-form-item>
                         <el-form-item label="交期：">
                             <el-tag type="warning" v-if="!gtNowDate(itemChild.delivery)">{{
-                                getFormatTime(itemChild.delivery)
-                            }}</el-tag>
+            getFormatTime(itemChild.delivery)
+        }}</el-tag>
                             <el-tag type="success" v-else>{{ getFormatTime(itemChild.delivery) }}</el-tag>
-                        </el-form-item>
-                        <el-form-item label="取货：">
-                            <el-tag v-if="itemChild.btaketime">{{ getFormatTime(itemChild.btaketime) }}</el-tag>
-                            <el-tag type="danger" v-else>未取货</el-tag>
                         </el-form-item>
                     </el-form-item>
                     <el-form-item label="备注：" v-if="itemChild.bremark">
                         <span>{{ itemChild.bremark }}</span>
                     </el-form-item>
+
                     <div class="operation">
+                        <el-button type="danger" size="small" @click="onClickOut(itemChild)">撤销缺货</el-button>
                     </div>
                 </el-form>
             </template>
@@ -54,7 +57,11 @@ import listCard from "../listCard.vue"
 import { gtNowDate } from "@/utils/other"
 import dayjs from "dayjs"
 
+import { cancelout } from "@/api"
 
+
+
+import { selectItem, extractDialogShow, allExtractDialogShow, getData, presentData } from "@/store/data"
 
 
 const Emits = defineEmits<{
@@ -82,7 +89,21 @@ function getFormatTime(str: string) {
     return dayjs(str).format("MM-DD")
 }
 
-onMounted(() =>{ 
+async function onClickOut(item: any) {
+
+    const { seq } = item;
+
+    try {
+        await cancelout([seq])
+    } finally {
+        getData();
+    }
+
+
+
+}
+
+onMounted(() => {
 
 
 })
@@ -97,6 +118,4 @@ export default {
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

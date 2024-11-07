@@ -10,7 +10,9 @@
                     <template v-if="presentData.length || selectTag == 3">
 
                         <template v-if="selectTag == 10">
+                            
                             <extract :data="presentData" />
+
                         </template>
 
                         <template v-else-if="selectTag == 20">
@@ -20,8 +22,12 @@
                         <template v-else-if="selectTag == 3">
                             <cddun :tableData="cddunData"></cddun>
                         </template>
+                        
+                        <template v-else-if="selectTag == 40">
+                            <not-yet-due :data="presentData" />
+                        </template>
 
-                        <template v-else>
+                        <template  v-else-if="selectTag == 50">
                             <out :data="presentData" />
                         </template>
 
@@ -53,6 +59,7 @@ import { Search } from '@element-plus/icons-vue'
 import extract from "./extract/index.vue"
 import undo from "./undo/index.vue"
 import out from "./out/index.vue"
+import notYetDue from "./notYetDue/index.vue"
 
 import extractDialog from "./extractDialog.vue"
 import allExtractDialog from "./allExtractDialog.vue"
