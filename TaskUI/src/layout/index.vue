@@ -47,7 +47,7 @@ import { ref, reactive, nextTick, defineProps, onBeforeMount, onMounted, onBefor
 
 import { ElMessage } from 'element-plus'
 
-import { getUserName } from "@/utils/auto"
+import { getUserName } from "@/store/user"
 import { getbarcode, setaction } from "@/api/task"
 
 
@@ -146,7 +146,7 @@ async function clickSetaction(action: string) {
 	const { id } = ruleForm;
 
 	try {
-		const result: any = await setaction(id, ruleForm.name, action)
+		const result: any = await setaction(id, ruleForm.name, action, ruleForm.order, ruleForm.taskname);
 		next.value = result.action;
 		disabled.value = true;
 

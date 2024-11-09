@@ -8,9 +8,11 @@ module.exports = defineConfig({
 				ws: true,
 				changeOrigin: true,
 				pathRewrite: {
-					"^/api": ""
+					"^/api/auth": "/ding/auth",
+					"^/api/auto": "/ding/auto",
+					"^/api": "/ding/task",
 				},
-				target: "http://127.0.0.1:7001"
+				target: "http://127.0.0.1:80"
 			}
 		}
 	},

@@ -5,11 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     
-    <link href="https://unpkg.com/element-plus@2.2.6/dist/index.css" rel="stylesheet">
-    <script src="https://unpkg.com/axios@0.27.2/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/element-plus@2.2.6/dist/index.full.js"></script>
     
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.13.42/dingtalk.open.js"></script>
+    
+    <% if(process.env.NODE_ENV == "production")  {%>
+
+
+      <link href="/ding/media/static/element-plus/2.2.6/index.css" rel="stylesheet">
+      <script src="/ding/media/static/axios/0.27.2/axios.min.js"></script>
+      <script src="/ding/media/static/vue/3.2.37/vue.global.prod.min.js"></script>
+      <script src="/ding/media/static/element-plus/2.2.6/index.full.js"></script>
+
+    <% } %>
+
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>任务确认</title>
   </head>

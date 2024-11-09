@@ -3,7 +3,12 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import * as dd from 'dingtalk-jsapi';
 
+
+import { userLogin } from "@/store/user"
+
+
 import initStatus from "./init"
+
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -12,7 +17,7 @@ import 'element-plus/dist/index.css'
 
 
 import queryString from "query-string";
-import { environment, userLogin } from "./utils/auto";
+import { environment } from "./utils/auto";
 
 
 window.urlSearch = queryString.parse(location.search);
@@ -25,29 +30,24 @@ if (process.env.NODE_ENV == "development") {
     window.urlSearch.corpId = "dingf2f1e9ca1da23dff";
 }
 
+new Promise<initStatus>((resolve) => {
+    
+    userLogin().then(resolve, resolve);
+
+}).then((code: initStatus) => {
 
 
-new Promise((resolve) => {
-    if (!environment()) {
+    window.initCode = code;
 
-        window.initCode = initStatus.NOENVIRONMENT;
-        resolve();
+    const app = createApp(App)
 
-    } else {
 
-        userLogin().then(() => {
-            window.initCode = initStatus.SUCCESS;
-        }).catch((error) => {
-            window.initCode = initStatus.NOLOGIN;
-        }).then(resolve)
-
-    }
-}).then(() => {
-
-    createApp(App).use(ElementPlus, {
+    app.use(ElementPlus, {
         size: "large"
     }).mount("#app");
+
+
+
+
 })
-
-
 

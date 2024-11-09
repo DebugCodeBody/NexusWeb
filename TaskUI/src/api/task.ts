@@ -1,7 +1,7 @@
 import request from "@/utils/request"
 
 
-export function getbarcode(barcode:string){
+export function getbarcode(barcode: string) {
     return request({
         url: "/getbarcode",
         params: { barcode }
@@ -15,9 +15,16 @@ export function getbarcode(barcode:string){
  * @param action 提交工作
  * @returns 
  */
-export function setaction(id:string,name:string,action:string){
+export function setaction(id: string, name: string, action: string, order: string, taskname: string) {
     return request({
         url: "/setaction",
-        params: { id ,name,action}
+        method: "post",
+        data: {
+            id,
+            name,
+            action,
+            order,
+            taskname
+        }
     })
 }
