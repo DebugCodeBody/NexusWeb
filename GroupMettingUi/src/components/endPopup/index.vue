@@ -1,10 +1,6 @@
 <template>
     <popDialog title="结束会议" class="dialog-end" v-model="dialog.visible" :center="true" @confirm="onConfirm"
-        @open="onOpen"
-        @cancel="onCancel"
-        @opened="onOpenEd"
-        @closeed="onCloseEd"
-        ref="popEl">
+        @open="onOpen" @cancel="onCancel" @opened="onOpenEd" @closeed="onCloseEd" ref="popEl">
         <el-form :model="form" label-width="auto" :hide-required-asterisk="true" :rules="rules" label-position="top"
             ref="formEl">
             <el-form-item label="会议结果" prop="content">
@@ -56,6 +52,7 @@ const popEl = $ref<any>();
 const formEl = $ref<any>();
 const resultRadioEl = $ref<any>();
 
+let noValidate = false;
 
 const rules = reactive<any>({
     content: [
@@ -71,7 +68,7 @@ const rules = reactive<any>({
     ]
 });
 
-function onOpen(){
+function onOpen() {
     nextTick(() => {
         resultRadioEl.parse(item);
     })
@@ -79,11 +76,18 @@ function onOpen(){
 
 async function onConfirm() {
 
-    try {
-        await formEl.validate()
-    } catch {
-        return;
+    if (!noValidate) {
+
+        try {
+            await formEl.validate()
+        } catch {
+            return;
+        }
+
     }
+
+
+    noValidate = false;
 
     await to(endMeeting(item.id, form.result, form.memo));
 
@@ -100,12 +104,22 @@ function onCancel() {
 
 function endItem(argItem: mettItem) {
 
-
     item = argItem;
+    form.memo = "";
+    form.result = "";
+
+    if (item.result != "") {
+
+        noValidate = true;
+        onConfirm();
+
+    } else {
+        dialog.visible = true;
+    }
 
 
 
-    dialog.visible = true;
+
 
 
 }
