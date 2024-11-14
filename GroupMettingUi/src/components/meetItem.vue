@@ -34,11 +34,18 @@
                 </el-col>
 
                 <el-col :span="12" v-if="isNowProView">
-                    <el-form-item label="执行时间">
+                    <el-form-item label="期待响应时间">
 
                         <div class="cursor-pointer" @click="onClickSetNextTime">
-                            <el-tag type="warning" size="small" v-if="!item.next_time">未设置时间</el-tag>
-                            <el-tag size="small" v-else>{{ item.next_time }}</el-tag>
+                            <el-tag type="warning" size="small" v-if="!item.expect">未设置时间</el-tag>
+
+                            <template v-else>
+                                <el-tag size="small">{{ item.expect.time }}</el-tag>
+                                <el-tag size="small" type="warning" class="ml-5px" v-if="item.expect.banci">{{ item.expect.banci }}</el-tag>
+
+                            </template>
+
+
                         </div>
 
                     </el-form-item>

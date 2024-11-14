@@ -13,3 +13,16 @@ export function setNextTime(id: number | string, time: string) {
     })
 
 }
+
+
+export function setExpectTime(id: number | string, expect: string) {
+    return request({
+        url: "/expect/set",
+        method: "post",
+        data: {
+            id,
+            expect
+        }
+    })
+
+}

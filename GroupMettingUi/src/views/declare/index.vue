@@ -30,18 +30,26 @@
                                     }}</el-radio>
                             </el-radio-group>
                         </el-form-item>
+                        
+                        <el-form-item label="响应时间" prop="expect" v-if="isNowType">
+                           <expect-time v-model="form.expect" />
+                        </el-form-item>
+                        
 
                         <el-form-item label="执行者" prop="track" v-if="isFdType">
                             <el-tag class="mr-5px" v-if="form.track">{{ form.track }}</el-tag>
                             <el-button @click="onClickSelectTrack">选择</el-button>
                             <el-button @click="onClickClearTrack" v-if="form.track">清除</el-button>
                         </el-form-item>
+
                         <el-form-item label="图片">
                             <upload-file ref="uploadEl" />
                         </el-form-item>
+
                         <el-form-item label="开会内容" prop="content">
                             <el-input type="textarea" v-model="form.content" />
                         </el-form-item>
+                        
                     </el-form>
 
                     <div class="mt-10px">
@@ -79,6 +87,7 @@ import type { FormRules } from 'element-plus'
 import actorUser from "@/components/actorUser.vue"
 
 import pySelectName from "@/components/pySelectName.vue"
+import expectTime from "@/components/expectTime.vue"
 
 
 import to from "await-to-js"
@@ -90,6 +99,8 @@ import { copyItemValue } from "@/utils/other"
 
 import { messageError } from "@/utils/elementLib";
 import uploadFile from "global@/uploadFile/index.vue";
+
+
 
 type resourceType = {
     label: string,
@@ -139,9 +150,6 @@ const rules = reactive<FormRules>({
     content: [
         { required: true, message: '请填写开会内容', trigger: 'change' }
     ],
-    time: [
-        { required: true, message: '请选开会时间', trigger: 'change' }
-    ],
     rtime: [
         { required: true, message: '请选预约时间', trigger: 'change' }
     ],
@@ -150,15 +158,29 @@ const rules = reactive<FormRules>({
 
             let retErr : Error|undefined  = undefined;
 
-
-            if(form.type == "防呆类" && form.track == ""){
+            if(isFdType && form.track == ""){
                 retErr = new Error("请选择执行人")
             }
 
             callback(retErr);
             
         }, trigger: 'change' }
+    ],
+    expect: [
+        { validator(rule, value, callback, source, options) {
+
+            let retErr : Error|undefined  = undefined;
+
+            if(isNowType && !value){
+                retErr = new Error("请选择期待响应时间")
+            }
+
+            callback(retErr);
+            
+        }, trigger: 'change' }
     ]
+
+
 });
 
 
@@ -183,11 +205,20 @@ const responseTissue = $ref<{
     tissue: string[],
 }[]>([]);
 
+/** 是否防呆类 */
 const isFdType = $computed(() => {
 
     return form.type == "防呆类"
 
-})
+});
+
+
+/** 是否在场类 */
+const isNowType = $computed(() => {
+
+    return form.type == "在产类"
+
+});
 
 
 
@@ -203,7 +234,9 @@ const form = $ref({
     /** 会议类型 */
     type: null as any as string,
     /** 执行人 */
-    track: ""
+    track: "",
+
+    expect: ""
 
 });
 

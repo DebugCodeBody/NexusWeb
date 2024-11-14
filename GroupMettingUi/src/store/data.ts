@@ -4,7 +4,9 @@ import { getAllActorUser } from "@/api"
 
 const exportData = {
     item: undefined,
-    userData: reactive([] as userItem[])
+    userData: reactive([] as userItem[]),
+    init
+
 }
 
 
@@ -21,6 +23,5 @@ async function init() {
 }
 
 
-init();
 
 export default exportData

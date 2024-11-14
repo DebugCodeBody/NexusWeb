@@ -111,7 +111,7 @@ type mettItem = {
   }[],
   is_mark: boolean,
   img: string[],
-  
+
   /** 会议结果 */
   result: string,
   /** 沟通人 */
@@ -119,15 +119,21 @@ type mettItem = {
 
   /** 标签内容 */
   tag_content: string,
-  
+
   /** 是否关注内容 */
   follow: boolean,
-  
+
   /** 创建的群号 */
   create_group: string,
-  
+
   /** 下一次任务的时间 */
   next_time: string,
+
+  /** 期待响应时间 */
+  expect: {
+    time: string,
+    banci: string
+  },
 
   /** 工艺优化 */
   is_optimize: boolean

@@ -160,6 +160,8 @@ async function onClickLeaveName() {
 
 }
 
+exportData.init();
+
 
 
 

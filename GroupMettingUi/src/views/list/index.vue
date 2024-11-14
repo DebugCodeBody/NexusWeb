@@ -88,8 +88,8 @@
                                     <el-checkbox v-model="dialogSearch.isLeave" label="过滤请假人员" value="过滤请假人员"
                                         @change="refresh" v-if="isVerifyView || isPrepareStartView" />
 
-                                    <el-checkbox v-model="dialogSearch.isOutNextTime" label="只显示超时或未处理"
-                                        value="只显示超出执行时间" @change="refresh" v-if="isNowProView" />
+                                    <el-checkbox v-model="dialogSearch.isOutNextTime" label="只显示超出响应时间"
+                                        value="只显示超出响应时间" @change="refresh" v-if="isNowProView" />
 
                                     <el-checkbox v-model="dialogSearch.isHectic" label="只显示非繁忙人员" value="只显示非繁忙人员"
                                         @change="refresh" v-if="isVerifyView || isHandleView" />
@@ -1065,6 +1065,8 @@ function refresh() {
 
 
 async function init() {
+
+    exportData.init();
 
     if (viewId) {
         getIdView();
