@@ -70,6 +70,7 @@ import Hammer from "hammerjs";
 
 
 
+
 import { localActive } from "@/store/data"
 import { selectItem, extractDialogShow, allExtractDialogShow, getData, presentData } from "@/store/data"
 
@@ -288,11 +289,27 @@ export default {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+
+
 
             .num {
                 margin-left: 5px;
                 font-weight: bold;
             }
+
+
+            .map-button{
+                position: absolute;
+
+                left: 50%;
+
+            }
+        }
+
+        .card-header-two{
+            text-align: right;
+            margin-top: 10px ;
         }
 
         .el-card__body .box-item-card .el-card__body {

@@ -1,10 +1,13 @@
 <template>
-    <el-card class="box-card" :class="{hide}" >
+    <el-card class="box-card" :class="{ hide }">
 
         <template #header>
             <div class="card-header" @click="onClickCardHeader">
                 <span class="name">{{ data.name || "" }}<span class="num">({{ data.value.length }})</span></span>
                 <slot name="top-button"></slot>
+            </div>
+            <div class="card-header-two"  v-if="showMap">
+                <map-button :item="data"/>
             </div>
         </template>
 
@@ -18,6 +21,7 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs"
+import mapButton from "global@/mapButton/index.vue"
 
 
 
@@ -30,7 +34,18 @@ const Props = defineProps<{
 }>();
 
 
+const showMap = $computed(() =>{
+
+
+    const { data } = Props;
+
+    return !!(data.sndname || data.sndaddr || data.sndlocate)
+
+
+})
+
 let hide = $ref(true);
+
 
 function onClickCardHeader() {
     hide = !hide;
