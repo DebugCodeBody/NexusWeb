@@ -182,8 +182,14 @@
         </div>
     </div>
 
-    <pop-dialog title="添加留言" v-model="add" :destroyOnClose="true" custom-class="memo-input-dialog" v-if="add"
-        @confirm="onAddConfirm" @opened="onOpenEd" @closeed="onCloseEd">
+    <pop-dialog title="添加留言" 
+        v-model="add" 
+        :destroyOnClose="true" 
+        class="memo-input-dialog" 
+        v-if="add"
+        @confirm="onAddConfirm" 
+        @opened="onOpenEd" 
+        @closeed="onCloseEd">
 
         <el-form :model="form" label-width="0" :hide-required-asterisk="true" :rules="rules" label-position="top"
             ref="formEl">
@@ -196,6 +202,16 @@
                 <el-input type="textarea" v-model="form.content" class="mb-5px" />
                 <result-radio v-model="form.result" ref="resultRadioEl" />
             </el-form-item>
+
+            <div class="create_group_tips flex flex-center" v-if="item.create_group">
+                <div>
+                    <el-tag type="danger">本会议已创建会议群，请到会议群中留言</el-tag>
+                </div>
+                <div class="mt-10px">
+                    <el-button type="primary" @click="onClickOpenCreate">打开会议群</el-button>
+                </div>
+            </div>
+
         </el-form>
 
     </pop-dialog>
@@ -229,7 +245,7 @@
         </el-form-item>
 
 
-        <el-form-item label="留言" class="label-top">
+        <el-form-item label="留言" class="label-top" v-if="!item.create_group">
             <el-input v-model="memo" size="default" type="textarea"></el-input>
         </el-form-item>
 
@@ -799,6 +815,11 @@ function onClickEditMask(item: mettItem) {
 
 async function onAddConfirm() {
 
+    if(Props.item.create_group) {
+        add = false;
+        return;
+    }
+
     try {
         await formEl.validate()
     } catch {
@@ -922,6 +943,7 @@ async function onClickOpenCreate() {
     }
 
     Props.refresh();
+    add = false;
 
 
     // 打开群聊
@@ -1157,6 +1179,24 @@ export default {
         height: 100px;
         resize: none;
     }
+
+    .el-form{
+        position: relative;
+    }
+
+    .create_group_tips{
+
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        background: white;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+    }
+
 }
 
 .edito-tissue_Dialog {
