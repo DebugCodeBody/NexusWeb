@@ -199,18 +199,18 @@
 
             </el-form-item>
             <el-form-item label="内容" prop="content">
-                <el-input type="textarea" v-model="form.content" class="mb-5px" />
+                <el-input type="textarea" v-model="form.content" class="mb-5px" :disabled="!!item.create_group"/>
                 <result-radio v-model="form.result" ref="resultRadioEl" />
             </el-form-item>
 
-            <div class="create_group_tips flex flex-center" v-if="item.create_group">
+            <!-- <div class="create_group_tips flex flex-center" v-if="item.create_group">
                 <div>
                     <el-tag type="danger">本会议已创建会议群，请到会议群中留言</el-tag>
                 </div>
                 <div class="mt-10px">
                     <el-button type="primary" @click="onClickOpenCreate">打开会议群</el-button>
                 </div>
-            </div>
+            </div> -->
 
         </el-form>
 
@@ -815,10 +815,7 @@ function onClickEditMask(item: mettItem) {
 
 async function onAddConfirm() {
 
-    if(Props.item.create_group) {
-        add = false;
-        return;
-    }
+
 
     try {
         await formEl.validate()

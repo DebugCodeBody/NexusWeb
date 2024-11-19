@@ -19,6 +19,7 @@ import search from "@/views/search/index.vue"
 import openGroup from "@/views/openGroup/index.vue"
 import leave from "@/views/leave/index.vue"
 import okrsearch from "@/views/okrsearch/index.vue"
+import groupend from "@/views/groupend/index.vue"
 // import hectic from "@/views/hectic/index.vue"
 
 import { ref, reactive, nextTick, defineProps, computed, onBeforeMount, onMounted, onBeforeUnmount, onUnmounted } from "vue"
@@ -38,7 +39,8 @@ const tabs: any = {
 	leave,
 	// hectic,
 	opengroup: openGroup,
-	okrsearch
+	okrsearch,
+	groupend
 }
 
 

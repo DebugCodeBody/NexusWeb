@@ -39,7 +39,7 @@ const showMap = $computed(() =>{
 
     const { data } = Props;
 
-    return !!(data.sndname || data.sndaddr || data.sndlocate)
+    return !!(data.sndlocate)
 
 
 })
