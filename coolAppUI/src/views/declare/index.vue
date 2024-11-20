@@ -114,7 +114,7 @@ async function init() {
 
     // 
     dd.config({
-        agentId: '1662765423',
+        agentId: '3190901288',
         corpId,
         timeStamp,
         nonceStr,

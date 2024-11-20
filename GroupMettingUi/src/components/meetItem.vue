@@ -41,7 +41,8 @@
 
                             <template v-else>
                                 <el-tag size="small">{{ item.expect.time }}</el-tag>
-                                <el-tag size="small" type="warning" class="ml-5px" v-if="item.expect.banci">{{ item.expect.banci }}</el-tag>
+                                <el-tag size="small" type="warning" class="ml-5px" v-if="item.expect.banci">{{
+        item.expect.banci }}</el-tag>
 
                             </template>
 
@@ -65,11 +66,11 @@
                             <div class="actor-name cursor-pointer" @click.capture="onClickPopoverActor(name)">
                                 <el-tag size="default" effect="plain" type="danger" v-if="hectic.includes(name)">
                                     <span>{{ name }}</span>
-                                    <span class="ml-5px color-red" >{{ countMap[name] }}</span>
+                                    <span class="ml-5px color-red">{{ countMap[name] }}</span>
                                 </el-tag>
                                 <el-tag size="default" effect="plain" v-else>
                                     <span>{{ name }}</span>
-                                    <span class="ml-5px color-red" >{{ countMap[name] }}</span>
+                                    <span class="ml-5px color-red">{{ countMap[name] }}</span>
                                 </el-tag>
                             </div>
 
@@ -129,7 +130,7 @@
             <el-form-item label="留言" prop="content" v-if="stepList.length" class="label-top">
                 <div>
                     <div v-for="(item, index) in stepList" :key="index">
-                        <div>{{ item.createdate }} {{ item.fname }}  <order-text :value="item.memo" /></div>
+                        <div>{{ item.createdate }} {{ item.fname }} <order-text :value="item.memo" /></div>
                         <template v-if="item.img.length">
                             <img-list v-for="(imgIten, index) in item.img" :img="item.img" :index="index" :key="index">
                             </img-list>
@@ -187,14 +188,8 @@
         </div>
     </div>
 
-    <pop-dialog title="添加留言" 
-        v-model="add" 
-        :destroyOnClose="true" 
-        class="memo-input-dialog" 
-        v-if="add"
-        @confirm="onAddConfirm" 
-        @opened="onOpenEd" 
-        @closeed="onCloseEd">
+    <pop-dialog title="添加留言" v-model="add" :destroyOnClose="true" class="memo-input-dialog" v-if="add"
+        @confirm="onAddConfirm" @opened="onOpenEd" @closeed="onCloseEd">
 
         <el-form :model="form" label-width="0" :hide-required-asterisk="true" :rules="rules" label-position="top"
             ref="formEl">
@@ -204,7 +199,7 @@
 
             </el-form-item>
             <el-form-item label="内容" prop="content">
-                <el-input type="textarea" v-model="form.content" class="mb-5px" :disabled="!!item.create_group"/>
+                <el-input type="textarea" v-model="form.content" class="mb-5px" :disabled="!!item.create_group" />
                 <result-radio v-model="form.result" ref="resultRadioEl" />
             </el-form-item>
 
@@ -306,6 +301,9 @@ import resultRadio from "@/components/resultRadio.vue"
 import { onOpenEd, onCloseEd } from "@/utils/popKey";
 
 import { isDing } from "@/utils/auth"
+
+import { openGroup } from "@/utils/ddgroup";
+
 
 
 
@@ -933,9 +931,12 @@ async function onClickOpenCreate() {
 
     if (isDing()) {
 
-        dd.biz.chat.toConversationByOpenConversationId({
-            openConversationId: conversation
-        });
+        try {
+            await openGroup(conversation);
+        } catch (err) {
+            alert(JSON.stringify(err))
+        }
+
 
     } else {
 
@@ -1170,7 +1171,7 @@ export default {
         margin-right: 10px !important;
     }
 
-    .color-red{
+    .color-red {
         color: #dc2626;
     }
 
@@ -1189,11 +1190,11 @@ export default {
         resize: none;
     }
 
-    .el-form{
+    .el-form {
         position: relative;
     }
 
-    .create_group_tips{
+    .create_group_tips {
 
         position: absolute;
         width: 100%;

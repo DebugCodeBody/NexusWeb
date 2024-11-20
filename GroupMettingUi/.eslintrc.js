@@ -18,6 +18,7 @@ module.exports = {
     "vue/multi-word-component-names":"off",
     "no-async-promise-executor":"off",
     "vue/no-mutating-props":"off",
-    "no-undef":"warn"
+    "no-undef":"warn",
+    "no-empty":"warn"
   },
 };

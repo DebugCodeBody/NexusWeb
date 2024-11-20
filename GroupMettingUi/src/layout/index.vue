@@ -2,7 +2,7 @@
 	<div class="main-wrap">
 		<div class="main-content">
 			<keep-alive :exclude="['memo']">
-				<component :is="tabs[path]" :path="path"/>
+				<component :is="tabs[path]" :path="path" />
 			</keep-alive>
 		</div>
 	</div>
@@ -62,6 +62,23 @@ function pathView() {
 
 
 	document.title = retVal.title;
+
+	if (dd.env.platform != "notInDingTalk") {
+
+		try {
+
+			dd.biz.navigation.setTitle({
+				title: retVal.title
+			});
+
+		} catch (error) {
+
+
+
+		}
+
+	}
+
 
 
 	return retVal
