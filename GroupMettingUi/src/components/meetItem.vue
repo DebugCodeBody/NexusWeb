@@ -63,9 +63,14 @@
                         <template #reference>
 
                             <div class="actor-name cursor-pointer" @click.capture="onClickPopoverActor(name)">
-                                <el-tag size="default" effect="plain" type="danger" v-if="hectic.includes(name)">{{ name
-                                    }}</el-tag>
-                                <el-tag size="default" effect="plain" v-else>{{ name }}</el-tag>
+                                <el-tag size="default" effect="plain" type="danger" v-if="hectic.includes(name)">
+                                    <span>{{ name }}</span>
+                                    <span class="ml-5px color-red" >{{ countMap[name] }}</span>
+                                </el-tag>
+                                <el-tag size="default" effect="plain" v-else>
+                                    <span>{{ name }}</span>
+                                    <span class="ml-5px color-red" >{{ countMap[name] }}</span>
+                                </el-tag>
                             </div>
 
                         </template>
@@ -322,13 +327,16 @@ const Props = withDefaults(defineProps<{
     /** 是否关联会议 */
     isLink?: boolean,
     /** 繁忙人员名单 */
-    hectic: string[]
+    hectic: string[],
+
+    countMap: {
+        [key: string]: number
+    }
 }>(), {
     cancel: false,
     isLink: false,
     optimize: false,
 });
-
 
 const resultRadioEl = $ref<any>();
 
@@ -1160,6 +1168,10 @@ export default {
 
     .optimize-check {
         margin-right: 10px !important;
+    }
+
+    .color-red{
+        color: #dc2626;
     }
 
 

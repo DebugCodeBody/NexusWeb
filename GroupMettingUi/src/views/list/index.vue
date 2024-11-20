@@ -127,7 +127,7 @@
 
                                 <template #item="{ item }">
                                     <meet-item :item="item" :type="nowActive" :refresh="refresh" :cancel="cancelUser"
-                                        :optimize="optimizeUser" :hectic="hectic" @click-track-user="onClickTrackUser">
+                                        :optimize="optimizeUser" :hectic="hectic" :countMap="exportData.nameCountMap" @click-track-user="onClickTrackUser">
                                     </meet-item>
                                 </template>
                             </collapse-list>
@@ -654,6 +654,9 @@ async function getData(value: number) {
     hectic.push(...result.hectic);
 
     dialogSearch.syncList.push(...result.filter);
+    
+
+    exportData.statistic(result.data);
 
 
 
