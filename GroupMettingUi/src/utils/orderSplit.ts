@@ -100,7 +100,22 @@ export function splitText(value = "") {
          * 
          */
 
-        while ((exec = rules.exec(value))) {
+        exec = rules.exec(value)
+
+        if (exec) {
+            
+            const bValue = value.slice(0, exec.index)
+            if (bValue) {
+                retArr.push([false, bValue]);
+            }
+        }
+
+
+
+
+
+
+        while (exec) {
             if (!lastExec) {
                 lastExec = exec;
             } else {
@@ -108,6 +123,9 @@ export function splitText(value = "") {
                 lastExec = exec;
             }
             retArr.push([true, exec[0]]);
+
+            exec = rules.exec(value)
+
         }
         if (lastExec && lastExec.index + lastExec[0].length < value.length) {
             retArr.push([false, slice(value.length)]);

@@ -2,6 +2,9 @@
     <span class="order-text">
         <template v-for="(item, index) in splitVlue" :key="index">
 
+
+
+
             <a :href="getHref(item[1])" target="_blank" v-if="item[0]">{{ item[1] }}</a>
             <span v-else>{{ item[1] }}</span>
 
@@ -19,6 +22,8 @@ const Props = defineProps<{
 }>();
 
 const splitVlue = computed(() => {
+
+
     return splitText(Props.value) as [boolean, string][];
 })
 
