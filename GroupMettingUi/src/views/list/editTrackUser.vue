@@ -23,7 +23,7 @@
         </actor-user-el>
         
         <el-form-item label="留言" class="label-top">
-            <el-input v-model="memo" size="default" type="textarea"></el-input>
+            <el-input v-model="memo" size="default" type="textarea" :disabled="showDialog.item.create_group"></el-input>
         </el-form-item>
 
     </popDialog>

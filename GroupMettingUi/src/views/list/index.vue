@@ -329,8 +329,6 @@ let thisName = $ref(getUserName());
 let viewChange = false;
 let viewId = $ref(getSearch("id"));
 
-
-
 let all = $ref(true);
 
 const whereIdTable = {
@@ -815,7 +813,7 @@ async function onTabChange(value: number) {
 
 
 
-    const tempObj = whereIdTable[value] || {
+    const tempObj =  {
         all: false,
         search: [],
         filter: [],
@@ -842,6 +840,8 @@ async function onTabChange(value: number) {
 
         isHectic: (value === 4)
     };
+
+    Object.assign(tempObj, (whereIdTable[value] || {}));
 
 
 
@@ -1070,6 +1070,36 @@ function refresh() {
 async function init() {
 
     exportData.init();
+
+    let label = parseInt(getSearch("label"));
+    if(isNaN(label) === false){
+        activeName = label;
+    }
+
+
+    let ismy = parseInt(getSearch("ismy"));
+    if(ismy === 1){
+       
+        let setVal: any;
+        if (activeName == 6) {
+
+            setVal = {
+                track:[thisName]
+            }
+            
+        } else {
+            setVal = {
+                search:[thisName]
+            }
+
+        }
+
+        whereIdTable[activeName] = setVal;
+        
+    }
+
+
+    
 
     if (viewId) {
         getIdView();
