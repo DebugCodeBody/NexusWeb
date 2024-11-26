@@ -23,7 +23,7 @@
 
 
             <el-form-item label="留言" prop="memo">
-                <el-input v-model="formData.memo" placeholder="请输入留言" type="textarea" :disabled="selectItem.create_group"></el-input>
+                <el-input v-model="formData.memo" placeholder="请输入留言" type="textarea" :disabled="!!selectItem.create_group"></el-input>
                 <div class="mt-10px">
                     <result-radio v-model="result" ref="resultRadioEl" />
                 </div>
