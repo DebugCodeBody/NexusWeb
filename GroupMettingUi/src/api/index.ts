@@ -78,7 +78,7 @@ export function submitMeet(openConversationId: string, data: any) {
         },
         method: "post",
         data
-    }) as any as Promise<boolean>
+    }) as any as Promise<mettItem>
 
 }
 

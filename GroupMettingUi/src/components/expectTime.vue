@@ -67,7 +67,7 @@ function updateModelValue(value: any) {
 
     const updateValue = [value];
 
-    if(formData.banci){
+    if (formData.banci) {
         updateValue.push(formData.banci);
     }
 
@@ -198,7 +198,7 @@ function onClickQuick(item: any) {
 }
 
 
-function onChangeDate(value:string){
+function onChangeDate(value: string) {
 
     setTtime(dayjs(value));
 
@@ -212,7 +212,7 @@ if (Props.modelValue) {
 
 watch(() => Props.modelValue, (value) => {
 
-    if(isUpdate){
+    if (isUpdate) {
         return;
     }
 
@@ -234,6 +234,14 @@ watch(() => Props.modelValue, (value) => {
 
 })
 
+
+defineExpose({
+    clickTime(index: number) {
+
+        quickList[index].handle();
+
+    }
+})
 
 
 </script>

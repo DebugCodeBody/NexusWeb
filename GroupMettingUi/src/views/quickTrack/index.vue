@@ -13,7 +13,6 @@
                     <el-result icon="error" sub-title="请通过点击群消息进入本页面" v-if="error">
 
                     </el-result>
-
                 </div>
 
             </div>
@@ -42,7 +41,7 @@ import { copyItemValue } from "@/utils/other"
 
 import { messageError } from "@/utils/elementLib";
 
-import { endMeeting } from "@/api"
+import { setTrack } from "@/api/quick"
 
 
 let submitDone = $ref(false);
@@ -51,32 +50,31 @@ let error = $ref(false);
 
 
 let id = getSearch("id");
-
-
-
-
+let name = getSearch("name");
 
 
 async function init() {
 
-    if (!id) {
+
+    if (!id || !name) {
         error = true;
         return
     }
 
 
 
-    const [err] = await to(endMeeting(parseInt(id), "", ""));
+    const [err] = await to(setTrack(parseInt(id), name));
     if (err) {
         return;
     }
 
-
+    
 
     submitDone = true;
 
-    
+
     location.replace(`${location.origin}${location.pathname}?path=list&label=6&ismy=1`);
+
 
 
 
@@ -93,7 +91,8 @@ init();
 
 <script lang="ts">
 
-const title = $ref("会议群内结案")
+const title = $ref("群内指派");
+
 export default {
     name: "",
     title
@@ -101,16 +100,6 @@ export default {
 </script>
 
 <style lang="scss">
-.el-overlay.is-message-box .el-overlay-message-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .el-message-box {
-        width: 80%;
-    }
-}
-
 #group-end {
     flex: 1;
 

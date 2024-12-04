@@ -16,25 +16,25 @@
                             </el-select>
                         </el-form-item> -->
 
-                        <actor-user 
-                            :actor="form.actor" 
-                            :notuser="form.notuser"
-                            :hot="hotArr"
-                             
-                            :actorArr="actorArr"
-                            :notuserArr="notUserList" />
+                        <actor-user :actor="form.actor" :notuser="form.notuser" :hot="hotArr" :actorArr="actorArr"
+                            :notuserArr="notUserList" :showNotUser="!form.isAudio" />
 
-                        <el-form-item label="会议类型" prop="type">
+                        <el-form-item label="会议类型" prop="type" v-if="!form.isAudio">
                             <el-radio-group v-model="form.type" @change="onChangeType">
                                 <el-radio v-for="(item, index) in typeArr" :key="index" :label="item">{{ item
                                     }}</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                        
-                        <el-form-item label="响应时间" prop="expect" v-if="isNowType">
-                           <expect-time v-model="form.expect" />
+
+
+                        <el-form-item label="工单号" v-if="form.isAudio">
+                            <order-input v-model="form.order" :search="false" />
                         </el-form-item>
-                        
+
+                        <el-form-item label="响应时间" prop="expect" v-if="isNowType" v-show="!form.isAudio">
+                            <expect-time v-model="form.expect" ref="expectTimeEl" />
+                        </el-form-item>
+
 
                         <el-form-item label="执行者" prop="track" v-if="isFdType">
                             <el-tag class="mr-5px" v-if="form.track">{{ form.track }}</el-tag>
@@ -46,10 +46,10 @@
                             <upload-file ref="uploadEl" />
                         </el-form-item>
 
-                        <el-form-item label="开会内容" prop="content">
+                        <el-form-item label="开会内容" prop="content" v-if="!form.isAudio">
                             <el-input type="textarea" v-model="form.content" />
                         </el-form-item>
-                        
+
                     </el-form>
 
                     <div class="mt-10px">
@@ -77,7 +77,7 @@
         </div>
 
     </div>
-    <py-select-name  />
+    <py-select-name />
 </template>
 
 <script setup lang="ts">
@@ -99,6 +99,10 @@ import { copyItemValue } from "@/utils/other"
 
 import { messageError } from "@/utils/elementLib";
 import uploadFile from "global@/uploadFile/index.vue";
+import orderInput from "global@/orderInput/index.vue";
+
+
+import { openGroup } from "@/utils/ddgroup";
 
 
 
@@ -116,6 +120,9 @@ let isRegist = $ref(false);
 let loading = $ref(false);
 
 
+const expectTimeEl = $ref<any>();
+
+
 const corpId = getCorpId();
 let openConversationId = getSearch("openConversationId");
 
@@ -124,7 +131,7 @@ if (process.env.NODE_ENV != "production") {
     openConversationId = "cidJgKt5cWr6G7oCrh3YtA/JA==";
 
     // openConversationId = "cidqSg4UlaQSpDlsI9p6p347Q==";
-    
+
     // openConversationId = "cidByQUlqQerQ3O141BE+4axg==";
 } else {
 
@@ -148,36 +155,67 @@ const rules = reactive<FormRules>({
         { required: true, message: '请选择参加人员', trigger: 'change' }
     ],
     content: [
-        { required: true, message: '请填写开会内容', trigger: 'change' }
+        {
+            validator(rule, value, callback, source, options) {
+
+                let retErr: Error | undefined = undefined;
+
+                if (!form.isAudio && !value) {
+                    retErr = new Error("请填写开会内容")
+                }
+
+                callback(retErr);
+
+            }, trigger: 'change'
+        }
     ],
     rtime: [
         { required: true, message: '请选预约时间', trigger: 'change' }
     ],
     track: [
-        { validator(rule, value, callback, source, options) {
+        {
+            validator(rule, value, callback, source, options) {
 
-            let retErr : Error|undefined  = undefined;
+                let retErr: Error | undefined = undefined;
 
-            if(isFdType && form.track == ""){
-                retErr = new Error("请选择执行人")
-            }
+                if (isFdType && form.track == "") {
+                    retErr = new Error("请选择执行人")
+                }
 
-            callback(retErr);
-            
-        }, trigger: 'change' }
+                callback(retErr);
+
+            }, trigger: 'change'
+        }
+    ],
+    order: [
+        {
+            validator(rule, value, callback, source, options) {
+
+                let retErr: Error | undefined = undefined;
+
+                if (form.isAudio && form.order == "") {
+                    retErr = new Error("语音会议需要扫描工单号")
+                }
+
+                callback(retErr);
+
+            }, trigger: 'change'
+        }
     ],
     expect: [
-        { validator(rule, value, callback, source, options) {
+        {
+            validator(rule, value, callback, source, options) {
 
-            let retErr : Error|undefined  = undefined;
+                let retErr: Error | undefined = undefined;
 
-            if(isNowType && !value){
-                retErr = new Error("请选择期待响应时间")
-            }
+                if (isNowType && !value) {
+                    retErr = new Error("请选择期待响应时间")
+                }
 
-            callback(retErr);
-            
-        }, trigger: 'change' }
+                callback(retErr);
+
+            }, trigger: 'change'
+        }
     ]
 
 
@@ -222,6 +260,8 @@ const isNowType = $computed(() => {
 
 
 
+
+
 const form = $ref({
     /** 组织人 */
     tissue: "",
@@ -236,6 +276,12 @@ const form = $ref({
     /** 执行人 */
     track: "",
 
+    /** 是否语音会议 */
+    isAudio: getSearch("audio") == "1",
+
+    /** 工单号 */
+    order: "",
+
     expect: ""
 
 });
@@ -249,7 +295,7 @@ function onChangeType(value: string) {
 
 
     tissueArr.length = 0;
-    if(temp){
+    if (temp) {
         tissueArr.push(...temp.tissue);
     }
     if (tissueArr.length == 1) {
@@ -268,22 +314,22 @@ function onClickToRegist() {
 
 
 /** 选择执行人 */
-async function onClickSelectTrack(){
+async function onClickSelectTrack() {
 
     try {
 
         const userList = [...hotArr, ...actorArr];
 
         const qianList = [] as any[];
-        const houList = [] as any[]; 
+        const houList = [] as any[];
 
         userList.forEach((item) => {
 
-            if(form.actor.includes(item.name)){
-                
+            if (form.actor.includes(item.name)) {
+
                 qianList.push(item);
 
-            }else{
+            } else {
                 houList.push(item);
             }
 
@@ -291,7 +337,7 @@ async function onClickSelectTrack(){
 
         form.track = await window.openNameSelect({
             title: "选择执行者",
-            selectList: form.track ? [form.track] : [], 
+            selectList: form.track ? [form.track] : [],
             userList: [...qianList, ...houList],
             isOne: true,
         });
@@ -300,17 +346,17 @@ async function onClickSelectTrack(){
     } catch {
         form.track = "";
     }
-    
 
 
-     
+
+
 }
 
 /** 清除执行人 */
-function onClickClearTrack(){
+function onClickClearTrack() {
 
     form.track = "";
-    
+
 }
 
 
@@ -336,7 +382,7 @@ async function init() {
             timeArr.push(...data.time);
 
             actorArr.push(...data.actor);
-            
+
             notUserList.push(...data.actor);
 
             hotArr.push(...data.hot);
@@ -371,6 +417,20 @@ async function init() {
 
             onChangeType(form.type);
 
+
+            if (form.isAudio) {
+
+
+                form.type = "在产类"
+
+                await nextTick();
+
+                expectTimeEl.clickTime(0);
+
+
+
+            }
+
         }
 
     }
@@ -398,11 +458,11 @@ async function onClickSubmit() {
     }
 
 
-    
+
 
     const sendData = Object.assign({}, form);
 
-    if(!isFdType){
+    if (!isFdType) {
         sendData.track = "";
     }
 
@@ -410,11 +470,19 @@ async function onClickSubmit() {
         ...sendData,
         img
     }));
-    if (!err) {
-        submitDone = true;
+
+    if (err) {
+        return
     }
-    if (data) {
-        copyItemValue(data as any, true);
+
+    submitDone = true;
+    copyItemValue(data as any, true);
+
+    if (form.isAudio) {
+
+
+        await openGroup(data.create_group);
+
     }
 
     loading = false;
@@ -455,7 +523,7 @@ export default {
         height: 0;
     }
 
-    
+
 
     .title {
         height: 50px;
