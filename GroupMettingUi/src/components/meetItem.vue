@@ -33,7 +33,7 @@
                     </el-form-item>
                 </el-col>
 
-                <el-col :span="12" v-if="isNowProView">
+                <el-col :span="12" :xs="24" v-if="isNowProView">
                     <el-form-item label="期待响应时间">
 
                         <div class="cursor-pointer" @click="onClickSetNextTime">
@@ -236,14 +236,21 @@
             </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="组织人员">
+        <el-form-item label="组织人员" v-if="!isSelectProduction">
             <span class="mr-10px">{{ tissueName }}</span>
             <el-button @click="onClickTissueDialog" size="default">修改</el-button>
         </el-form-item>
-        <el-form-item label="执行者">
+        
+        <el-form-item label="执行者" v-if="!isSelectProduction">
             <span class="mr-10px" v-if="trackName">{{ trackName }}</span>
             <el-button @click="onClickTrackDialog" size="default">修改</el-button>
             <el-button @click="onClickClearTrack" size="default" type="info" v-if="trackName">清除</el-button>
+        </el-form-item>
+
+        <!-- 在场会议的执行人员，用组织人员来显示 -->
+        <el-form-item label="执行者" v-else>
+            <span class="mr-10px">{{ trackTissue }}</span>
+            <el-button @click="onClickTrackTissueDialog" size="default">修改</el-button>
         </el-form-item>
 
 
@@ -380,7 +387,6 @@ const rules = reactive<any>({
 
 const stepList = computed(() => {
 
-
     const retList = Props.item.log;
 
     return retList;
@@ -434,7 +440,6 @@ const showCancelEnd = computed(() => {
 
     const { type } = Props;
 
-
     // type  == 102 &&  Props.item.status == 3 最近操作 且 已经结案
 
     return type == 2 || (type == 102 && Props.item.status == 3);
@@ -473,16 +478,35 @@ let isMark = $ref(Props.item.is_mark);
 
 let isFollow = $ref(Props.item.follow);
 
+/** 组织人员 */
 let tissueName = $ref("");
+/** 跟进人员 */
 let trackName = $ref("");
 
+/** 在场会议跟进人员，用组织人员来设定 */
+let trackTissue = $ref("");
+
+
+
 let thisName = $ref(getUserName());
+
 
 /** 会议类型 */
 let thisType = $ref("");
 
 // "现场类",
 let typeArr = $ref(["在产类", "防呆类", "畅聊类", "建议类"]);
+
+/** 当前会议类型选中的是否为在产类 */
+const isSelectProduction = $computed(() => {
+    return thisType == "在产类"
+});
+
+
+
+
+
+
 
 const uploadEl = $ref<InstanceType<typeof uploadFile>>();
 
@@ -665,7 +689,19 @@ async function onClickEdit(item: mettItem) {
     thisType = item.type;
 
     tissueName = Props.item.tissue_user;
-    trackName = Props.item.track_user;
+
+
+    if(Props.item.type == "在产类") {
+
+        trackTissue = Props.item.tissue_user;
+
+    } else {
+
+        trackName = Props.item.track_user;
+
+    }
+
+    
 
     isFollow = Props.item.follow;
 
@@ -734,6 +770,14 @@ async function onConfirmEditUset() {
 
     };
 
+
+    if(isSelectProduction){
+
+        data.tissue = trackTissue;
+        
+    }
+
+
     const [err, result] = await to(setEditorUserList(Props.item.id, data));
     if (err) {
         return;
@@ -768,6 +812,26 @@ async function onClickTissueDialog() {
 
 
 }
+
+
+/** 编辑会议点击修改在场会议的跟进人 */
+async function onClickTrackTissueDialog() {
+
+    try {
+        trackTissue = await window.openNameSelect({
+            title: "修改组织人员",
+            isOne: true,
+        });
+
+
+    } catch {
+        return;
+    }
+
+
+}
+
+
 
 /** 编辑会议点击修改组织人员 */
 async function onClickTrackDialog() {

@@ -109,7 +109,9 @@ type mettItem = {
     memo: string,
     img: string[]
   }[],
+  
   is_mark: boolean,
+
   img: string[],
 
   /** 会议结果 */
