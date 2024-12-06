@@ -11,7 +11,7 @@
                                     <el-button class="show-this" @click="onClickShowThis">只显示自己的</el-button>
                                 </div>
                                 <div>
-                                    <el-button class="show-this" @click="onClickShowHectic">显示繁忙清单</el-button>
+                                    <el-button class="show-this" @click="onClickShowHectic" v-if="false">显示繁忙清单</el-button>
                                 </div>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
                             <div class="w-full mt-10px">
                                 <div class="flex flex-1">
                                     <el-checkbox v-model="dialogSearch.isFollow" label="只显示关注" value="只显示关注"
-                                        @change="refresh" v-if="!isNowProView" />
+                                        @change="refresh" v-if="false && !isNowProView" />
                                     <el-checkbox v-model="dialogSearch.isTenDay" label="只显示十天前" value="只显示十天前"
                                         @change="refresh" v-if="isHandleView" />
 
@@ -86,13 +86,13 @@
                                         @change="refresh" v-if="isVerifyView" /> -->
 
                                     <el-checkbox v-model="dialogSearch.isLeave" label="过滤请假人员" value="过滤请假人员"
-                                        @change="refresh" v-if="isVerifyView || isPrepareStartView" />
+                                        @change="refresh" v-if="false && (isVerifyView || isPrepareStartView)" />
 
                                     <el-checkbox v-model="dialogSearch.isOutNextTime" label="只显示超出响应时间"
                                         value="只显示超出响应时间" @change="refresh" v-if="isNowProView" />
 
                                     <el-checkbox v-model="dialogSearch.isHectic" label="只显示非繁忙人员" value="只显示非繁忙人员"
-                                        @change="refresh" v-if="isVerifyView || isHandleView" />
+                                        @change="refresh" v-if="false && (isVerifyView || isHandleView) "  />
                                 </div>
                             </div>
                             <div class="mobile">
@@ -221,7 +221,7 @@
                 <div class="w-full mt-10px">
                     <div class="">
                         <el-checkbox v-model="dialogSearch.isFollow" label="只显示关注" value="只显示关注" @change="refresh"
-                            v-if="!isNowProView" />
+                            v-if=" false && !isNowProView" />
                         <el-checkbox v-model="dialogSearch.isTenDay" label="只显示十天前" value="只显示十天前" @change="refresh"
                             v-if="isHandleView" />
 
@@ -235,13 +235,13 @@
                                         @change="refresh" v-if="isVerifyView" /> -->
 
                         <el-checkbox v-model="dialogSearch.isLeave" label="过滤请假人员" value="过滤请假人员" @change="refresh"
-                            v-if="isVerifyView || isPrepareStartView" />
+                            v-if="false && (isVerifyView || isPrepareStartView) " />
 
                         <el-checkbox v-model="dialogSearch.isOutNextTime" label="只显示超时或未处理" value="只显示超出执行时间"
                             @change="refresh" v-if="isNowProView" />
 
                         <el-checkbox v-model="dialogSearch.isHectic" label="只显示非繁忙人员" value="只显示非繁忙人员" @change="refresh"
-                            v-if="isVerifyView || isHandleView" />
+                            v-if="false && (isVerifyView || isHandleView)" />
                     </div>
                 </div>
 
@@ -497,11 +497,13 @@ const tagList = $ref([
         label: "已确认",
         event: getMark
     },
-    {
-        id: 10,
-        label: "待约",
-        event: getAbout
-    },
+
+    // {
+    //     id: 10,
+    //     label: "待约",
+    //     event: getAbout
+    // },
+
     {
         id: 1,
         label: "已开",
@@ -835,10 +837,15 @@ async function onTabChange(value: number) {
         /** 如果是在现场类的话，只显示超时或未处理是默认勾上的 */
         outTime: value === 5,
 
-        isLeave: (value === 4 || value === 10),
+        // 暂时先把这两个隐藏起来，所以需要先设置为false
+        // 2024-12-05
+        // isLeave: (value === 4 || value === 10),
+        // isHectic: (value === 4)
 
+        isLeave: false,
+        isHectic: false
 
-        isHectic: (value === 4)
+        
     };
 
     Object.assign(tempObj, (whereIdTable[value] || {}));
@@ -880,6 +887,7 @@ async function onTabChange(value: number) {
 
     dialogSearch.isHectic = tempObj.isHectic;
 
+    
 
 
 

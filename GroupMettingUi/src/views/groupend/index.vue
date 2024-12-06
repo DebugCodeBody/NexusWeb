@@ -8,6 +8,14 @@
 
                 <div class="relative h-full">
                     <el-result v-if="submitDone" icon="success" title="提交成功">
+                        <template #extra>
+                            <el-tag>
+                                <div class="flex items-center">
+                                    <el-icon class="mr-5px is-loading" ><Loading /></el-icon>
+                                    正在跳转到下一个任务
+                                </div>
+                            </el-tag>
+                        </template>
                     </el-result>
 
                     <el-result icon="error" sub-title="请通过点击群消息进入本页面" v-if="error">
@@ -44,6 +52,7 @@ import { messageError } from "@/utils/elementLib";
 
 import { endMeeting } from "@/api"
 
+import { toNextHandle } from "@/utils/quick"
 
 let submitDone = $ref(false);
 
@@ -64,8 +73,6 @@ async function init() {
         return
     }
 
-
-
     const [err] = await to(endMeeting(parseInt(id), "", ""));
     if (err) {
         return;
@@ -74,11 +81,8 @@ async function init() {
 
 
     submitDone = true;
-
     
-    location.replace(`${location.origin}${location.pathname}?path=list&label=6&ismy=1`);
-
-
+    toNextHandle();
 
 
 }

@@ -12,7 +12,7 @@
             <div class="flex-1">
                 <div class="text-right">
                     <el-button size="small" @click.stop="onClickStart(item)" v-if="showStart">转已开</el-button>
-                    <el-button size="small" @click.stop="onClickToAbout(item)" v-if="showToAbout">转待约</el-button>
+                    <!-- <el-button size="small" @click.stop="onClickToAbout(item)" v-if="showToAbout">转待约</el-button> -->
                     <end-button :item="item" size="small" v-if="showEnd" />
                     <el-button type="warning" v-if="showCancelEnd" size="small"
                         @click="onClickCacelEnd">撤销结案</el-button>
@@ -42,7 +42,7 @@
                             <template v-else>
                                 <el-tag size="small">{{ item.expect.time }}</el-tag>
                                 <el-tag size="small" type="warning" class="ml-5px" v-if="item.expect.banci">{{
-        item.expect.banci }}</el-tag>
+                                    item.expect.banci }}</el-tag>
 
                             </template>
 
@@ -168,9 +168,11 @@
 
 
                     <el-button size="default" @click.stop="onClickOpenCreate"
-                        v-if="isShowCreateGroup && item.create_group" type="primary">打开会议群</el-button>
+                        v-if="isShowCreateGroup && item.create_group" :loading="createGroupLoading"
+                        type="primary">打开会议群</el-button>
                     <el-button size="default" @click.stop="onClickOpenCreate"
-                        v-if="isShowCreateGroup && !item.create_group" type="warning">创建会议群</el-button>
+                        v-if="isShowCreateGroup && !item.create_group" :loading="createGroupLoading"
+                        type="warning">创建会议群</el-button>
                     <el-button size="default" @click.stop="onClickSendMessage" type="success">发送消息</el-button>
 
 
@@ -339,6 +341,9 @@ const Props = withDefaults(defineProps<{
 const resultRadioEl = $ref<any>();
 
 let add = $ref(false);
+
+let createGroupLoading = $ref(false)
+
 
 const formEl = $ref<any>();
 const form = $ref({
@@ -895,61 +900,72 @@ async function onClickCacelEnd() {
 async function onClickOpenCreate() {
 
 
-    const { id } = Props.item;
+    try {
+
+        createGroupLoading = true;
+ 
+        const { id } = Props.item;
+
+        let [error, result] = await to(openSceneGroups(id));
+        if (error) {
+            alert("创建群失败，请联系管理员！");
+            createGroupLoading = false;
+            return;
+        }
 
 
-    let [error, result] = await to(openSceneGroups(id));
-    if (error) {
-        alert("创建群失败，请联系管理员！");
-        return;
-    }
+        let { conversation, exist } = result!;
+        if (exist) {
+            try {
+                await MessageBoxWarning("会议参与人员已有群，是否打开？");
+            } catch {
 
-    let { conversation, exist } = result!;
-    if (exist) {
-        try {
-            await MessageBoxWarning("会议参与人员已有群，是否打开？");
-        } catch {
+                [error, result] = await to(openSceneGroups(id, true));
+                if (error) {
+                    return;
+                }
 
-            [error, result] = await to(openSceneGroups(id, true));
-            if (error) {
-                return;
+                conversation = (result && result!.conversation || "");
+
+            }
+        }
+
+        if (!conversation) {
+            alert("创建群失败，请联系管理员！");
+            return;
+        }
+
+        Props.item.create_group = conversation;
+
+
+
+        if (isDing()) {
+
+            try {
+                await openGroup(conversation);
+            } catch (err) {
+                alert(JSON.stringify(err))
             }
 
-            conversation = (result && result!.conversation || "");
+
+        } else {
+
+            let aEl = document.createElement("a");
+            aEl.href = `dingtalk://dingtalkclient/action/openapp?corpid=dingf2f1e9ca1da23dff&container_type=work_platform&app_id=0_2726873885&redirect_type=emit_params&params=&redirect_url=https%3A%2F%2Fcddgd.cn%2Fding%2Fcoolapp%2Fmeeting%2Findex.html%3Fpath%3Dopengroup%26conversation%3D${encodeURIComponent(encodeURIComponent(conversation))}`
+
+            aEl.click();
+            aEl = undefined as any;
 
         }
+
+        Props.refresh();
+        add = false;
+
+    } finally {
+
+        createGroupLoading = false;
+        
     }
-
-    if (!conversation) {
-        alert("创建群失败，请联系管理员！");
-        return;
-    }
-
-    Props.item.create_group = conversation;
-
-
-
-    if (isDing()) {
-
-        try {
-            await openGroup(conversation);
-        } catch (err) {
-            alert(JSON.stringify(err))
-        }
-
-
-    } else {
-
-        let aEl = document.createElement("a");
-        aEl.href = `dingtalk://dingtalkclient/action/openapp?corpid=dingf2f1e9ca1da23dff&container_type=work_platform&app_id=0_2726873885&redirect_type=emit_params&params=&redirect_url=https%3A%2F%2Fcddgd.cn%2Fding%2Fcoolapp%2Fmeeting%2Findex.html%3Fpath%3Dopengroup%26conversation%3D${encodeURIComponent(encodeURIComponent(conversation))}`
-
-        aEl.click();
-        aEl = undefined as any;
-
-    }
-
-    Props.refresh();
-    add = false;
 
 
     // 打开群聊
