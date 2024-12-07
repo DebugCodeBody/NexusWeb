@@ -26,6 +26,16 @@
                         start-placeholder="起始时间" end-placeholder="结束时间" />
                 </el-form-item>
             </el-col>
+            <el-col :span="6">
+                <el-form-item label="只显示群内用户" prop="time">
+                    <el-switch
+                        v-model="formData.isExistGroup"
+                        size="large"
+                        active-text="是"
+                        inactive-text="否"
+                    />
+                </el-form-item>
+            </el-col>
 
         </el-row>
         <el-row :gutter="10">

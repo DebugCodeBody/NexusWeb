@@ -10,12 +10,21 @@ const thisManage = {
     formEl: {} as any,
     formData: reactive({
         status: 0,
+        
         type: "全部",
+
         time: [] as Date[],
+
         track_user: [] as string[],
+
         create_user: [] as string[],
+
         actor_user: [] as string[],
-        content: ""
+
+        content: "",
+
+        /** 只显示群内用户 */
+        isExistGroup: true
     }),
 
     tab: {} as any,
