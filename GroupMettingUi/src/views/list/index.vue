@@ -848,6 +848,11 @@ async function onTabChange(value: number) {
         
     };
 
+    if(value == 6 && !whereIdTable[value]){
+        tempObj.track.push(thisName as never)
+
+    }
+
     Object.assign(tempObj, (whereIdTable[value] || {}));
 
 
