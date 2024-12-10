@@ -8,7 +8,7 @@
             <div>
                 
                 <div class="mt-50px" v-show="data.pyValue"></div>
-                <div v-if="!data.pyValue">
+                <div v-if="false">
                     <div>热度：</div>
                     <el-checkbox-group v-model="data.hot" size="small" @change="onHotChange">
                         <el-checkbox v-for="item in hotList" :key="item.name" :label="item.name" :value="item.name"
