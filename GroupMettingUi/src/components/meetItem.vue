@@ -527,7 +527,9 @@ let isShowMark = computed(() => {
 
 /** 是否显示转结案 */
 let isEnd = computed(() => {
+
     return [0, 1, 3, 4, 5, 6, 7, 8].indexOf(parseInt(`${Props.type}`)) > -1 || Props.item.track_user == thisName;
+
 })
 
 /** 是否显示转待开 */
@@ -973,35 +975,17 @@ async function onClickOpenCreate() {
         let [error, result] = await to(openSceneGroups(id));
         if (error) {
             alert("创建群失败，请联系管理员！");
-            createGroupLoading = false;
             return;
         }
 
 
-        let { conversation, exist } = result!;
-        if (exist) {
-            try {
-                await MessageBoxWarning("会议参与人员已有群，是否打开？");
-            } catch {
-
-                [error, result] = await to(openSceneGroups(id, true));
-                if (error) {
-                    return;
-                }
-
-                conversation = (result && result!.conversation || "");
-
-            }
-        }
-
+        let { conversation } = result!;
         if (!conversation) {
             alert("创建群失败，请联系管理员！");
             return;
         }
 
         Props.item.create_group = conversation;
-
-
 
         if (isDing()) {
 

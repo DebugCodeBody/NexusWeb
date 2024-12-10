@@ -491,8 +491,6 @@ async function onClickSubmit() {
 
 init();
 
-window.testActor = form.actor
-
 
 
 </script>
