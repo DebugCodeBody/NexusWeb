@@ -93,6 +93,8 @@
 
                                     <el-checkbox v-model="dialogSearch.isHectic" label="只显示非繁忙人员" value="只显示非繁忙人员"
                                         @change="refresh" v-if="false && (isVerifyView || isHandleView) "  />
+
+                                    <el-checkbox v-model="dialogSearch.showIgnore" label="显示忽略会议" value="显示忽略会议" @change="refresh"/>
                                 </div>
                             </div>
                             <div class="mobile">
@@ -242,6 +244,7 @@
 
                         <el-checkbox v-model="dialogSearch.isHectic" label="只显示非繁忙人员" value="只显示非繁忙人员" @change="refresh"
                             v-if="false && (isVerifyView || isHandleView)" />
+                        <el-checkbox v-model="dialogSearch.showIgnore" label="显示忽略会议" value="显示忽略会议" @change="refresh"/>
                     </div>
                 </div>
 
@@ -402,7 +405,12 @@ let dialogSearch = $ref({
     isLeave: false,
 
     /** 只显示非繁忙人员 */
-    isHectic: false
+    isHectic: false,
+
+    /** 显示忽略会议 */
+    showIgnore: false
+
+
 
 });
 
@@ -614,16 +622,22 @@ async function getData(value: number) {
         isSync: !dialogSearch.isSync,
 
         isFollow: dialogSearch.isFollow,
+        
         isTenDay: dialogSearch.isTenDay,
+
         filterLong: dialogSearch.filterLong,
 
         noGroup: dialogSearch.isNoGroup,
+
         haveGroup: dialogSearch.isGroup,
 
         outTime: dialogSearch.isOutNextTime,
+
         isLeave: dialogSearch.isLeave,
 
         isHectic: dialogSearch.isHectic,
+
+        showIgnore: dialogSearch.showIgnore
 
     };
 
@@ -753,17 +767,6 @@ function onClickTrackUser(item: mettItem) {
 }
 
 
-function onClickEditMask(item: mettItem) {
-
-
-    try {
-        editMark(item.id, true)
-    } finally {
-        refresh();
-    }
-
-}
-
 
 function onSearchConfirm() {
     onClickCloseDrawer();
@@ -843,7 +846,9 @@ async function onTabChange(value: number) {
         // isHectic: (value === 4)
 
         isLeave: false,
-        isHectic: false
+        isHectic: false,
+
+        showIgnore: false
 
         
     };

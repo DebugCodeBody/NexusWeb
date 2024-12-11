@@ -1,7 +1,19 @@
-import { getList, getFollow, openSceneGroups } from "@/api"
+import { getList, getFollow, getProdu, openSceneGroups } from "@/api"
 import { getUserName } from "@/store/user"
 import { openGroup } from "@/utils/ddgroup";
+import { isGetNext } from "@/api"
 
+
+
+async function produGet() {
+
+    const sendData = {"all":true,"search":[],"filter":[],"track":[],"comm":[],"create":[],"value":"","result":[],"isSync":true,"isFollow":false,"isTenDay":false,"filterLong":false,"noGroup":true,"haveGroup":true,"outTime":true,"isLeave":false,"isHectic":false};
+
+    const { data } = await getProdu(sendData);
+
+    return data;
+
+}
 
 
 async function listGet() {
@@ -57,8 +69,13 @@ async function followGet() {
 export async function toNextHandle() {
 
 
+    const next = await isGetNext();
+    if (!next) {
+        closeNavigation();
+        return;
+    }
 
-    const getArr = [listGet, followGet];
+    const getArr = [produGet, listGet, followGet];
 
     let isOpen = false;
 
@@ -91,10 +108,18 @@ export async function toNextHandle() {
     }
 
     if (!isOpen) {
-        dd.biz.navigation.close();
+        closeNavigation();
     }
 
 
 }
 
+
+export function closeNavigation() {
+    try {
+        dd.biz.navigation.close();
+    } catch {
+
+    }
+}
 

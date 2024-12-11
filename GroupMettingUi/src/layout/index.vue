@@ -22,6 +22,7 @@ import okrsearch from "@/views/okrsearch/index.vue"
 import groupend from "@/views/groupend/index.vue"
 import quicktrack from "@/views/quickTrack/index.vue"
 import groupsetother from "@/views/groupsetother/index.vue"
+import groupignore from "@/views/groupignore/index.vue"
 // import hectic from "@/views/hectic/index.vue"
 
 import { ref, reactive, nextTick, defineProps, computed, onBeforeMount, onMounted, onBeforeUnmount, onUnmounted } from "vue"
@@ -44,7 +45,8 @@ const tabs: any = {
 	okrsearch,
 	groupend,
 	quicktrack,
-	groupsetother
+	groupsetother,
+	groupignore
 }
 
 

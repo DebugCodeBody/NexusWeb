@@ -664,3 +664,9 @@ export function followDel(id: number) {
 
 
 
+
+export function isGetNext(){
+    return request({
+        url: "/isGetNext",
+    }) as any as Promise<boolean>
+}
