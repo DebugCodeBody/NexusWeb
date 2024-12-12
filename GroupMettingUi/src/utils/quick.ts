@@ -5,9 +5,22 @@ import { isGetNext } from "@/api"
 
 
 
+function sleep(value: number) {
+
+    return new Promise((resolve) => {
+
+        setTimeout(() => {
+            resolve();
+        }, value || 0)
+
+    })
+
+}
+
+
 async function produGet() {
 
-    const sendData = {"all":true,"search":[],"filter":[],"track":[],"comm":[],"create":[],"value":"","result":[],"isSync":true,"isFollow":false,"isTenDay":false,"filterLong":false,"noGroup":true,"haveGroup":true,"outTime":true,"isLeave":false,"isHectic":false};
+    const sendData = { "all": true, "search": [], "filter": [], "track": [], "comm": [], "create": [], "value": "", "result": [], "isSync": true, "isFollow": false, "isTenDay": false, "filterLong": false, "noGroup": true, "haveGroup": true, "outTime": true, "isLeave": false, "isHectic": false };
 
     const { data } = await getProdu(sendData);
 
@@ -80,6 +93,7 @@ export async function toNextHandle() {
     let isOpen = false;
 
     for (let index = 0; index < getArr.length; index++) {
+
         const element = getArr[index];
 
 
@@ -91,13 +105,16 @@ export async function toNextHandle() {
 
         isOpen = true;
 
-        const { conversation } = await openSceneGroups(data[0].id);
+
 
         try {
+
+            const { conversation } = await openSceneGroups(data[0].id);
+
             await openGroup(conversation)
+
         } catch (err) {
             alert(`打开群失败：${JSON.stringify(err)}`);
-            isOpen = false;
             break;
         }
 
@@ -107,17 +124,23 @@ export async function toNextHandle() {
 
     }
 
-    if (!isOpen) {
-        closeNavigation();
-    }
+    // await sleep(100);
 
+    // closeNavigation();
 
+    
 }
 
 
 export function closeNavigation() {
     try {
-        dd.biz.navigation.close();
+        dd.biz.navigation.close({
+            onFail(err: any) {
+
+                alert(`关闭页面失败：${JSON.stringify(err)}`);
+
+            }
+        });
     } catch {
 
     }

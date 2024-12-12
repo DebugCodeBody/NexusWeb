@@ -28,9 +28,13 @@
                                     <el-icon class="mr-5px is-loading">
                                         <Loading />
                                     </el-icon>
-                                    正在跳转到下一个任务
+                                    <span>正在跳转到下一个任务</span>
                                 </div>
                             </el-tag>
+                            
+                            <div>
+                                <el-button class="mt-10px" @click="onClickClose" >关闭页面</el-button>
+                            </div>
                         </template>
                     </el-result>
 
@@ -60,7 +64,7 @@ import getSearch, { getCorpId } from "@/utils/urlSearch"
 import { setTrack } from "@/api/quick"
 import exportData from "@/store/data"
 
-import { toNextHandle } from "@/utils/quick"
+import { toNextHandle, closeNavigation } from "@/utils/quick"
 
 let submitDone = $ref(false);
 
@@ -74,6 +78,12 @@ let loading = $ref(false);
 
 
 const formData = $ref({});
+
+function onClickClose() {
+
+    closeNavigation();
+
+}
 
 async function onClickSubmit() {
 

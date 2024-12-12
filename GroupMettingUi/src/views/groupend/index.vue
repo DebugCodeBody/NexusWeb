@@ -15,6 +15,9 @@
                                     正在跳转到下一个任务
                                 </div>
                             </el-tag>
+                            <div>
+                                <el-button class="mt-10px" @click="onClickClose" >关闭页面</el-button>
+                            </div>
                         </template>
                     </el-result>
 
@@ -52,7 +55,7 @@ import { messageError } from "@/utils/elementLib";
 
 import { endMeeting } from "@/api"
 
-import { toNextHandle } from "@/utils/quick"
+import { toNextHandle , closeNavigation } from "@/utils/quick"
 
 let submitDone = $ref(false);
 
@@ -61,6 +64,12 @@ let error = $ref(false);
 
 let id = getSearch("id");
 
+
+function onClickClose(){
+
+    closeNavigation();
+
+}
 
 
 
