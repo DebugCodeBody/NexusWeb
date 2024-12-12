@@ -22,9 +22,10 @@ export function workId(id: string | number) {
 
 }
 
-export function workGet(group?: number | null, txt?: string | null, dept?: string | null, other = false) {
+export function workGet(group?: number | null, txt?: string | null, dept?: string | null, create?: string | null, other = false) {
     group = group || null;
     dept = dept || null;
+    create = create || null;
     txt = txt || null;
     const otherUser = other ? 1 : 0;
 
@@ -35,6 +36,7 @@ export function workGet(group?: number | null, txt?: string | null, dept?: strin
             group,
             txt,
             dept,
+            create,
             other: otherUser
         }
     }) as unknown as Promise<{
@@ -121,3 +123,5 @@ export function workReacll(id: number, memo: string) {
 
 
 }
+
+

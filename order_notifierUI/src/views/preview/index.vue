@@ -17,6 +17,11 @@
                     style="width:300px; margin-left: 10px;"
                     clearable
                     @keydown.enter="onSearch" />
+                <el-input v-model="filter.create" 
+                    placeholder="创建人搜索" 
+                    style="width:300px; margin-left: 10px;"
+                    clearable
+                    @keydown.enter="onSearch" />
                 <el-button type="primary" style="margin-left: 10px;" @click="onSearch">搜索</el-button>
                 <el-checkbox v-model="checked" style="margin-left: 10px">显示其他用户的提出</el-checkbox>
             </el-card>
@@ -100,7 +105,8 @@ let searchIng = false;
 let filter = $ref({
     group: undefined,
     txt: "",
-    dept: ""
+    dept: "",
+    create: ""
 });
 
 let timeEl = $ref<any>();
@@ -163,11 +169,11 @@ function groupBy(val: any[], key: string) {
 
 function onSearch() {
 
-    if (!searchIng && filter.group == undefined && !filter.txt && !filter.dept) {
+    if (!searchIng && filter.group == undefined && !filter.txt && !filter.dept && !filter.create) {
         return;
     }
 
-    searchIng = !!filter.txt || !!filter.dept; 
+    searchIng = !!filter.txt || !!filter.dept || !!filter.create; 
     init();
 
 }
@@ -196,7 +202,7 @@ async function init() {
             });
         }
 
-        const [error, result] = await workGet(filter.group, filter.txt, filter.dept, checked.value);
+        const [error, result] = await workGet(filter.group, filter.txt, filter.dept, filter.create, checked.value);
 
         Object.keys(result!).forEach((elem) => {
             data[elem].length = 0;
