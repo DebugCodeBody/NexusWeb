@@ -465,6 +465,10 @@ async function onClickSubmit() {
     if (!isFdType) {
         sendData.track = "";
     }
+    /** 如果是在场类的话，把组织人员给去掉 */
+    if(isNowType){
+        sendData.tissue = "";
+    }
 
     const [err, data] = await to(submitMeet(openConversationId, {
         ...sendData,

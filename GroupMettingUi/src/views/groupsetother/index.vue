@@ -101,6 +101,9 @@ async function onClickSubmit() {
 
     } catch (error) {
 
+        alert("设置执行人错误");
+
+
     } finally {
 
         loading = false
@@ -119,38 +122,6 @@ async function init() {
 
     await exportData.init();
 
-    // const TaskArr = [
-    //     getView(id),
-    //     getEditorUserList(id)
-    // ]
-
-
-    // const [view, data] = await Promise.all(TaskArr) as any;
-
-
-
-
-
-    // let { user, hot } = data;
-
-
-    // hotArr.length = 0;
-    // hotArr.push(...hot);
-
-
-    // allactor.length = 0;
-    // allactor.push(...user);
-
-
-    // actorArr.length = 0;
-    // actorArr.push(...user);
-
-    // actor.length = 0;
-    // actor.push(...view.data[0].actor_user);
-
-    // notuser.length = 0;
-    // notuser.push(...view.data[0].not_neceuser);
-
 
 
     try {
@@ -160,7 +131,6 @@ async function init() {
             userList: exportData.userData
         })
 
-        console.log(selectName)
 
 
     } catch {

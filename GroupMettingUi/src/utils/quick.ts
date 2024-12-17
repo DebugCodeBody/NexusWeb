@@ -18,17 +18,18 @@ function sleep(value: number) {
 }
 
 
+/** 在产 */
 async function produGet() {
 
     const sendData = { "all": true, "search": [], "filter": [], "track": [], "comm": [], "create": [], "value": "", "result": [], "isSync": true, "isFollow": false, "isTenDay": false, "filterLong": false, "noGroup": true, "haveGroup": true, "outTime": true, "isLeave": false, "isHectic": false };
 
     const { data } = await getProdu(sendData);
 
-    return data;
+    return data[0];
 
 }
 
-
+/** 待开 */
 async function listGet() {
 
     const sendData = { "all": true, "search": [], "filter": [], "track": [], "comm": [], "create": [], "value": "", "result": [], "isSync": true, "isFollow": false, "isTenDay": false, "filterLong": false, "noGroup": true, "haveGroup": true, "outTime": false, "isLeave": false, "isHectic": false };
@@ -36,12 +37,12 @@ async function listGet() {
 
     const { data } = await getList(sendData);
 
-    return data;
+    return data[0];
 
 
 }
 
-
+/** 待处理 */
 async function followGet() {
 
     const name = getUserName();
@@ -67,19 +68,47 @@ async function followGet() {
     }
 
 
-
-
-
-
     const { data } = await getFollow(sendData);
 
+    if (data.length == 0) {
+
+        return;
+
+    } else {
 
 
-    return data;
+        let fangdai: any;
+
+
+        const retItem = data.find((item) => {
+
+            if (item.type == "畅聊类") {
+
+                return true;
+
+            } else if (item.type == "防呆类") {
+
+                if (!fangdai) {
+                    fangdai  = item;
+                }
+
+            }
+
+            return false;
+
+        })
+
+        return retItem || fangdai;
+
+    }
+
+
+
 
 }
 
-export async function toNextHandle() {
+async function toNextHandleFun() {
+
 
 
     const next = await isGetNext();
@@ -97,19 +126,17 @@ export async function toNextHandle() {
         const element = getArr[index];
 
 
-        const data = await element();
+        const item = await element();
 
-        if (data.length == 0) {
+        if (!item) {
             continue;
         }
 
         isOpen = true;
 
-
-
         try {
 
-            const { conversation } = await openSceneGroups(data[0].id);
+            const { conversation } = await openSceneGroups(item.id);
 
             await openGroup(conversation)
 
@@ -124,11 +151,25 @@ export async function toNextHandle() {
 
     }
 
-    // await sleep(100);
+    if (!isOpen) {
+        alert("已经完成全部任务！");
+    }
 
-    // closeNavigation();
 
-    
+}
+
+
+export async function toNextHandle() {
+
+    try {
+        await toNextHandleFun()
+    } catch {
+
+
+        alert("获取下一个任务失败")
+
+    }
+
 }
 
 

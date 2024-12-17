@@ -1,5 +1,5 @@
 <template>
-    <div id="group-end" class="wh-full">
+    <div id="group-charge" class="wh-full">
 
         <div class="declare-view">
             <h3 class="title">{{ title }}</h3>
@@ -11,12 +11,14 @@
                         <template #extra>
                             <el-tag>
                                 <div class="flex items-center">
-                                    <el-icon class="mr-5px is-loading" ><Loading /></el-icon>
+                                    <el-icon class="mr-5px is-loading">
+                                        <Loading />
+                                    </el-icon>
                                     正在跳转到下一个任务
                                 </div>
                             </el-tag>
                             <div>
-                                <el-button class="mt-10px" @click="onClickClose" >关闭页面</el-button>
+                                <el-button class="mt-10px" @click="onClickClose">关闭页面</el-button>
                             </div>
                         </template>
                     </el-result>
@@ -47,15 +49,11 @@ import expectTime from "@/components/expectTime.vue"
 import to from "await-to-js"
 
 import getSearch, { getCorpId } from "@/utils/urlSearch"
-import { isExist, getPrepare, submitMeet } from "@/api"
-import { getUserName } from "@/store/user"
-import { copyItemValue } from "@/utils/other"
 
-import { messageError } from "@/utils/elementLib";
 
-import { endMeeting } from "@/api"
+import { toNextHandle, closeNavigation } from "@/utils/quick"
 
-import { toNextHandle , closeNavigation } from "@/utils/quick"
+import { tissueDrawDown, tissueAbandon } from "@/api/tissue"
 
 let submitDone = $ref(false);
 
@@ -65,7 +63,7 @@ let error = $ref(false);
 let id = getSearch("id");
 
 
-function onClickClose(){
+function onClickClose() {
 
     closeNavigation();
 
@@ -82,18 +80,29 @@ async function init() {
         return
     }
 
-    const [err] = await to(endMeeting(parseInt(id), "", ""));
-    if (err) {
-        alert("结案失败")
+    const action = parseInt(getSearch("action")) || 1;
+
+    let nextFun;
+    if (action == 1) {
+        nextFun = tissueDrawDown
+    } else if (action == 2) {
+        nextFun = tissueAbandon
+    } else {
+        error = true;
         return;
     }
 
 
 
-    submitDone = true;
-    
-    toNextHandle();
+    const [err] = await to(nextFun(id));
+    if (err) {
+        alert("操作失败")
+        return;
+    }
 
+    submitDone = true;
+
+    toNextHandle();
 
 }
 
@@ -107,7 +116,8 @@ init();
 
 <script lang="ts">
 
-const title = $ref("会议群内结案")
+const title = $ref("会议群领取")
+
 export default {
     name: "",
     title
@@ -125,7 +135,7 @@ export default {
     }
 }
 
-#group-end {
+#group-charge {
     flex: 1;
 
     audio {

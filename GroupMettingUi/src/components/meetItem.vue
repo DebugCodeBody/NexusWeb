@@ -3,7 +3,7 @@
         <div class="w-full flex justify-between mb-5px font-16px title-line">
             <div>
                 <span class="font-bold">{{ item.title }}</span>
-                <span class="ml-10px">{{ item.tissue_user }}</span>
+                <span class="ml-10px" v-if="item.tissue_user">{{ item.tissue_user }}</span>
                 <span class="ml-10px">{{ item.create_date }}</span>
                 <span class="ml-10px" v-if="item.is_urgent">
                     <el-tag type="danger" effect="dark" size="small">紧急</el-tag>
@@ -143,14 +143,22 @@
         </el-form>
         <div class="w-full font-16px title-line">
 
+
             <div class="flex-1 text-right mb-5px flex justify-between items-center" v-if="type != 2 && type != 102">
-                <div>
+                <div class="flex">
+
 
                 </div>
                 <div class="flex">
                     <!-- <el-button size="default" @click="onClickLinkView" v-if="!isLink && ( Props.type != 9 && Props.type != 10 )">关联会议</el-button> -->
                     <el-checkbox v-model="item.is_optimize" :border="true" size="default" class="optimize-check"
                         @change="onCheckOptimize" :disabled="disabledOptimize">工艺优化</el-checkbox>
+
+
+                    <el-button type="info" size="default" @click="onClickDrawDown" v-if="showDrawDownButton"  :loading="tissueLoading">领取会议</el-button>
+                    <el-button type="warning" size="default" @click="onClickAbandon" v-if="showAbandonButton" :loading="tissueLoading">放弃会议</el-button>
+
+
                     <el-button type="success" size="default" @click="onClickAdd" v-if="isShowMemo">留言</el-button>
                     <el-button size="default" @click.stop="onClickStart(item)" v-if="showStart">转已开</el-button>
                     <el-button size="default" @click.stop="onClickToHandle(item)" v-if="isFdHandle">转待处理</el-button>
@@ -158,6 +166,7 @@
                     <end-button :item="item" v-if="isEnd" />
                 </div>
             </div>
+
             <div class="flex-1 flex justify-between items-center">
                 <el-tag type="danger" size="small" v-if="item.is_mark">已确认</el-tag>
                 <div class="flex-1 text-right">
@@ -240,7 +249,7 @@
             <span class="mr-10px">{{ tissueName }}</span>
             <el-button @click="onClickTissueDialog" size="default">修改</el-button>
         </el-form-item>
-        
+
         <el-form-item label="执行者" v-if="!isSelectProduction">
             <span class="mr-10px" v-if="trackName">{{ trackName }}</span>
             <el-button @click="onClickTrackDialog" size="default">修改</el-button>
@@ -312,6 +321,8 @@ import { onOpenEd, onCloseEd } from "@/utils/popKey";
 import { isDing } from "@/utils/auth"
 
 import { openGroup } from "@/utils/ddgroup";
+
+import { tissueDrawDown, tissueAbandon } from "@/api/tissue"
 
 
 
@@ -486,6 +497,7 @@ let trackName = $ref("");
 /** 在场会议跟进人员，用组织人员来设定 */
 let trackTissue = $ref("");
 
+let tissueLoading = $ref(false);
 
 
 let thisName = $ref(getUserName());
@@ -591,6 +603,19 @@ const disabledOptimize = computed(() => {
 
 });
 
+/** 是否显示领取按钮 */
+const showDrawDownButton = computed(() => {
+
+    return isNowProView && (!Props.item.tissue_user || Props.item.tissue_user != thisName);
+})
+
+/** 是否显示放弃按钮 */
+const showAbandonButton = computed(() => {
+
+    return isNowProView && Props.item.tissue_user == thisName
+
+})
+
 
 
 function onClickItem(item: mettItem) {
@@ -632,6 +657,42 @@ function onClickCopyShareUrl() {
 
     messageSuccess("复制成功");
 }
+
+
+/** 领取会议 */
+async function onClickDrawDown() {
+
+    
+
+    try {
+        tissueLoading = true;
+        await tissueDrawDown(Props.item.id)
+    } finally {
+        tissueLoading = false;
+        Props.refresh();
+    }
+
+
+
+
+}
+
+/** 放弃会议 */
+async function onClickAbandon() {
+
+    
+    try {
+        tissueLoading = true;
+        await tissueAbandon(Props.item.id)
+    } finally {
+        tissueLoading = false;
+        Props.refresh();
+    }
+
+
+
+}
+
 
 
 /** 转到待开 */
@@ -693,7 +754,7 @@ async function onClickEdit(item: mettItem) {
     tissueName = Props.item.tissue_user;
 
 
-    if(Props.item.type == "在产类") {
+    if (Props.item.type == "在产类") {
 
         trackTissue = Props.item.tissue_user;
 
@@ -703,7 +764,7 @@ async function onClickEdit(item: mettItem) {
 
     }
 
-    
+
 
     isFollow = Props.item.follow;
 
@@ -773,10 +834,10 @@ async function onConfirmEditUset() {
     };
 
 
-    if(isSelectProduction){
+    if (isSelectProduction) {
 
         data.tissue = trackTissue;
-        
+
     }
 
 
@@ -969,7 +1030,7 @@ async function onClickOpenCreate() {
     try {
 
         createGroupLoading = true;
- 
+
         const { id } = Props.item;
 
         let [error, result] = await to(openSceneGroups(id));
@@ -1012,7 +1073,7 @@ async function onClickOpenCreate() {
     } finally {
 
         createGroupLoading = false;
-        
+
     }
 
 
@@ -1216,6 +1277,16 @@ export default {
         font-size: 14px;
         padding: 5px 10px;
 
+
+        .el-button {
+            padding: 10px;
+        }
+
+        .el-button+.el-button {
+            margin-left: 8px !important;
+        }
+
+
     }
 
     .el-form {
@@ -1232,7 +1303,7 @@ export default {
     }
 
     .optimize-check {
-        margin-right: 10px !important;
+        margin-right: 8px !important;
     }
 
     .color-red {

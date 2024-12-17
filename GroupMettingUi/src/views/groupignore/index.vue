@@ -71,21 +71,17 @@ async function init() {
         return
     }
 
-
-
     const result = await addIgnore(id);
-
     submitDone = true;
 
     /** 不需要跳转，直接关闭当前页面 */
     if (!result) {
 
-        // closeNavigation();
+        alert("暂无权限忽略会议")
 
     } else {
 
         toNextHandle();
-
     }
 
 }
