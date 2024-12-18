@@ -128,9 +128,11 @@ let openConversationId = getSearch("openConversationId");
 
 if (process.env.NODE_ENV != "production") {
 
+    /** 自己的测试群 */
     openConversationId = "cidJgKt5cWr6G7oCrh3YtA/JA==";
 
-    // openConversationId = "cidqSg4UlaQSpDlsI9p6p347Q==";
+    /** 中高层管理群 */
+    openConversationId = "cidqSg4UlaQSpDlsI9p6p347Q==";
 
     // openConversationId = "cidByQUlqQerQ3O141BE+4axg==";
 } else {
@@ -482,11 +484,8 @@ async function onClickSubmit() {
     submitDone = true;
     copyItemValue(data as any, true);
 
-    if (form.isAudio) {
-
-
+    if(data.create_group){
         await openGroup(data.create_group);
-
     }
 
     loading = false;
