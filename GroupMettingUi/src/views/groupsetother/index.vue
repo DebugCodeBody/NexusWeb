@@ -4,7 +4,7 @@
         <div class="declare-view">
             <h3 class="title">{{ title }}</h3>
 
-            <div class="relative overflow-auto p-10px">
+            <div class="relative overflow-auto p-10px " style="min-height: 400px;">
 
                 <div class="relative h-full flex flex-col">
 
@@ -22,20 +22,40 @@
                     </div>
 
                     <el-result v-if="submitDone" icon="success" title="提交成功">
+
                         <template #extra>
+
+                            <el-tag v-if="isGetCount" type="warning">
+                                <div class="flex items-center">
+                                    <el-icon class="mr-5px is-loading">
+                                        <Loading />
+                                    </el-icon>
+                                    正在获取任务详细数量
+                                </div>
+                            </el-tag>
+
+                            <div class="mb-10px">
+                                <div v-for="item in nextArr" :key="item.name" class="flex">
+                                    <span class="w-70px text-right">{{ item.name }}</span>
+                                    <span>：</span>
+                                    <span>{{ item.count }}</span>
+                                </div>
+                            </div>
+
                             <el-tag>
                                 <div class="flex items-center">
                                     <el-icon class="mr-5px is-loading">
                                         <Loading />
                                     </el-icon>
-                                    <span>正在跳转到下一个任务</span>
+                                    正在跳转到下一个任务
                                 </div>
                             </el-tag>
-                            
+
                             <div>
-                                <el-button class="mt-10px" @click="onClickClose" >关闭页面</el-button>
+                                <el-button class="mt-10px" @click="onClickClose">关闭页面</el-button>
                             </div>
                         </template>
+
                     </el-result>
 
                     <el-result icon="error" sub-title="请通过点击群消息进入本页面" v-if="error">
@@ -64,7 +84,7 @@ import getSearch, { getCorpId } from "@/utils/urlSearch"
 import { setTrack } from "@/api/quick"
 import exportData from "@/store/data"
 
-import { toNextHandle, closeNavigation } from "@/utils/quick"
+import { toNextHandle, closeNavigation, getNextCount } from "@/utils/quick"
 
 let submitDone = $ref(false);
 
@@ -75,6 +95,11 @@ let id = getSearch("id");
 
 let selectName = $ref("");
 let loading = $ref(false);
+
+
+let isGetCount = $ref(false);
+let nextArr = $ref<any[]>([]);
+
 
 
 const formData = $ref({});
@@ -94,9 +119,23 @@ async function onClickSubmit() {
 
         await setTrack(id, selectName);
 
+
+        
         submitDone = true;
 
-        await toNextHandle();
+        isGetCount = true;
+
+        const result = await getNextCount();
+
+        nextArr.push(...result)
+
+        isGetCount = false;
+
+        setTimeout(() => {
+
+            toNextHandle();
+
+        }, 300);
 
 
     } catch (error) {
@@ -130,6 +169,7 @@ async function init() {
             isOne: true,
             userList: exportData.userData
         })
+
 
 
 

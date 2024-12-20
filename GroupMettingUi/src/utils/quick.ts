@@ -3,6 +3,8 @@ import { getUserName } from "@/store/user"
 import { openGroup } from "@/utils/ddgroup";
 import { isGetNext } from "@/api"
 
+import to from "await-to-js"
+
 
 
 function sleep(value: number) {
@@ -18,6 +20,10 @@ function sleep(value: number) {
 }
 
 
+
+
+
+
 /** 在产 */
 async function produGet() {
 
@@ -25,7 +31,7 @@ async function produGet() {
 
     const { data } = await getProdu(sendData);
 
-    return data[0];
+    return data;
 
 }
 
@@ -37,7 +43,7 @@ async function listGet() {
 
     const { data } = await getList(sendData);
 
-    return data[0];
+    return data;
 
 
 }
@@ -70,42 +76,80 @@ async function followGet() {
 
     const { data } = await getFollow(sendData);
 
-    if (data.length == 0) {
 
-        return;
-
-    } else {
-
-
-        let fangdai: any;
-
-
-        const retItem = data.find((item) => {
-
-            if (item.type == "畅聊类") {
-
-                return true;
-
-            } else if (item.type == "防呆类") {
-
-                if (!fangdai) {
-                    fangdai  = item;
-                }
-
-            }
-
-            return false;
-
-        })
-
-        return retItem || fangdai;
-
-    }
+    return data;
 
 
 
 
 }
+
+const getArr = [
+    {
+        name: "在产类",
+        handle: produGet,
+        data: [] as any[],
+        get() {
+            return this.data[0]
+        }
+
+
+    }, {
+        name: "待开",
+        handle: listGet,
+        data: [] as any[],
+        get() {
+            return this.data[0]
+        }
+
+
+    }, {
+        name: "待处理",
+        handle: followGet,
+        data: [] as any[],
+        get() {
+
+            const { data } = this;
+
+
+            if (data.length == 0) {
+
+                return;
+
+            } else {
+
+
+                let fangdai: any;
+
+
+                const retItem = data.find((item) => {
+
+                    if (item.type == "畅聊类") {
+
+                        return true;
+
+                    } else if (item.type == "防呆类") {
+
+                        if (!fangdai) {
+                            fangdai = item;
+                        }
+
+                    }
+
+                    return false;
+
+                })
+
+                return retItem || fangdai;
+
+            }
+
+
+        }
+
+    }];
+
+
 
 async function toNextHandleFun() {
 
@@ -117,7 +161,6 @@ async function toNextHandleFun() {
         return;
     }
 
-    const getArr = [produGet, listGet, followGet];
 
     let isOpen = false;
 
@@ -126,7 +169,7 @@ async function toNextHandleFun() {
         const element = getArr[index];
 
 
-        const item = await element();
+        const item = await element.get();
 
         if (!item) {
             continue;
@@ -187,3 +230,50 @@ export function closeNavigation() {
     }
 }
 
+
+export async function getNextCount() {
+
+    debugger;
+
+    const allRun = getArr.map((item) => {
+
+        const retVal = to(item.handle()) as any;
+
+        return retVal.then((result: any) => {
+
+            result.name = item.name
+
+            return result
+
+        });
+
+    })
+
+
+    const allResult = await Promise.all(allRun);
+
+
+    const result = allResult.map((item, index) => {
+
+        const [err, data] = item;
+
+        getArr[index].data = err ? [] : data;
+
+        return {
+            name: item.name,
+            count: getArr[index].data.length
+        }
+
+    })
+
+    return result;
+
+
+
+
+
+
+
+
+
+}
