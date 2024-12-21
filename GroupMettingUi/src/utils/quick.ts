@@ -90,7 +90,18 @@ const getArr = [
         handle: produGet,
         data: [] as any[],
         get() {
-            return this.data[0]
+            
+            const name = getUserName();
+            
+            const retVal = this.data.find((item) => {
+
+                return item.tissue_user == "" && item.tissue_user == name
+
+            })
+
+            return retVal;
+
+            
         }
 
 
@@ -99,7 +110,11 @@ const getArr = [
         handle: listGet,
         data: [] as any[],
         get() {
+
             return this.data[0]
+            
+
+
         }
 
 
