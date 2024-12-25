@@ -1,7 +1,13 @@
 <template>
     <div class="user-checkbox">
         <el-form-item :label="actorTitle" prop="actor" class="label-top">
+            <div v-if="showActorGroup" class="mb-10px actor-grounp-item" >
+                <el-button size="default" v-for="item in actorGroupList" :key="item.name" @click="onClickActorGroup(item)">{{ item.name
+                }}</el-button>
 
+                <el-button type="success" @click="onClickToActorGroup" size="default" class="group-manage">分组管理</el-button>
+
+            </div>
             <div class="mb-5px w-full">
                 <el-input v-model="data.actorPy" size="default" placeholder="用户搜索" clearable @clear="onActorClear"></el-input>
             </div>
@@ -61,6 +67,8 @@
 
 import { pySearch } from "@/utils/other"
 
+import { getUserName } from "@/store/user"
+
 
 
 const Emit = defineEmits<{
@@ -89,9 +97,16 @@ const Props = withDefaults(defineProps<{
     /** 是否只允许选中一个 */
     isOneUser?: boolean
 
+
+    actorGroupList?: actorGroup[],
+    showActorGroup?: boolean
+
+
 }>(), {
     title: "参与人员",
-    showNotUser: true
+    showNotUser: true,
+    actorGroupList: [] as any,
+    showActorGroup: false
 })
 
 
@@ -491,7 +506,26 @@ function onNoPyKeyDown(event: KeyboardEvent){
 }
 
 
+function onClickActorGroup(item:actorGroup){
 
+    
+    data.actor.length = 0;
+    data.actor.push(getUserName());
+    data.actor.push(...item.user);
+    emitChange()
+
+
+
+}
+
+function onClickToActorGroup(){
+
+    
+
+    location.href = `${location.origin}${location.pathname}?path=creategroup`;
+
+
+}
 
 
 

@@ -206,7 +206,7 @@
             ref="formEl">
 
             <el-form-item label="图片">
-                <upload-file ref="uploadEl" v-model="imgLength" />
+                <upload-file ref="uploadEl" v-model="imgLength"  :disabled="!!item.create_group"/>
 
             </el-form-item>
             <el-form-item label="内容" prop="content">

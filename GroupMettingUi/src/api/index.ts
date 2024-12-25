@@ -53,6 +53,7 @@ export function getPrepare(openConversationId: string) {
         hot: userItem[],
         type: string[],
         time: string[],
+        actorGroup: actorGroup[] 
 
     }>
 }

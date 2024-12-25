@@ -24,6 +24,7 @@ import quicktrack from "@/views/quickTrack/index.vue"
 import groupsetother from "@/views/groupsetother/index.vue"
 import groupignore from "@/views/groupignore/index.vue"
 import groupcharge from "@/views/groupcharge/index.vue"
+import creategroup from "@/views/createGroup/index.vue"
 // import hectic from "@/views/hectic/index.vue"
 
 import { ref, reactive, nextTick, defineProps, computed, onBeforeMount, onMounted, onBeforeUnmount, onUnmounted } from "vue"
@@ -49,6 +50,7 @@ const tabs: any = {
 	groupsetother,
 	groupignore,
 	groupcharge,
+	creategroup
 }
 
 

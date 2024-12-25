@@ -149,3 +149,8 @@ type userItem = {
   py: string,
   count: number
 }
+
+type actorGroup = {
+  name:string,
+  user: string[]
+}

@@ -17,7 +17,8 @@
                         </el-form-item> -->
 
                         <actor-user :actor="form.actor" :notuser="form.notuser" :hot="hotArr" :actorArr="actorArr"
-                            :notuserArr="notUserList" :showNotUser="!form.isAudio" />
+                            :notuserArr="notUserList" :showNotUser="!form.isAudio" :show-actor-group="true"
+                            :actorGroupList="actorGroup" />
 
                         <el-form-item label="会议类型" prop="type" v-if="!form.isAudio">
                             <el-radio-group v-model="form.type" @change="onChangeType">
@@ -240,6 +241,8 @@ const timePeriod = $ref<string[]>([]);
 
 const notUserList = $ref<userItem[]>([]);
 
+const actorGroup = $ref<actorGroup[]>([]);
+
 const responseTissue = $ref<{
     name: string,
     tissue: string[],
@@ -392,6 +395,9 @@ async function init() {
             responseTissue.push(...data.tissue);
 
 
+            actorGroup.push(...data.actorGroup);
+
+
             // typeArr.push(...data.type);
 
             // , "现场类"
@@ -468,7 +474,7 @@ async function onClickSubmit() {
         sendData.track = "";
     }
     /** 如果是在场类的话，把组织人员给去掉 */
-    if(isNowType){
+    if (isNowType) {
         sendData.tissue = "";
     }
 
@@ -484,7 +490,7 @@ async function onClickSubmit() {
     submitDone = true;
     copyItemValue(data as any, true);
 
-    if(data.create_group){
+    if (data.create_group) {
         await openGroup(data.create_group);
     }
 
@@ -620,6 +626,23 @@ export default {
 
         .el-checkbox.is-bordered {
             margin-right: 10px;
+        }
+
+        .actor-grounp-item {
+            .el-button {
+                margin-left: 0 !important;
+                margin-right: 10px;
+                margin-bottom: 10px;
+
+
+            }
+
+            .group-manage {
+                position: absolute;
+                right: 0;
+                top: -35px;
+            }
+
         }
     }
 
