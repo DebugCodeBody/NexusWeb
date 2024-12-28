@@ -17,7 +17,7 @@
                         </el-form-item> -->
 
                         <actor-user :actor="form.actor" :notuser="form.notuser" :hot="hotArr" :actorArr="actorArr"
-                            :notuserArr="notUserList" :showNotUser="!form.isAudio" :show-actor-group="true"
+                            :notuserArr="notUserList" :showNotUser="!form.isAudio" :show-actor-group="true" :isHiddenUser="form.isAudio"
                             :actorGroupList="actorGroup" />
 
                         <el-form-item label="会议类型" prop="type" v-if="!form.isAudio">

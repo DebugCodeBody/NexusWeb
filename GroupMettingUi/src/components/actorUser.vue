@@ -2,8 +2,22 @@
     <div class="user-checkbox">
         <el-form-item :label="actorTitle" prop="actor" class="label-top">
             <div v-if="showActorGroup" class="mb-10px actor-grounp-item" >
-                <el-button size="default" v-for="item in actorGroupList" :key="item.name" @click="onClickActorGroup(item)">{{ item.name
-                }}</el-button>
+                <div>
+                    <el-button size="default" v-for="item in actorGroupList" :key="item.name" @click="onClickActorGroup(item)">{{ item.name
+                    }}</el-button>
+                </div>
+
+                <div>
+                    <el-checkbox-group v-model="data.actor" size="small" @change="onActorChange">
+                        <el-checkbox 
+                            v-for="name in selectActorGrounpItem.user" 
+                            :key="name" 
+                            :label="name" 
+                            :value="name"
+                            :border="true" 
+                            size="default" />
+                    </el-checkbox-group>
+                </div>
 
                 <el-button type="success" @click="onClickToActorGroup" size="default" class="group-manage">分组管理</el-button>
 
@@ -13,30 +27,42 @@
             </div>
             <div>
                 
-                <div class="mt-50px" v-show="data.pyValue"></div>
-                <div v-if="false">
-                    <div>热度：</div>
-                    <el-checkbox-group v-model="data.hot" size="small" @change="onHotChange">
-                        <el-checkbox v-for="item in hotList" :key="item.name" :label="item.name" :value="item.name"
-                            :border="true" size="default" />
-                    </el-checkbox-group>
+                <div class="mt-20px" v-show="data.pyValue"></div>
+
+                <div>
+                    <el-button size="default" @click="onClickShowUser" v-if="hiddenUser">展开参与人员</el-button>
+                    <el-button size="default" @click="onClickShowUser" v-else>隐藏参与人员</el-button>
                 </div>
 
-                <div v-if="!data.pyValue">
-                    <div>拼音：</div>
-                    <el-checkbox-group v-model="data.actor" size="small" @change="onActorChange">
-                        <el-checkbox v-for="item in actorList" :key="item.name" :label="item.name" :value="item.name"
-                            :border="true" size="default" />
-                    </el-checkbox-group>
-                </div>
+                <template v-if="!hiddenUser">
 
-                <div v-if="data.pyValue">
-                    <el-checkbox-group v-model="data.actor" size="small" @change="onActorChange">
-                        <el-checkbox v-for="item in allList" :key="item.name" :label="item.name" :value="item.name"
-                            :border="true" size="default" />
-                    </el-checkbox-group>
-                    
-                </div>
+                    <div v-if="false">
+                        <div>热度：</div>
+                        <el-checkbox-group v-model="data.hot" size="small" @change="onHotChange">
+                            <el-checkbox v-for="item in hotList" :key="item.name" :label="item.name" :value="item.name"
+                                :border="true" size="default" />
+                        </el-checkbox-group>
+                    </div>
+
+                    <div v-if="!data.pyValue ">
+                        <div>拼音：</div>
+                        <el-checkbox-group v-model="data.actor" size="small" @change="onActorChange">
+                            <el-checkbox v-for="item in actorList" :key="item.name" :label="item.name" :value="item.name"
+                                :border="true" size="default" />
+                        </el-checkbox-group>
+                    </div>
+
+                    <div v-if="data.pyValue">
+                        <el-checkbox-group v-model="data.actor" size="small" @change="onActorChange">
+                            <el-checkbox v-for="item in allList" :key="item.name" :label="item.name" :value="item.name"
+                                :border="true" size="default" />
+                        </el-checkbox-group>
+                    </div>
+
+                </template>
+
+
+
             </div>
 
         </el-form-item>
@@ -92,21 +118,32 @@ const Props = withDefaults(defineProps<{
 
     /** 显示的标题 */
     title?: string,
+
     /** 是否显示有空参加 */
     showNotUser?: boolean,
+
     /** 是否只允许选中一个 */
     isOneUser?: boolean
 
-
+    /** 会议参与人员分组 */
     actorGroupList?: actorGroup[],
-    showActorGroup?: boolean
+    
+    /** 是否显示会议参与人员分组 */
+    showActorGroup?: boolean,
+
+    /** 是否隐藏参与人员 */
+    isHiddenUser?: boolean
+
+
 
 
 }>(), {
     title: "参与人员",
     showNotUser: true,
     actorGroupList: [] as any,
-    showActorGroup: false
+    showActorGroup: false,
+    
+    isHiddenUser: false
 })
 
 
@@ -140,6 +177,10 @@ let timtEmitClear = false;
 
 let noInputEl: HTMLInputElement;
 let noTimtEmitClear = false;
+let hiddenUser = $ref(Props.isHiddenUser);
+
+let selectActorGrounpItem = $ref<actorGroup>({}  as actorGroup);
+
 
 const data = $ref({
     actor: Props.actor,
@@ -509,10 +550,12 @@ function onNoPyKeyDown(event: KeyboardEvent){
 function onClickActorGroup(item:actorGroup){
 
     
-    data.actor.length = 0;
-    data.actor.push(getUserName());
-    data.actor.push(...item.user);
-    emitChange()
+    Object.assign(selectActorGrounpItem, item)
+    
+    // data.actor.length = 0;
+    // data.actor.push(getUserName());
+    // data.actor.push(...item.user);
+    // emitChange()
 
 
 
@@ -528,6 +571,12 @@ function onClickToActorGroup(){
 }
 
 
+/** 展开参与人员被点击 */
+function onClickShowUser(){
+
+    hiddenUser = !hiddenUser; 
+
+}
 
 
 
