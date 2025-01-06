@@ -138,7 +138,10 @@ type mettItem = {
   },
 
   /** 工艺优化 */
-  is_optimize: boolean
+  is_optimize: boolean,
+
+  /** 扩展字段 */
+  extend_type: string
 
 };
 

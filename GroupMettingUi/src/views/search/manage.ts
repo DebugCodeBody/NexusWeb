@@ -1,7 +1,10 @@
 import { getAllActorUser } from "@/api"
 
-import { searchGet } from "@/api/search"
+import { searchGet, searchExport } from "@/api/search"
 import to from "await-to-js";
+
+import { getMettItemDetail } from "@/utils/other"
+import dayjs from "dayjs";
 
 
 const thisManage = {
@@ -10,7 +13,7 @@ const thisManage = {
     formEl: {} as any,
     formData: reactive({
         status: 0,
-        
+
         type: "全部",
 
         time: [] as Date[],
@@ -57,15 +60,7 @@ const thisManage = {
 
     },
 
-
-    async search() {
-
-        try {
-            await this.formEl.validate();
-        } catch {
-            return;
-        }
-
+    getWhere() {
 
         const data = Object.assign({}, this.formData);
 
@@ -98,6 +93,20 @@ const thisManage = {
             (data as any).order = order;
         }
 
+        return data;
+
+    },
+
+    async search() {
+
+        try {
+            await this.formEl.validate();
+        } catch {
+            return;
+        }
+
+        const data = this.getWhere();
+
         this.other.loading = true;
 
         const [err, result] = await to(searchGet(data));
@@ -108,13 +117,54 @@ const thisManage = {
             return;
         }
 
-
         this.data.length = 0;
         this.data.push(...(result as any).view);
 
 
         this.compute.length = 0;
         this.compute.push(...(result as any).count);
+
+
+    },
+
+    async export() {
+
+        try {
+            await this.formEl.validate();
+        } catch {
+            return;
+        }
+
+        const data = this.getWhere();
+
+        this.other.loading = true;
+
+        const [err, result] = await to(searchExport(data));
+
+        this.other.loading = false;
+
+        if (err) {
+            return;
+        }
+
+        const detailList = result!.map((item) => getMettItemDetail(item));
+
+        const content = detailList.join("\r\n\r\n");
+
+
+        const nowTime = dayjs();
+
+
+        
+
+
+        const a = document.createElement('a');
+        a.href = `data:text/plain;charset=utf-8,${content}`;
+        a.download = `${ nowTime.format("MM-DD") }会议导出记录.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
 
 
     },
@@ -136,7 +186,6 @@ const thisManage = {
 
     setFormEl(el: any) {
         this.formEl = el;
-
     },
 
     setTabManage(tab: any) {

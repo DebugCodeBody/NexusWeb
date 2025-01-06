@@ -40,7 +40,7 @@
                             </el-tag>
 
                             <div>
-                                <el-button class="mt-10px" @click="onClickClose">关闭页面</el-button>
+                                <el-button class="mt-10px" @click="onClickClose">跳转到待处理</el-button>
                             </div>
                         </template>
 
@@ -76,7 +76,7 @@ import to from "await-to-js"
 import getSearch, { getCorpId } from "@/utils/urlSearch"
 
 
-import { getNextCount, toNextHandle, closeNavigation } from "@/utils/quick"
+import { getNextCount, toNextHandle, toHandle } from "@/utils/quick"
 
 import { tissueDrawDown, tissueAbandon } from "@/api/tissue"
 
@@ -95,7 +95,7 @@ let id = getSearch("id");
 
 function onClickClose() {
 
-    closeNavigation();
+    toHandle();
 
 }
 

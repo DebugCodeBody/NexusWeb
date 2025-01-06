@@ -17,7 +17,7 @@
                         </el-form-item> -->
 
                         <actor-user :actor="form.actor" :notuser="form.notuser" :hot="hotArr" :actorArr="actorArr"
-                            :notuserArr="notUserList" :showNotUser="!form.isAudio" :show-actor-group="true" :isHiddenUser="form.isAudio"
+                            :notuserArr="notUserList" :showNotUser="!form.isAudio" :show-actor-group="true" :isHiddenUser="true"
                             :actorGroupList="actorGroup" />
 
                         <el-form-item label="会议类型" prop="type" v-if="!form.isAudio">
@@ -25,6 +25,15 @@
                                 <el-radio v-for="(item, index) in typeArr" :key="index" :label="item">{{ item
                                     }}</el-radio>
                             </el-radio-group>
+                        </el-form-item>
+
+                        <!-- 语音会议的类型 -->
+                        <el-form-item label="会议类型" prop="extend" v-if="form.isAudio" >
+                            <el-radio-group v-model="form.extend">
+                                <el-radio v-for="(item, index) in extendList" :key="index" :label="item.name">{{ item.name
+                                    }}</el-radio>
+                            </el-radio-group>
+                            <a @click.prevent="onClickToType" class="ml-10px a_add-extend">新增类型</a>
                         </el-form-item>
 
 
@@ -219,6 +228,21 @@ const rules = reactive<FormRules>({
 
             }, trigger: 'change'
         }
+    ],
+    extend: [
+        {
+            validator(rule, value, callback, source, options) {
+
+                let retErr: Error | undefined = undefined;
+
+                if (form.isAudio  && !value) {
+                    retErr = new Error("请选择会议类型")
+                }
+
+                callback(retErr);
+
+            }, trigger: 'change'
+        }
     ]
 
 
@@ -242,6 +266,14 @@ const timePeriod = $ref<string[]>([]);
 const notUserList = $ref<userItem[]>([]);
 
 const actorGroup = $ref<actorGroup[]>([]);
+
+const extendList = $ref<{
+    name: string,
+    user: string[]
+}[]>([{
+    "name": "在产类",
+    "user": []
+}]);
 
 const responseTissue = $ref<{
     name: string,
@@ -287,7 +319,9 @@ const form = $ref({
     /** 工单号 */
     order: "",
 
-    expect: ""
+    expect: "",
+
+    extend: ""
 
 });
 
@@ -309,6 +343,11 @@ function onChangeType(value: string) {
         form.tissue = "";
     }
 
+
+}
+
+
+function onChangeExtend(){
 
 }
 
@@ -364,6 +403,13 @@ function onClickClearTrack() {
 
 }
 
+function onClickToType(){
+    
+    location.href = `${location.origin}${location.pathname}?path=extendType`;
+
+}
+
+
 
 
 
@@ -396,6 +442,8 @@ async function init() {
 
 
             actorGroup.push(...data.actorGroup);
+
+            extendList.push(...data.extend);
 
 
             // typeArr.push(...data.type);
@@ -437,6 +485,10 @@ async function init() {
 
 
 
+            }
+
+            if(extendList.length == 1){
+                form.extend = extendList[0].name
             }
 
         }
@@ -644,6 +696,14 @@ export default {
             }
 
         }
+
+        .a_add-extend{
+            cursor: pointer;
+            color: #2440b3;
+
+            text-decoration: underline;
+        }
+
     }
 
     .fun-area {

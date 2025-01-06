@@ -25,14 +25,20 @@
 
                         <template #extra>
 
-                            <el-tag v-if="isGetCount" type="warning">
-                                <div class="flex items-center">
-                                    <el-icon class="mr-5px is-loading">
-                                        <Loading />
-                                    </el-icon>
-                                    正在获取任务详细数量
-                                </div>
-                            </el-tag>
+                            <div class="mb-10px">
+                                <el-tag type="danger" v-if="noSet">在场类不允许指派执行者</el-tag>
+                            </div>
+
+                            <div v-if="isGetCount">
+                                <el-tag type="warning">
+                                    <div class="flex items-center">
+                                        <el-icon class="mr-5px is-loading">
+                                            <Loading />
+                                        </el-icon>
+                                        正在获取任务详细数量
+                                    </div>
+                                </el-tag>
+                            </div>
 
                             <div class="mb-10px">
                                 <div v-for="item in nextArr" :key="item.name" class="flex">
@@ -52,7 +58,7 @@
                             </el-tag>
 
                             <div>
-                                <el-button class="mt-10px" @click="onClickClose">关闭页面</el-button>
+                                <el-button class="mt-10px" @click="onClickClose">跳转到待处理</el-button>
                             </div>
                         </template>
 
@@ -84,7 +90,7 @@ import getSearch, { getCorpId } from "@/utils/urlSearch"
 import { setTrack } from "@/api/quick"
 import exportData from "@/store/data"
 
-import { toNextHandle, closeNavigation, getNextCount } from "@/utils/quick"
+import { toNextHandle, toHandle, getNextCount } from "@/utils/quick"
 
 let submitDone = $ref(false);
 
@@ -100,13 +106,15 @@ let loading = $ref(false);
 let isGetCount = $ref(false);
 let nextArr = $ref<any[]>([]);
 
+let noSet = $ref(false);
+
 
 
 const formData = $ref({});
 
 function onClickClose() {
 
-    closeNavigation();
+    toHandle();
 
 }
 
@@ -116,11 +124,10 @@ async function onClickSubmit() {
 
         loading = true;
 
+        const data = await setTrack(id, selectName);
 
-        await setTrack(id, selectName);
+        noSet = data.noSet;
 
-
-        
         submitDone = true;
 
         isGetCount = true;
@@ -137,6 +144,8 @@ async function onClickSubmit() {
 
         }, 300);
 
+
+   
 
     } catch (error) {
 
@@ -162,20 +171,28 @@ async function init() {
     await exportData.init();
 
 
+    let name = getSearch("name");
 
-    try {
+    if (name) {
 
-        const selectName = await window.openNameSelect({
-            isOne: true,
-            userList: exportData.userData
-        })
+        selectName = name;
+        onClickSubmit();
 
+    } else {
 
+        try {
 
+            const selectName = await window.openNameSelect({
+                isOne: true,
+                userList: exportData.userData
+            })
 
-    } catch {
+        } catch {
+
+        }
 
     }
+
 
 
 

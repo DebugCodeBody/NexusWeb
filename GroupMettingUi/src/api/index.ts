@@ -53,7 +53,11 @@ export function getPrepare(openConversationId: string) {
         hot: userItem[],
         type: string[],
         time: string[],
-        actorGroup: actorGroup[] 
+        actorGroup: actorGroup[],
+        extend:{
+            name: string,
+            user: string[]
+        }[]
 
     }>
 }

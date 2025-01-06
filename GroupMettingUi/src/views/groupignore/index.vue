@@ -40,7 +40,7 @@
                             </el-tag>
 
                             <div>
-                                <el-button class="mt-10px" @click="onClickClose">关闭页面</el-button>
+                                <el-button class="mt-10px" @click="onClickClose">跳转到待处理</el-button>
                             </div>
                         </template>
 
@@ -69,7 +69,7 @@ import getSearch, { getCorpId } from "@/utils/urlSearch"
 
 import { addIgnore } from "@/api/ignore"
 
-import { toNextHandle, closeNavigation, getNextCount } from "@/utils/quick"
+import { toNextHandle, toHandle, getNextCount } from "@/utils/quick"
 
 let submitDone = $ref(false);
 
@@ -85,7 +85,7 @@ let id = getSearch("id");
 
 function onClickClose() {
 
-    closeNavigation();
+    toHandle();
 
 }
 

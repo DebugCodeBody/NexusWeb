@@ -6,9 +6,9 @@
             <el-form-item label="分组名" prop="name">
                 <el-input size="default" v-model="form.name"></el-input>
             </el-form-item>
-
+            <!-- 
             <actor-user title="用户" :actor="form.actor" :notuser="form.notuser" :hot="hotArr" :actorArr="data.actorArr"
-                :notuserArr="data.notUserList" :showNotUser="false" />
+                :notuserArr="data.notUserList" :showNotUser="false" /> -->
 
         </el-form>
 
@@ -36,7 +36,7 @@ import actorUser from "@/components/actorUser.vue"
 
 import { data, getDate } from "./data";
 
-import { add, edit, del } from "@/api/createGroup"
+import { add, edit, del } from "@/api/extendType"
 
 import to from "await-to-js";
 
@@ -109,6 +109,7 @@ async function onClickSubmit() {
 
 
     await getDate();
+
 
     if (isAdd) {
 

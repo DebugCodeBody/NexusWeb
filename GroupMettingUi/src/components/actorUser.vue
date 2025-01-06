@@ -61,7 +61,9 @@
 
                 </template>
 
-
+                <div v-else>
+                    <el-tag v-for="item in data.actor" :key="item" class="mr-10px">{{ item }}</el-tag>
+                </div>
 
             </div>
 

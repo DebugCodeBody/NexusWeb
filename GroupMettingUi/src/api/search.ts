@@ -14,3 +14,15 @@ export function searchGet(data: any) {
 
 }
 
+
+
+export function searchExport(data: any) {
+
+    return request({
+        url: "/search/export",
+        method: "post",
+        data
+    }) as any as Promise<mettItems>
+
+}
+

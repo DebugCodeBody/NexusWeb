@@ -8,8 +8,9 @@
                     <span>总计: {{ data.length }}</span>
                 </div>
                 <div class="button">
-                    <el-button type="primary" @click="onClickSearch" :loading="thisManage.other.loading">搜索</el-button>
-                    <el-button @click="onClickReset">重置</el-button>
+                    <el-button size="default" type="primary" @click="onClickSearch" :loading="thisManage.other.loading">搜索</el-button>
+                    <el-button size="default" type="warning" @click="onClickExport" :loading="thisManage.other.loading">导出</el-button>
+                    <el-button size="default" @click="onClickReset">重置</el-button>
                 </div>
             </div>
             <div class="flex-1 mt-10px  rounded-5px overflow-hidden">
@@ -58,6 +59,13 @@ function onClickSearch() {
 function onClickReset() {
 
     thisManage.reset();
+
+}
+
+
+function onClickExport() {
+
+    thisManage.export();
 
 }
 

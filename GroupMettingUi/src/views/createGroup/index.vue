@@ -50,8 +50,6 @@ function onClickName() {
 
 
 
-
-
 async function init() {
 
 

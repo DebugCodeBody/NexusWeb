@@ -1,7 +1,7 @@
 import { getList, getFollow, getProdu, openSceneGroups } from "@/api"
 import { getUserName } from "@/store/user"
 import { openGroup } from "@/utils/ddgroup";
-import { isGetNext } from "@/api"
+import { isGetNext } from "@/api/quick"
 
 import to from "await-to-js"
 
@@ -90,9 +90,9 @@ const getArr = [
         handle: produGet,
         data: [] as any[],
         get() {
-            
+
             const name = getUserName();
-            
+
             const retVal = this.data.find((item) => {
 
                 return item.tissue_user == "" && item.tissue_user == name
@@ -101,7 +101,7 @@ const getArr = [
 
             return retVal;
 
-            
+
         }
 
 
@@ -112,7 +112,7 @@ const getArr = [
         get() {
 
             return this.data[0]
-            
+
 
 
         }
@@ -232,6 +232,9 @@ export async function toNextHandle() {
 
 
 export function closeNavigation() {
+
+    // 不需要关闭页面了，改成跳转到待处理
+
     try {
         dd.biz.navigation.close({
             onFail(err: any) {
@@ -245,10 +248,14 @@ export function closeNavigation() {
     }
 }
 
+export function toHandle() {
+
+    location.href = `${location.origin}${location.pathname}?path=list&label=6&ismy=1`;
+
+}
+
 
 export async function getNextCount() {
-
-    debugger;
 
     const allRun = getArr.map((item) => {
 

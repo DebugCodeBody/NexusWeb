@@ -74,14 +74,9 @@ export function getRtime(day: number, ptime: number) {
 
 }
 
-
-
-export function copyItemValue(item: mettItem, shareUrl = false) {
-
-
+export function getMettItemDetail(item: mettItem, shareUrl = false) {
 
     const textArr = [];
-
 
     textArr.push(`${item.title} ${item.create_date}`);
     textArr.push(`预约用户：${item.create_user}`);
@@ -97,7 +92,7 @@ export function copyItemValue(item: mettItem, shareUrl = false) {
 
     textArr.push(`开会内容：${item.content}`);
     if (item.log && item.log.length > 0) {
-        
+
         textArr.push(`留言`);
 
         item.log.forEach((elem) => {
@@ -107,20 +102,29 @@ export function copyItemValue(item: mettItem, shareUrl = false) {
     }
 
 
-    if(shareUrl){
-        
+    if (shareUrl) {
+
         const href = `${location.origin}/ding/coolapp/meeting/share/${item.id}`;
 
         textArr.push(`${item.content}：dingtalk://dingtalkclient/action/openapp?corpid=dingf2f1e9ca1da23dff&container_type=work_platform&redirect_url=${encodeURIComponent(href)}&app_id=0_2726873885`);
 
     }
 
+    return textArr.join("\r\n");
 
-    copyText(textArr.join("\r\n"));
+}
+
+
+export function copyItemValue(item: mettItem, shareUrl = false) {
+
+
+    const copyContent = getMettItemDetail(item,shareUrl);
+
+
+    copyText(copyContent);
 
 }
 
 export function pySearch(array: userItem[], value: string) {
     return array.filter((elem) => (!value || elem.py.indexOf(value) > -1 || elem.name.indexOf(value) > -1))
 }
- 

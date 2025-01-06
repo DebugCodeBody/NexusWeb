@@ -20,11 +20,12 @@ import openGroup from "@/views/openGroup/index.vue"
 import leave from "@/views/leave/index.vue"
 import okrsearch from "@/views/okrsearch/index.vue"
 import groupend from "@/views/groupend/index.vue"
-import quicktrack from "@/views/quickTrack/index.vue"
 import groupsetother from "@/views/groupsetother/index.vue"
 import groupignore from "@/views/groupignore/index.vue"
 import groupcharge from "@/views/groupcharge/index.vue"
 import creategroup from "@/views/createGroup/index.vue"
+import extendType from "@/views/extendType/index.vue"
+import groupmark from "@/views/groupmark/index.vue"
 // import hectic from "@/views/hectic/index.vue"
 
 import { ref, reactive, nextTick, defineProps, computed, onBeforeMount, onMounted, onBeforeUnmount, onUnmounted } from "vue"
@@ -44,13 +45,15 @@ const tabs: any = {
 	leave,
 	// hectic,
 	opengroup: openGroup,
+	groupmark,
 	okrsearch,
 	groupend,
-	quicktrack,
+	quicktrack: groupsetother,
 	groupsetother,
 	groupignore,
 	groupcharge,
-	creategroup
+	creategroup,
+	extendtype: extendType 
 }
 
 
@@ -61,8 +64,10 @@ let path = $ref("");
 
 
 function pathView() {
-	path = path || getPathSearch();
+	
+	path = path || getPathSearch() || "";
 
+	path = path.toLocaleLowerCase();
 
 	let retVal = tabs[path];
 	if (!retVal) {

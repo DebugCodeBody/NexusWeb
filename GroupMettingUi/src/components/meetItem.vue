@@ -98,7 +98,7 @@
             </el-form-item>
             <div class="flex">
                 <el-form-item label="会议类型" prop="content" class="flex-1">
-                    <div>{{ item.type }}</div>
+                    <div>{{ item.extend_type || item.type }}</div>
                 </el-form-item>
                 <el-form-item label="开会时间" prop="content" class="flex-1" v-if="item.is_resource || item.start_time">
                     <div v-if="item.is_resource">{{ dayjs(item.rtime).format("MM-DD HH:mm") }}</div>

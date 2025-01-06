@@ -73,8 +73,12 @@
                                 <div class="flex flex-1">
                                     <el-checkbox v-model="dialogSearch.isFollow" label="只显示关注" value="只显示关注"
                                         @change="refresh" v-if="false && !isNowProView" />
+
                                     <el-checkbox v-model="dialogSearch.isTenDay" label="只显示十天前" value="只显示十天前"
                                         @change="refresh" v-if="isHandleView" />
+                                        
+                                    <el-checkbox v-model="dialogSearch.recentNoneHandle" label="三天内未处理" value="三天内未处理" @change="refresh"
+                                        v-if="isHandleView" />
 
                                     <el-checkbox v-model="dialogSearch.isGroup" label="显示有会议群" value="显示有会议群"
                                         @change="refresh" v-if="isHandleView || isToStartView" />
@@ -224,7 +228,11 @@
                     <div class="">
                         <el-checkbox v-model="dialogSearch.isFollow" label="只显示关注" value="只显示关注" @change="refresh"
                             v-if=" false && !isNowProView" />
+                            
                         <el-checkbox v-model="dialogSearch.isTenDay" label="只显示十天前" value="只显示十天前" @change="refresh"
+                            v-if="isHandleView" />
+
+                        <el-checkbox v-model="dialogSearch.recentNoneHandle" label="三天内未处理" value="三天内未处理" @change="refresh"
                             v-if="isHandleView" />
 
                         <el-checkbox v-model="dialogSearch.isGroup" label="显示有会议群" value="显示有会议群" @change="refresh"
@@ -408,8 +416,10 @@ let dialogSearch = $ref({
     isHectic: false,
 
     /** 显示忽略会议 */
-    showIgnore: false
+    showIgnore: false,
 
+    /** 三天内未处理 */
+    recentNoneHandle: false
 
 
 });
@@ -596,10 +606,10 @@ async function onClickStart(item?: mettItem) {
 }
 
 async function getData(value: number) {
+
     if (loading) {
         return;
     }
-
 
 
     const tag = tagList.find((elem) => elem.id == value)!;
@@ -637,7 +647,9 @@ async function getData(value: number) {
 
         isHectic: dialogSearch.isHectic,
 
-        showIgnore: dialogSearch.showIgnore
+        showIgnore: dialogSearch.showIgnore,
+        
+        recentNoneHandle: dialogSearch.recentNoneHandle
 
     };
 
@@ -848,7 +860,10 @@ async function onTabChange(value: number) {
         isLeave: false,
         isHectic: false,
 
-        showIgnore: false
+        showIgnore: false,
+
+        /** 近期没有任何处理的，在带处理中默认为真 */
+        recentNoneHandle: false
 
         
     };
@@ -897,11 +912,12 @@ async function onTabChange(value: number) {
 
     dialogSearch.isHectic = tempObj.isHectic;
 
-    
-
+    dialogSearch.recentNoneHandle = tempObj.recentNoneHandle;
 
 
     getData(value);
+
+
 }
 
 

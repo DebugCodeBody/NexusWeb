@@ -7,8 +7,8 @@
             <div class="relative overflow-auto p-10px h-400px">
 
                 <div class="relative h-full">
-
                     <el-result v-if="submitDone" icon="success" title="提交成功">
+
 
                         <template #extra>
 
@@ -39,48 +39,35 @@
                             </el-tag>
 
                             <div>
-                                <el-button class="mt-10px" @click="onClickClose">关闭页面</el-button>
+                                <el-button class="mt-10px" @click="onClickClose">跳转到待处理</el-button>
                             </div>
                         </template>
 
                     </el-result>
 
                     <el-result icon="error" sub-title="请通过点击群消息进入本页面" v-if="error">
+
                     </el-result>
+
                 </div>
 
             </div>
         </div>
 
     </div>
-    <py-select-name />
 </template>
 
 <script setup lang="ts">
 
-import { ElForm, } from "element-plus"
-import type { FormRules } from 'element-plus'
-import actorUser from "@/components/actorUser.vue"
-
-import pySelectName from "@/components/pySelectName.vue"
-import expectTime from "@/components/expectTime.vue"
-
-
 import to from "await-to-js"
 
-import getSearch, { getCorpId } from "@/utils/urlSearch"
-import { isExist, getPrepare, submitMeet } from "@/api"
-import { getUserName } from "@/store/user"
-import { copyItemValue } from "@/utils/other"
+import getSearch from "@/utils/urlSearch"
 
-import { messageError } from "@/utils/elementLib";
+import { setMark } from "@/api/quick"
 
-import { setTrack } from "@/api/quick"
+import { toNextHandle, toHandle, getNextCount } from "@/utils/quick"
 
-import { closeNavigation,getNextCount,toNextHandle } from "@/utils/quick"
-
-
-let submitDone = $ref(true);
+let submitDone = $ref(false);
 
 let error = $ref(false);
 
@@ -88,35 +75,39 @@ let isGetCount = $ref(false);
 
 let nextArr = $ref<any[]>([]);
 
-
-
 let id = getSearch("id");
-let name = getSearch("name");
 
 
 function onClickClose() {
 
-    closeNavigation();
+    toHandle();
 
 }
-
-
 
 async function init() {
 
 
-    if (!id || !name) {
+    if (!id) {
         error = true;
         return
     }
 
-
-
-    const [err] = await to(setTrack(parseInt(id), name));
+    const [err, data] = await to(setMark(parseInt(id)));
     if (err) {
+        alert("确认会议失败")
         return;
     }
 
+
+    if (!data.auth) {
+
+        alert("暂无权限群内确认会议！")
+
+        onClickClose();
+
+        return;
+
+    }
 
 
     submitDone = true;
@@ -137,9 +128,6 @@ async function init() {
     }, 300);
 
 
-
-
-
 }
 
 
@@ -152,8 +140,7 @@ init();
 
 <script lang="ts">
 
-const title = $ref("群内指派");
-
+const title = $ref("会议群内确认")
 export default {
     name: "",
     title
@@ -161,6 +148,16 @@ export default {
 </script>
 
 <style lang="scss">
+.el-overlay.is-message-box .el-overlay-message-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .el-message-box {
+        width: 80%;
+    }
+}
+
 #group-end {
     flex: 1;
 
