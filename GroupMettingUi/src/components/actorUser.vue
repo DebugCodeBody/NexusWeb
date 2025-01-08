@@ -2,7 +2,7 @@
     <div class="user-checkbox">
         <el-form-item :label="actorTitle" prop="actor" class="label-top">
             <div v-if="showActorGroup" class="mb-10px actor-grounp-item" >
-                <div>
+                <div class="actor-grounp-list">
                     <el-button size="default" v-for="item in actorGroupList" :key="item.name" @click="onClickActorGroup(item)">{{ item.name
                     }}</el-button>
                 </div>
@@ -30,8 +30,8 @@
                 <div class="mt-20px" v-show="data.pyValue"></div>
 
                 <div>
-                    <el-button size="default" @click="onClickShowUser" v-if="hiddenUser">展开参与人员</el-button>
-                    <el-button size="default" @click="onClickShowUser" v-else>隐藏参与人员</el-button>
+                    <el-button size="default" @click="onClickShowUser" v-if="hiddenUser">展开{{ title }}</el-button>
+                    <el-button size="default" @click="onClickShowUser" v-else>隐藏{{ title }}</el-button>
                 </div>
 
                 <template v-if="!hiddenUser">
@@ -652,5 +652,18 @@ div.user-checkbox {
         margin-bottom: 5px;
         min-width: 90px;
     }
+
+    .actor-grounp-item .el-button {
+        margin-left: 0 !important;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
+    .group-manage {
+        position: absolute;
+        right: 0;
+        top: -35px;
+    }
+
 }
 </style>

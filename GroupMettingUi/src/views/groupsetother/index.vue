@@ -9,10 +9,11 @@
                 <div class="relative h-full flex flex-col">
 
                     <div class="flex-1 form-warp">
-                        <el-form :model="formData" :hide-required-asterisk="true" label-width="auto" ref="DefaultFormEl"
+                        <el-form :model="form" :hide-required-asterisk="true" label-width="auto" ref="DefaultFormEl"
                             @submit.prevent>
-                            <input-select-name v-model="selectName" :user-list="exportData.userData"
-                                @enter="onClickSubmit" />
+                            <actor-user :actor="form.actor" :notuser="form.notuser" :hot="hotArr" :actorArr="actorArr"
+                                :notuserArr="notUserList" :showNotUser="false" :show-actor-group="true"
+                                :isHiddenUser="true" :actorGroupList="actorGroup" title="指派人员" :isOneUser="true"/>
                         </el-form>
                     </div>
 
@@ -81,16 +82,22 @@
 
 import { ElForm, } from "element-plus"
 
-import type { FormRules } from 'element-plus'
+import actorUser from "@/components/actorUser.vue"
 
-import inputSelectName from "@/components/inputSelectName.vue"
 
 import getSearch, { getCorpId } from "@/utils/urlSearch"
 
 import { setTrack } from "@/api/quick"
 import exportData from "@/store/data"
 
+import to from "await-to-js"
+
+import { isExist, getPrepare, submitMeet } from "@/api"
+
 import { toNextHandle, toHandle, getNextCount } from "@/utils/quick"
+
+
+
 
 let submitDone = $ref(false);
 
@@ -99,7 +106,6 @@ let error = $ref(false);
 
 let id = getSearch("id");
 
-let selectName = $ref("");
 let loading = $ref(false);
 
 
@@ -108,9 +114,76 @@ let nextArr = $ref<any[]>([]);
 
 let noSet = $ref(false);
 
+let openConversationId = getSearch("openConversationId");
 
 
-const formData = $ref({});
+const typeArr = $ref<string[]>([]);
+const timeArr = $ref<string[]>([]);
+const resourceTime = $ref<resourceType[]>([]);
+const timePeriod = $ref<string[]>([]);
+const notUserList = $ref<userItem[]>([]);
+const actorGroup = $ref<actorGroup[]>([]);
+const tissueArr = $ref<string[]>([]);
+/** 参加会议人员 */
+const actorArr = $ref<userItem[]>([]);
+
+/** 热度列表人员 */
+const hotArr = $ref<userItem[]>([]);
+
+
+if (process.env.NODE_ENV != "production") {
+
+    /** 自己的测试群 */
+    openConversationId = "cidJgKt5cWr6G7oCrh3YtA/JA==";
+
+    /** 中高层管理群 */
+    openConversationId = "cidqSg4UlaQSpDlsI9p6p347Q==";
+
+    // openConversationId = "cidByQUlqQerQ3O141BE+4axg==";
+} else {
+
+
+    if (!openConversationId) {
+        // 中高层管理群
+        openConversationId = "cidqSg4UlaQSpDlsI9p6p347Q==";
+    }
+
+}
+
+
+
+
+const form = $ref({
+    /** 组织人 */
+    tissue: "",
+    /** 必须参与人 */
+    actor: [] as string[],
+    /** 非必须参与人 */
+    notuser: [] as string[],
+    /** 开会内容 */
+    content: "",
+    /** 会议类型 */
+    type: null as any as string,
+    /** 执行人 */
+    track: "",
+
+    /** 是否语音会议 */
+    isAudio: getSearch("audio") == "1",
+
+    /** 工单号 */
+    order: "",
+
+    expect: "",
+
+    extend: ""
+
+});
+
+
+let selectName = $computed(()=>{
+    return form.actor[0] || ""
+});
+
 
 function onClickClose() {
 
@@ -122,6 +195,7 @@ async function onClickSubmit() {
 
     try {
 
+        
         loading = true;
 
         const data = await setTrack(id, selectName);
@@ -145,7 +219,7 @@ async function onClickSubmit() {
         }, 300);
 
 
-   
+
 
     } catch (error) {
 
@@ -168,28 +242,36 @@ async function init() {
     }
 
 
-    await exportData.init();
+
 
 
     let name = getSearch("name");
 
     if (name) {
 
-        selectName = name;
+
+        form.actor.push(name);
+        
         onClickSubmit();
 
     } else {
 
-        try {
-
-            const selectName = await window.openNameSelect({
-                isOne: true,
-                userList: exportData.userData
-            })
-
-        } catch {
-
+        const [err, data] = await to(getPrepare(openConversationId));
+        if (err) {
+            return;
         }
+
+
+        timeArr.push(...data.time);
+
+        actorArr.push(...data.actor);
+
+        notUserList.push(...data.actor);
+
+        hotArr.push(...data.hot);
+
+        actorGroup.push(...data.actorGroup);
+
 
     }
 

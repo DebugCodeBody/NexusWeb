@@ -116,11 +116,6 @@ import { openGroup } from "@/utils/ddgroup";
 
 
 
-type resourceType = {
-    label: string,
-    day: number
-
-}
 
 const uploadEl = $ref<InstanceType<typeof uploadFile>>();
 const formEl = $ref<InstanceType<typeof ElForm>>();
@@ -262,9 +257,7 @@ const typeArr = $ref<string[]>([]);
 const timeArr = $ref<string[]>([]);
 const resourceTime = $ref<resourceType[]>([]);
 const timePeriod = $ref<string[]>([]);
-
 const notUserList = $ref<userItem[]>([]);
-
 const actorGroup = $ref<actorGroup[]>([]);
 
 const extendList = $ref<{
@@ -689,11 +682,7 @@ export default {
 
             }
 
-            .group-manage {
-                position: absolute;
-                right: 0;
-                top: -35px;
-            }
+ 
 
         }
 

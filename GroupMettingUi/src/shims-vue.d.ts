@@ -157,3 +157,10 @@ type actorGroup = {
   name:string,
   user: string[]
 }
+
+
+type resourceType = {
+  label: string,
+  day: number
+
+}
