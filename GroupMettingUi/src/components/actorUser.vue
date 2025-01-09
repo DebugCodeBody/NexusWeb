@@ -30,8 +30,8 @@
                 <div class="mt-20px" v-show="data.pyValue"></div>
 
                 <div>
-                    <el-button size="default" @click="onClickShowUser" v-if="hiddenUser">展开{{ title }}</el-button>
-                    <el-button size="default" @click="onClickShowUser" v-else>隐藏{{ title }}</el-button>
+                    <el-button size="default" @click="onClickShowUser" v-if="hiddenUser">展开【{{ title }}】</el-button>
+                    <el-button size="default" @click="onClickShowUser" v-else>收起【{{ title }}】</el-button>
                 </div>
 
                 <template v-if="!hiddenUser">
@@ -70,7 +70,7 @@
         </el-form-item>
         <el-form-item :label="notuserTitle" class="label-top" v-if="showNotUser">
 
-            <el-button v-if="!isAddNotUser" @click="onClickAddNotUser">添加人员</el-button>
+            <el-button v-if="!isAddNotUser" @click="onClickAddNotUser">添加【有空参与】</el-button>
             <template v-else>
                 <template v-if="notuserList.length">
                     <div class="mb-5px w-full no-input" >
@@ -181,7 +181,9 @@ let noInputEl: HTMLInputElement;
 let noTimtEmitClear = false;
 let hiddenUser = $ref(Props.isHiddenUser);
 
+
 let selectActorGrounpItem = $ref<actorGroup>({}  as actorGroup);
+
 
 
 const data = $ref({
@@ -581,7 +583,6 @@ function onClickShowUser(){
 }
 
 
-
 onMounted(() => {
 
     const { actor } = Props;
@@ -629,9 +630,10 @@ defineExpose({
         data.actor = [...actor];
         data.notuser = [...actor];
 
+    },
+    emitHiddenUser(){
 
-
-
+        hiddenUser = Props.actorGroupList.length > 0;
     }
 
 });

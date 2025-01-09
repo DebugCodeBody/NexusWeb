@@ -17,8 +17,8 @@
                         </el-form-item> -->
 
                         <actor-user :actor="form.actor" :notuser="form.notuser" :hot="hotArr" :actorArr="actorArr"
-                            :notuserArr="notUserList" :showNotUser="!form.isAudio" :show-actor-group="true" :isHiddenUser="true"
-                            :actorGroupList="actorGroup" />
+                            :notuserArr="notUserList" :showNotUser="!form.isAudio" :show-actor-group="true"
+                            :isHiddenUser="true" :actorGroupList="actorGroup" ref="actorUserEl" />
 
                         <el-form-item label="会议类型" prop="type" v-if="!form.isAudio">
                             <el-radio-group v-model="form.type" @change="onChangeType">
@@ -28,9 +28,10 @@
                         </el-form-item>
 
                         <!-- 语音会议的类型 -->
-                        <el-form-item label="会议类型" prop="extend" v-if="form.isAudio" >
+                        <el-form-item label="会议类型" prop="extend" v-if="form.isAudio">
                             <el-radio-group v-model="form.extend">
-                                <el-radio v-for="(item, index) in extendList" :key="index" :label="item.name">{{ item.name
+                                <el-radio v-for="(item, index) in extendList" :key="index" :label="item.name">{{
+                                    item.name
                                     }}</el-radio>
                             </el-radio-group>
                             <a @click.prevent="onClickToType" class="ml-10px a_add-extend">新增类型</a>
@@ -230,7 +231,7 @@ const rules = reactive<FormRules>({
 
                 let retErr: Error | undefined = undefined;
 
-                if (form.isAudio  && !value) {
+                if (form.isAudio && !value) {
                     retErr = new Error("请选择会议类型")
                 }
 
@@ -250,6 +251,8 @@ const actorArr = $ref<userItem[]>([]);
 
 /** 热度列表人员 */
 const hotArr = $ref<userItem[]>([]);
+
+const actorUserEl = $ref<any>()
 
 
 
@@ -340,7 +343,7 @@ function onChangeType(value: string) {
 }
 
 
-function onChangeExtend(){
+function onChangeExtend() {
 
 }
 
@@ -396,12 +399,34 @@ function onClickClearTrack() {
 
 }
 
-function onClickToType(){
-    
+function onClickToType() {
+
     location.href = `${location.origin}${location.pathname}?path=extendType`;
 
 }
 
+
+
+let emitCount = 0;
+function emithiddenUser() {
+
+    emitCount += 1;
+    if (emitCount < 2) {
+        return;
+    }
+
+    setTimeout(() => {
+
+
+        if(actorUserEl){
+            actorUserEl.emitHiddenUser();
+        }else{
+            emithiddenUser()
+        }
+        
+    })
+
+}
 
 
 
@@ -420,6 +445,8 @@ async function init() {
 
     {
         const [err, data] = await to(getPrepare(openConversationId));
+
+        emithiddenUser();
 
         if (!err) {
 
@@ -480,7 +507,7 @@ async function init() {
 
             }
 
-            if(extendList.length == 1){
+            if (extendList.length == 1) {
                 form.extend = extendList[0].name
             }
 
@@ -546,6 +573,11 @@ async function onClickSubmit() {
 init();
 
 
+onMounted(() => {
+
+    emithiddenUser();
+
+})
 
 </script>
 
@@ -682,11 +714,11 @@ export default {
 
             }
 
- 
+
 
         }
 
-        .a_add-extend{
+        .a_add-extend {
             cursor: pointer;
             color: #2440b3;
 
