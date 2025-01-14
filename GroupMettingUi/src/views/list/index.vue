@@ -58,6 +58,12 @@
                                             placeholder="过滤结果" @confirm="onSearchConfirm" @open="onOpenResult"
                                             v-if="isHandleView" />
                                     </div>
+                                    <div class="ml-5px">
+                                        <name-select v-model="dialogSearch.handleType" title="过滤类型"
+                                            :user-list="dialogSearch.userList" :disabled="loading" :showCount="false"
+                                            placeholder="过滤类型" @confirm="onSearchConfirm" @open="onOpenType"
+                                            v-if="isHandleView" />
+                                    </div>
                                     <div class="ml-5px flex flex-1">
                                         <el-input v-model="dialogSearch.value" placeholder="内容搜索" clearable
                                             :disabled="loading" @keydown.enter="onSearchValue"></el-input>
@@ -210,6 +216,12 @@
                         <name-select v-model="dialogSearch.result" title="过滤结果" :user-list="dialogSearch.userList"
                             :disabled="loading" :showCount="false" placeholder="过滤结果" @confirm="onSearchConfirm"
                             @open="onOpenResult" v-if="isHandleView" />
+                    </div>
+                    <div class="ml-5px">
+                        <name-select v-model="dialogSearch.handleType" title="过滤类型"
+                            :user-list="dialogSearch.userList" :disabled="loading" :showCount="false"
+                            placeholder="过滤类型" @confirm="onSearchConfirm" @open="onOpenType"
+                            v-if="isHandleView" />
                     </div>
                     <div class="ml-5px flex flex-1">
                         <el-input v-model="dialogSearch.value" placeholder="内容搜索" clearable :disabled="loading"
@@ -385,6 +397,9 @@ let dialogSearch = $ref({
 
     /** 结案结果 */
     result: [] as string[],
+
+    /** 过滤类型 */
+    handleType: [] as string[],
 
     /** 是否使用同步状态 */
     isSync: false,
@@ -649,7 +664,9 @@ async function getData(value: number) {
 
         showIgnore: dialogSearch.showIgnore,
         
-        recentNoneHandle: dialogSearch.recentNoneHandle
+        recentNoneHandle: dialogSearch.recentNoneHandle, 
+
+        handleType: dialogSearch.handleType, 
 
     };
 
@@ -863,7 +880,9 @@ async function onTabChange(value: number) {
         showIgnore: false,
 
         /** 近期没有任何处理的，在带处理中默认为真 */
-        recentNoneHandle: false
+        recentNoneHandle: false,
+
+        handleType: [] 
 
         
     };
@@ -913,6 +932,8 @@ async function onTabChange(value: number) {
     dialogSearch.isHectic = tempObj.isHectic;
 
     dialogSearch.recentNoneHandle = tempObj.recentNoneHandle;
+
+    dialogSearch.handleType = tempObj.handleType;
 
 
     getData(value);
@@ -1019,6 +1040,34 @@ function onOpenResult() {
     userList.push({
         name: "培训",
         py: "px",
+        count: 0
+    });
+
+
+}
+
+/** 打开类型搜索 */
+function onOpenType() {
+
+    const { filterList, userList, actorList } = dialogSearch;
+    const dataList = exportData.userData;
+
+    userList.length = 0;
+
+    userList.push({
+        name: "防呆类",
+        py: "fdl",
+        count: 0
+    });
+    userList.push({
+        name: "畅聊类",
+        py: "cll",
+        count: 0
+    });
+
+    userList.push({
+        name: "在产类",
+        py: "zcl",
         count: 0
     });
 

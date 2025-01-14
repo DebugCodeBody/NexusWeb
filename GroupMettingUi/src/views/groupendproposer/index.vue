@@ -1,5 +1,5 @@
 <template>
-    <div id="group-set-other" class="wh-full">
+    <div id="group-end-proposer" class="wh-full">
 
         <div class="declare-view">
             <h3 class="title">{{ title }}</h3>
@@ -9,11 +9,13 @@
                 <div class="relative h-full flex flex-col">
 
                     <div class="flex-1 form-warp">
-                        <el-form :model="form" :hide-required-asterisk="true" label-width="auto" ref="DefaultFormEl"
-                            @submit.prevent>
-                            <actor-user :actor="form.actor" :notuser="form.notuser" :hot="hotArr" :actorArr="actorArr"
-                                :notuserArr="notUserList" :showNotUser="false" :show-actor-group="true"
-                                :isHiddenUser="true" :actorGroupList="actorGroup" title="指派人员" :isOneUser="true"/>
+                        <el-form :model="form" :hide-required-asterisk="true" label-width="auto" ref="formEl"
+                            @submit.prevent  :rules="rules">
+                            <el-form-item label="会议结果" prop="content">
+                                <result-radio v-model="form.result" ref="resultRadioEl" />
+                            </el-form-item>
+
+
                         </el-form>
                     </div>
 
@@ -92,7 +94,9 @@ import exportData from "@/store/data"
 
 import to from "await-to-js"
 
-import { isExist, getPrepare, submitMeet } from "@/api"
+import { endPropose } from "@/api/quick"
+
+import resultRadio from "@/components/resultRadio.vue"
 
 import { toNextHandle, toHandle, getNextCount } from "@/utils/quick"
 
@@ -116,19 +120,8 @@ let noSet = $ref(false);
 
 let openConversationId = getSearch("openConversationId");
 
-
-const typeArr = $ref<string[]>([]);
-const timeArr = $ref<string[]>([]);
-const resourceTime = $ref<resourceType[]>([]);
-const timePeriod = $ref<string[]>([]);
-const notUserList = $ref<userItem[]>([]);
-const actorGroup = $ref<actorGroup[]>([]);
-const tissueArr = $ref<string[]>([]);
-/** 参加会议人员 */
-const actorArr = $ref<userItem[]>([]);
-
-/** 热度列表人员 */
-const hotArr = $ref<userItem[]>([]);
+const formEl = $ref<any>()
+const resultRadioEl = $ref<any>()
 
 
 if (process.env.NODE_ENV != "production") {
@@ -175,61 +168,80 @@ const form = $ref({
 
     expect: "",
 
-    extend: ""
+    extend: "",
+
+    /** 会议结果 */
+    result: ""
 
 });
 
 
-let selectName = $computed(()=>{
-    return form.actor[0] || ""
+const rules = reactive<any>({
+    content: [
+        {
+            validator(rule: any, value: any, callback: any) {
+
+                let error: Error | undefined = resultRadioEl.rule();
+
+                callback(error);
+
+            }, trigger: 'change'
+        }
+    ]
 });
 
 
 function onClickClose() {
-
     toHandle();
-
 }
 
 async function onClickSubmit() {
 
     try {
-
-        
-        loading = true;
-
-        const data = await setTrack(id, selectName);
-
-        noSet = data.noSet;
-
-        submitDone = true;
-
-        isGetCount = true;
-
-        const result = await getNextCount();
-
-        nextArr.push(...result)
-
-        isGetCount = false;
-
-        setTimeout(() => {
-
-            toNextHandle();
-
-        }, 300);
-
-
-
-
-    } catch (error) {
-
-        alert("设置执行人错误");
-
-
-    } finally {
-
-        loading = false
+        await formEl.validate()
+    } catch {
+        return;
     }
+ 
+    if (!id) {
+        error = true;
+        return
+    }
+
+    const [err, data] = await to(endPropose(parseInt(id), form.result));
+    if (err) {
+        alert("申请失败")
+        return;
+    }
+
+
+    // if (!data.auth) {
+
+    //     alert("暂无权限群内！")
+
+    //     onClickClose();
+
+    //     return;
+
+    // }
+
+
+    submitDone = true;
+
+    isGetCount = true;
+
+    const result = await getNextCount();
+
+    nextArr.push(...result)
+
+    isGetCount = false;
+
+
+    setTimeout(() => {
+
+        toNextHandle();
+
+    }, 300);
 
 
 }
@@ -242,45 +254,6 @@ async function init() {
     }
 
 
-
-
-
-    let name = getSearch("name");
-
-    if (name) {
-
-
-        form.actor.push(name);
-        
-        onClickSubmit();
-
-    } else {
-
-        const [err, data] = await to(getPrepare(openConversationId));
-        if (err) {
-            return;
-        }
-
-
-        timeArr.push(...data.time);
-
-        actorArr.push(...data.actor);
-
-        notUserList.push(...data.actor);
-
-        hotArr.push(...data.hot);
-
-        actorGroup.push(...data.actorGroup);
-
-
-    }
-
-
-
-
-
-
-
     // submitDone = true;
 
     // toNextHandle();
@@ -288,21 +261,6 @@ async function init() {
 
 }
 
-
-watch(() => selectName, (value) => {
-   
-    if(!value){
-        return;
-    }
-    
-
-    nextTick(()=>{
-        onClickSubmit();
-    })
-
-
-
-})
 
 
 
@@ -316,7 +274,7 @@ onMounted(() => {
 
 <script lang="ts">
 
-const title = $ref("会议群指派执行者")
+const title = $ref("结案申请")
 export default {
     name: "",
     title
@@ -334,7 +292,7 @@ export default {
     }
 }
 
-#group-set-other {
+#group-end-proposer {
     flex: 1;
 
     audio {
@@ -413,7 +371,6 @@ export default {
     }
 
     form {
-        box-shadow: 0 -2px 4px rgb(0 0 0 / 12%), 0 2px 6px rgb(0 0 0 / 12%);
         position: relative;
         padding: 10px;
 

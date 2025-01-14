@@ -46,6 +46,21 @@ export function setMark(id: number | string) {
 }
 
 
+export function endPropose(id: number | string, result: string){
+
+    return request({
+        url: "/quick/endPropose",
+        method: "post",
+        data: {
+            id,
+            result
+        }
+    }) as any as Promise<{
+        auth: boolean
+    }>
+
+}
+
 
 
 export function isGetNext() {

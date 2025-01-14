@@ -26,6 +26,7 @@ import groupcharge from "@/views/groupcharge/index.vue"
 import creategroup from "@/views/createGroup/index.vue"
 import extendType from "@/views/extendType/index.vue"
 import groupmark from "@/views/groupmark/index.vue"
+import groupendproposer from "@/views/groupendproposer/index.vue"
 // import hectic from "@/views/hectic/index.vue"
 
 import { ref, reactive, nextTick, defineProps, computed, onBeforeMount, onMounted, onBeforeUnmount, onUnmounted } from "vue"
@@ -53,7 +54,8 @@ const tabs: any = {
 	groupignore,
 	groupcharge,
 	creategroup,
-	extendtype: extendType 
+	extendtype: extendType ,
+	groupendproposer
 }
 
 
