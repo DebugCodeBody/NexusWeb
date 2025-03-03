@@ -102,7 +102,12 @@ interface orderResult {
   /** 错误代码 */
   errmsg: string,
   /** 规格 */
-  spec: specType | undefined
+  spec: specType | undefined,
+  /** 提交返回的规格 */
+  setSpec: string,
+
+  /** 类型 */
+  type: number
 }
 
 

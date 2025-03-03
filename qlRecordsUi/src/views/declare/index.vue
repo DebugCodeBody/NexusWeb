@@ -10,11 +10,11 @@
                                 ref="formEl">
 
                                 <el-form-item label="条码" prop="tissue" v-if="false">
-                                    <el-tag >{{ form.seq }}</el-tag>
+                                    <el-tag>{{ form.seq }}</el-tag>
                                 </el-form-item>
 
                                 <el-form-item label="工单号">
-                                    <el-tag >{{ scanResult.orderid }}</el-tag>
+                                    <el-tag>{{ scanResult.orderid }}</el-tag>
                                 </el-form-item>
 
                                 <el-form-item label="规格">
@@ -24,7 +24,7 @@
 
 
                                     <el-tag v-if="initLoading">正在查询</el-tag>
-                                    
+
                                     <el-tag type="danger" v-else-if="scanResult.errmsg">{{ scanResult.errmsg }}</el-tag>
                                     <el-tag type="warning" v-else-if="scanResult.status == 0">暂未登记缺料</el-tag>
                                     <el-tag type="success" v-else>已登记缺料</el-tag>
@@ -42,6 +42,14 @@
                         </div>
 
                         <el-result v-if="submitDone" icon="success" title="提交成功" class="success-result">
+                            <template #extra>
+                                <div class="flex items-center">
+                                    <span>{{ successTitle }}：</span>
+                                    <el-tag>{{ scanResult.setSpec }}</el-tag>
+                                </div>
+                            </template>
+
+
                         </el-result>
                         <el-result v-if="initError" icon="error" class="error-result">
                             <template #extra>
@@ -83,6 +91,7 @@ const paramsSpec = $ref({
 
 } as specType)
 
+
 /** 扫描结果 */
 const scanResult = $ref({
 
@@ -90,8 +99,39 @@ const scanResult = $ref({
     status: -1,
     errmsg: "",
     spec: undefined,
+    type: parseInt(getSearch("type")) || 1,
+    setSpec: ""
 
 } as orderResult)
+
+
+const scanTitle = $computed(() => {
+
+    let typeStr = "";
+    if (scanResult.type == 1) {
+        typeStr = "缺料"
+    } else {
+        typeStr = "满料"
+    }
+    return typeStr
+
+})
+
+
+const title = $computed(() => {
+
+    return `${scanTitle}登记`
+
+});
+
+const successTitle = $computed(() => {
+
+    return `${scanTitle}规格`
+
+
+});
+
+
 
 const specStr = $computed(() => {
 
@@ -210,12 +250,14 @@ async function submitQuery(status: number) {
         const result = await submitData(sendData);
 
         retVal = result.status;
+        scanResult.setSpec = result.spec
+
         if (!retVal) {
 
             ElMessageBox.confirm(
                 result.errmsg,
                 "错误",
-                { 
+                {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'error',
@@ -247,7 +289,7 @@ async function onClickCancel() {
     /** 1=登记缺料, 2=取消登记. */
     const result = await submitQuery(2);
     if (result) {
-        scanQuery();
+        submitDone = true;
     }
 
 
@@ -269,8 +311,6 @@ async function onClickSubmit() {
 
     }
 
-
-
 }
 
 
@@ -282,8 +322,43 @@ async function init() {
 
         if (form.seq || !isEmptySpec) {
             await scanQuery();
+
+            /** 类型 = 缺料 */
+            if (scanResult.type == 1) {
+
+                /** 如果已经登记过缺料 */
+                if (isRecords) {
+
+                    /** 直接完成 */
+                    submitDone = true;
+
+                } else {
+
+                    /** 直接提交 */
+                    await onClickSubmit()
+
+                }
+
+            } else {
+
+                /** 类型 = 满料 */
+
+                await onClickCancel();
+
+                // if (isRecords) {
+
+                //     await onClickCancel();
+
+                // } else {
+
+                //     /** 直接完成 */
+                //     submitDone = true;
+                // }
+
+            }
+
         } else {
-            initError = true;    
+            initError = true;
         }
 
 
@@ -305,11 +380,8 @@ init();
 
 <script lang="ts">
 
-const title = $ref("缺料登记");
-
 export default {
-    name: "",
-    title
+    name: ""
 }
 </script>
 

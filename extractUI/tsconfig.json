@@ -22,7 +22,7 @@
         "src/*"
       ],
       "global@/*": [
-        "H:/private/globalComponents/*"
+        "../globalComponents/*"
       ]
     },
     "lib": [

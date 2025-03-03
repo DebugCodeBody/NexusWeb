@@ -19,6 +19,7 @@ export function submitData(data:any) {
         data
     }) as any as Promise<{
         status: boolean,
-        errmsg: string
+        errmsg: string,
+        spec: string
     }>
 }

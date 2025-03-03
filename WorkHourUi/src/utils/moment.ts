@@ -137,12 +137,13 @@ export function getLastMonthAllWeek() {
  * @returns 
  */
 export function getWeekText(date: string) {
+    
 
     const splitDate = parseInt(date.split("-")[0]);
     const timeDay = moment().format("MM");
 
     if (splitDate == 12 && parseInt(timeDay) == 1) {
-        return moment(`2022-${date}`).format("dddd")
+        return moment(`2024-${date}`).format("dddd")
 
     }
 

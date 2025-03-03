@@ -27,7 +27,10 @@ const thisManage = {
         content: "",
 
         /** 只显示群内用户 */
-        isExistGroup: true
+        isExistGroup: true,
+
+        /** 只显示群内用户 */
+        is_optimize: false
     }),
 
     tab: {} as any,

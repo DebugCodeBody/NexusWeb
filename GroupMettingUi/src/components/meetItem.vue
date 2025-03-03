@@ -152,7 +152,7 @@
                 <div class="flex">
                     <!-- <el-button size="default" @click="onClickLinkView" v-if="!isLink && ( Props.type != 9 && Props.type != 10 )">关联会议</el-button> -->
                     <el-checkbox v-model="item.is_optimize" :border="true" size="default" class="optimize-check"
-                        @change="onCheckOptimize" :disabled="disabledOptimize">工艺优化</el-checkbox>
+                        @change="onCheckOptimize" :disabled="disabledOptimize">客户图纸问题</el-checkbox>
 
 
                     <el-button type="info" size="default" @click="onClickDrawDown" v-if="showDrawDownButton"  :loading="tissueLoading">领取会议</el-button>
@@ -345,15 +345,17 @@ const Props = withDefaults(defineProps<{
     /** 是否关联会议 */
     isLink?: boolean,
     /** 繁忙人员名单 */
-    hectic: string[],
+    hectic?: string[],
 
-    countMap: {
+    countMap?: {
         [key: string]: number
     }
 }>(), {
     cancel: false,
     isLink: false,
     optimize: false,
+    hectic: [] as any[],
+    countMap: {} as any
 });
 
 const resultRadioEl = $ref<any>();
@@ -596,7 +598,7 @@ const isShowCreateGroup = computed(() => {
 
 })
 
-/** 是否禁用工艺优化 */
+/** 是否禁用客户图纸问题 */
 const disabledOptimize = computed(() => {
 
     return [2, 102].includes(Props.type) || !Props.optimize;

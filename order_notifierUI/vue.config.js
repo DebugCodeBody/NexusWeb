@@ -62,9 +62,11 @@ module.exports = defineConfig({
 			});
 
 
+		const globalComponentsPath = path.join(__dirname, "../globalComponents") 
+
 		config.resolve.alias
 			.set('@', path.join(__dirname, './src'))
-			.set('global@', 'H:/private/globalComponents');
+			.set('global@', globalComponentsPath);
 
 
 		if (process.env.NODE_ENV == "production") {

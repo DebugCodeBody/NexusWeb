@@ -137,7 +137,7 @@ type mettItem = {
     banci: string
   },
 
-  /** 工艺优化 */
+  /** 客户图纸问题 */
   is_optimize: boolean,
 
   /** 扩展字段 */
