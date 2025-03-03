@@ -1,83 +1,12 @@
 // import { i18n } from '/@/lang/index'
 
-/*
- * 默认Url点击事件处理
- */
-export const openUrl = (url: string, field: TableColumn) => {
-    if (field.target == '_blank') {
-        window.open(url)
-    } else {
-        window.location.href = url
-    }
-}
-
-/*
- * 默认按钮组
- */
-export const defaultOptButtons = (optButType: DefaultOptButType[] = ['weigh-sort', 'edit', 'delete']): OptButton[] => {
-    const optButtonsPre: Map<string, OptButton> = new Map([
-        [
-            'weigh-sort',
-            {
-                render: 'moveButton',
-                name: 'weigh-sort',
-                title: 'weigh-sort',
-                text: '',
-                type: 'info',
-                icon: 'fa fa-arrows',
-                class: 'table-row-weigh-sort',
-                disabledTip: false,
-            },
-        ],
-        [
-            'edit',
-            {
-                render: 'tipButton',
-                name: 'edit',
-                title: 'edit',
-                text: '',
-                type: 'primary',
-                icon: 'fa fa-pencil',
-                class: 'table-row-edit',
-                disabledTip: false,
-            },
-        ],
-        [
-            'delete',
-            {
-                render: 'confirmButton',
-                name: 'delete',
-                title: 'delete',
-                text: '',
-                type: 'danger',
-                icon: 'fa fa-trash',
-                class: 'table-row-delete',
-                popconfirm: {
-                    confirmButtonText: "删除",
-                    cancelButtonText: "取消",
-                    confirmButtonType: 'danger',
-                    title: "您确定要删除所选记录吗?",
-                },
-                disabledTip: false,
-            },
-        ],
-    ])
-
-    const optButtons: OptButton[] = []
-    for (const key in optButType) {
-        if (optButtonsPre.has(optButType[key])) {
-            optButtons.push(optButtonsPre.get(optButType[key])!)
-        }
-    }
-    return optButtons
-}
 
 /*
  * 格式化时间戳
  */
 export const timeFormat = (dateTime: string | number | null = null, fmt = 'yyyy-mm-dd hh:MM:ss') => {
 
-    
+
     if (dateTime == 'none') return 'none'
     if (!dateTime) dateTime = Number(new Date())
     if (dateTime.toString().length === 10) {
@@ -148,4 +77,36 @@ export function isExternal(path: string): boolean {
     return /^(https?|ftp|mailto|tel):/.test(path)
 }
 
-type DefaultOptButType = 'weigh-sort' | 'edit' | 'delete'
+
+/**
+ * 这个是在饿了么提取出来的
+ * @param obj 对象
+ * @param path 字符串路径
+ * @param strict 是否严格模式
+ * @returns 
+ */
+export function getPropByPath(obj: any, path: string, strict: boolean) {
+    let tempObj = obj;
+    path = path.replace(/\[(\w+)\]/g, '.$1');
+    path = path.replace(/^\./, '');
+
+    let keyArr = path.split('.');
+    let i = 0;
+    for (let len = keyArr.length; i < len - 1; ++i) {
+        if (!tempObj && !strict) break;
+        let key = keyArr[i];
+        if (key in tempObj) {
+            tempObj = tempObj[key];
+        } else {
+            if (strict) {
+                throw new Error('please transfer a valid prop path to form item!');
+            }
+            break;
+        }
+    }
+    return {
+        o: tempObj,
+        k: keyArr[i],
+        v: tempObj ? tempObj[keyArr[i]] : null
+    };
+};

@@ -6,9 +6,9 @@
 
 <script setup lang="ts">
 
-import boxTable from "H:/private/newTool/UI/src/components/boxTable/index.vue";
+import boxTable from "global@/table/index.vue";
 
-import { boxTableControl } from "H:/private/newTool/UI/src/components/boxTable/utils/boxTable"
+import { boxTableControl } from "global@/table/utils/boxTable"
 
 
 

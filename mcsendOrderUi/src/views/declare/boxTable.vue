@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 
-import boxTable from "H:/private/newTool/UI/src/components/boxTable/index.vue";
+import boxTable from "global@/table/index.vue";
 
 import tabManage from "./dataManage"
 

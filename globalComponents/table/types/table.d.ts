@@ -1,4 +1,3 @@
-import type { TagProps, ButtonType, ElForm } from 'element-plus'
 import { Component, ComponentPublicInstance } from 'vue'
 import Table from '/@/components/table/index.vue'
 import * as enumDeclare from "./enum";
@@ -9,46 +8,123 @@ declare global {
     type TableRenderType = enumDeclare.TableRenderType;
 
 
-
     const TableRenderType: typeof enumDeclare.TableRenderType;
 
-    /* baTable */
-    interface BaTable {
+
+    interface BoxTable<T = any> {
+
+        /** 表格的Vue组件实例 */
         ref?: typeof Table
 
         /** 主键字段 */
         pk?: string
-        /** 数据源 */
-        data?: TableRow[]
-        /** 路由remark */
-        remark?: string | null
+
+        /** 表格数据 */
+        data: T[]
+
+        /** el-alert 提示信息 */
+        remark?: string
+
         /** 表格加载状态 */
-        loading?: boolean
+        loading: boolean
+
         /** 是否展开所有子项 */
-        expandAll?: boolean
-        /** 选中项 */
-        selection?: TableRow[]
+        expandAll: boolean
+
+        /** 选中多行项 */
+        selection: T[]
+
+        /** 选中的单行 */
+        selectRow?: T
+        
+        /** 单选选中的行下标 */
+        selectIndex?: number
+
+        /** 选中的单行列 */
+        selectColumn?: any
+
+        /** 当前选中的列数 */
+        selectColumnIndex: number
+
+        /** 当前选中的行数 */
+        selectRowIndex: number
+
         /** 不需要'双击编辑'的字段 */
-        dblClickNotEditColumn?: (string | undefined)[]
+        dblClickNotEditColumn: string[]
+
         /** 列数据 */
-        column: TableColumn[]
+        column: TableColumn[],
+
         /** 数据总量 */
-        total?: number
+        total: number
+
+        /** 接受url的query参数并自动触发通用搜索 */
+        acceptQuery: boolean
+
         /** 字段搜索,快速搜索,分页等数据 */
-        filter?: anyObj
-        defaultOrder?: { prop: string; order: string }
+        filter: anyObj
+
+        /** 默认排序字段 */
+        defaultOrder: {
+            prop: string, 
+            order: string
+        }
+
         /** 拖动排序限位字段:例如拖动行pid=1,那么拖动目的行pid也需要为1 */
         dragSortLimitField?: string
+
         /** 接受url的query参数并自动触发通用搜索 */
         acceptQuery?: boolean
+
         /** 显示公共搜索 */
         showComSearch?: boolean
+
         /** 扩展数据 */
         extend?: anyObj,
 
         /** 是否需要斑马纹 */
-        stripe?: boolean
+        stripe: boolean
+
     }
+    
+    interface BoxTableForm<T = any> {
+
+        /** 表单ref，new时无需传递 */
+        ref?: InstanceType<typeof ElForm>
+
+        /** 当前操作:add=添加,edit=编辑 */
+        operate: string
+
+        /** 被操作数据ID,支持批量编辑:add=[0],edit=[1,2,n] */
+        operateItems: T[]
+
+        /** 表单数据 */
+        item: T
+
+        /** 提交按钮状态 */
+        submitLoading: boolean
+
+        /** 默认表单数据(添加) */
+        defaultItems: T
+
+        /** 表单字段加载状态 */
+        loading: boolean
+
+        /** 表单标题 */
+        title: string,
+
+        /** 表单标题对应表 */
+        titleTable: {
+            [key: string]: string
+        }
+
+        /** 当前操作是否为添加状态 */
+        isAdd: boolean
+        /** 当前操作是否为编辑状态 */
+        isEdit: boolean
+
+    }
+
 
     interface TableRenderPublicInstance extends ComponentPublicInstance {
         $attrs: {
@@ -58,60 +134,33 @@ declare global {
         }
     }
 
-    /* 用来增加或者编辑的表单弹窗 */
-    interface BaTableForm {
-        /** 表单ref，new时无需传递 */
-        ref?: InstanceType<typeof ElForm> | undefined
-        /** 表单label宽度 */
-        labelWidth?: number
-        /** 当前操作:add=添加,edit=编辑 */
-        operate?: string
-        /** 被操作数据ID,支持批量编辑:add=[0],edit=[1,2,n] */
-        operateIds?: string[]
-        /** 表单数据 */
-        items?: anyObj
-        /** 提交按钮状态 */
-        submitLoading?: boolean
-        /** 默认表单数据(添加) */
-        defaultItems?: anyObj
-        /** 表单字段加载状态 */
-        loading?: boolean
-        /** 扩展数据 */
-        extend?: anyObj
-    }
 
     /* BaTable前置处理函数(前置埋点) */
-    interface BaTableBefore {
+    interface BoxBefore {
+
+        /** 某一行被选中 */
+        rowClick?: Function
         /** 获取数据 */
         getIndex?: Function
         /** 删除数据 */
         postDel?: Function
         /** 编辑数据 */
         requestEdit?: Function
-        /** 表头单机 */
+        /** 双击表格 */
         onTableDblclick?: Function
+        /** 表单弹出 */
         toggleForm?: Function
         /** 提交表单 */
         onSubmit?: Function
+        /** 表格事件 */
         onTableAction?: Function
+        /** 表格按钮事件 */
         onTableHeaderAction?: Function
+        /** 表格加载事件 */
         mount?: Function
         [key: string]: Function | undefined
     }
 
-    /* BaTable后置处理函数(后置埋点) */
-    interface BaTableAfter {
-        getIndex?: Function
-        postDel?: Function
-        requestEdit?: Function
-        onTableDblclick?: Function
-        toggleForm?: Function
-        onSubmit?: Function
-        onTableAction?: Function
-        onTableHeaderAction?: Function
-        mount?: Function
-        [key: string]: Function | undefined
-    }
 
     interface ComSearch {
         form: anyObj
@@ -133,7 +182,7 @@ declare global {
         /** 渲染为:icon|switch|image|images|tag|url|datetime|buttons|customTemplate|customRender */
         render?: TableRenderType | TableRenderTypeStr
         /** 操作按钮组 */
-        buttons?: OptButton[]
+        buttons?: string[] | ('weigh-sort' | 'edit' | 'delete')[]
         /** 渲染为Tag时:el-tag 组件的主题 */
         effect?: TagProps['effect']
         /** 渲染为Tag时:el-tag 组件的size */
@@ -180,6 +229,7 @@ declare global {
         render: string
         name: string
         title?: string
+        npTooltip?: boolean
         text?: string
         class?: string
         type: ButtonType
@@ -198,7 +248,7 @@ declare global {
     }
 
     /* 表头支持的按钮 */
-    type HeaderOptButton = 'refresh' | 'add' | 'edit' | 'delete' | 'unfold' | 'recycle bin' | 'comSearch' | 'quickSearch' | 'columnDisplay'
+    type HeaderOptButton = 'refresh' | 'add' | 'edit' | 'delete' | 'unfold' | 'recycle bin' | 'comSearch' | 'quickSearch' | 'columnDisplay' | 'export' | string[]
 
     // '='：等于
     // '<>'：不等于
@@ -249,6 +299,9 @@ declare global {
         label: string
         children?: ElTreeData[]
     }
+
+
+
 }
 
 /*
@@ -265,7 +318,7 @@ interface ElTableColumn {
     label?: string
 
     'column-key'?: string
-    prop?: string
+    prop: string
 
     /** 列宽 */
     width?: string | number

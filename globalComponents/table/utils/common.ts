@@ -72,6 +72,9 @@
 //     return /^(https?|ftp|mailto|tel):/.test(path)
 // }
 
+
+type callFunction = any;
+
 /**
  * 防抖
  * @param fn 执行函数
@@ -131,22 +134,6 @@ export const getArrayKey = (arr: any, pk: string, value: string): any => {
 //     }
 // }
 
-/**
- * 是否在后台应用内
- */
-export const isAdminApp = () => {
-    if (window.location.hash.indexOf('#/admin') === 0) {
-        return true
-    }
-    return false
-
-
-    // if (/^\/admin/.test(router.currentRoute.value.fullPath) || window.location.hash.indexOf('#/admin') === 0) {
-    //     return true
-    // }
-    // return false
-
-}
 
 // /**
 //  * 从一个文件路径中获取文件名
@@ -157,23 +144,6 @@ export const isAdminApp = () => {
 //     return paths[paths.length - 1]
 // }
 
-/**
- * 页面按钮鉴权
- * @param name
- */
-export const auth = (name: string) => {
-
-    return true;
-
-    // const navTabs = useNavTabs()
-    // if (navTabs.state.authNode.has(router.currentRoute.value.path)) {
-    //     if (navTabs.state.authNode.get(router.currentRoute.value.path)!.some((v: string) => v == router.currentRoute.value.path + '/' + name)) {
-    //         return true
-    //     }
-    // }
-    // return false
-
-}
 
 /**
  * 获取资源完整地址

@@ -24,9 +24,6 @@ enum TableRenderType {
     BUTTONS = 'buttons'
 }
 
-window.TableRenderType = TableRenderType;
-
-
 
 export {
     TableRenderType

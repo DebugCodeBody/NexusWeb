@@ -198,9 +198,30 @@ async function toNextHandleFun() {
 
             await openGroup(conversation)
 
-        } catch (err) {
-            alert(`打开群失败：${JSON.stringify(err)}`);
-            break;
+        } catch (err: any) {
+
+            let message = err;
+
+            if (err instanceof Error) {
+                message = err.message
+            } else if (typeof err == "object") {
+
+                message = JSON.stringify(err);
+
+                if (message == "{}") {
+                    message = ""
+                }
+
+            }
+
+
+            if (message) {
+                message += `\r\n${element.name}`
+                alert(`打开群失败：${message}`);
+                break;
+            }
+
+
         }
 
         if (isOpen) {

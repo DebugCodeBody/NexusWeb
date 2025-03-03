@@ -1,4 +1,50 @@
-import createAxios from "../utils/axios"
+// import createAxios from "../utils/axios"
+
+import axios, { AxiosPromise, Method } from 'axios'
+import type { AxiosRequestConfig } from 'axios'
+
+function createAxios(axiosConfig: AxiosRequestConfig, options: any = {}, loading: any = {}): ApiPromise | AxiosPromise {
+
+
+    const Axios = axios.create({
+        baseURL: "http://192.168.0.205:8011/ding/nexus/admin",
+        timeout: 1000 * 10,
+        headers: {
+            'Content-Type': 'application/json'
+
+        }
+    })
+
+
+
+
+    Axios.interceptors.response.use(
+
+        response => {
+            const res = response.data
+            if (res.code !== 200) {
+                return Promise.reject(new Error(res.msg || 'Error'))
+            } else {
+                return res.data;
+            }
+        },
+        error => {
+            if (error.message == "Network Error") {
+                error.message = "网络连接失败！"
+            }
+            return Promise.reject(error)
+        }
+    )
+
+
+    axiosConfig.params = axiosConfig.params || {};
+
+    axiosConfig.params.authorization = "85e141710a25880d6f498f4522dfc283";
+
+
+
+    return Axios(axiosConfig) as any;
+}
 
 /**
  * 生成一个控制器的：增、删、改、查、排序的操作url
@@ -78,3 +124,12 @@ export class baTableApi {
     }
 
 }
+
+
+
+
+//     this.table.data = data.list;
+//     this.table.total = data.totalCount;
+
+
+
