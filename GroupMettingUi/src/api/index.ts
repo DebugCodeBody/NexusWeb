@@ -96,7 +96,8 @@ export function getList(data: any) {
     }) as any as Promise<{
         data: mettItem[],
         filter: string[],
-        hectic: string[]
+        hectic: string[],
+        total: number
     }>
 }
 

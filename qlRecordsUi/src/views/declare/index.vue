@@ -41,11 +41,10 @@
 
                         </div>
 
-                        <el-result v-if="submitDone" icon="success" title="提交成功" class="success-result">
+                        <el-result v-if="submitDone" icon="success" :title="resultTitle" class="success-result">
                             <template #extra>
                                 <div class="flex items-center">
-                                    <span>{{ successTitle }}：</span>
-                                    <el-tag>{{ scanResult.setSpec }}</el-tag>
+                                    <h1 class="set-spec">{{ scanResult.setSpec }}</h1>
                                 </div>
                             </template>
 
@@ -117,6 +116,11 @@ const scanTitle = $computed(() => {
 
 })
 
+const resultTitle = $computed(() => {
+
+    return `登记${scanTitle}成功`
+
+})
 
 const title = $computed(() => {
 
@@ -476,5 +480,13 @@ export default {
 
     }
 
+    .set-spec{
+        
+        font-size: 24px;
+        font-weight: bold;
+
+    }
+
 }
 </style>
+

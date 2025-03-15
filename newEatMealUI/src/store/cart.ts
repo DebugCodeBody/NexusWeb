@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { getShowName, getSelectAtt, getSelectAttributeObject, getDefautlDayArray } from "@/utils/other"
 
+import dayjs from "dayjs"
+
+import { getShop } from "@/api"
+
 
 
 
@@ -8,16 +12,26 @@ import { getShowName, getSelectAtt, getSelectAttributeObject, getDefautlDayArray
 interface State {
     data: Map<Time, dateFoodCard>
 
+    delData: Map<Time, dateFoodCard>
+
     foodNum: number,
     packNum: number,
-    stopStorage: boolean
+    stopStorage: boolean,
+
+    isCach: boolean
 }
 
 const state: State = {
     data: new Map<Time, dateFoodCard>(),
+
+    delData: new Map<Time, dateFoodCard>(),
+
     packNum: 0,
     foodNum: 0,
-    stopStorage: false
+    stopStorage: false,
+
+    /** 是否缓存添加数据 */
+    isCach: false
 }
 
 
@@ -71,13 +85,45 @@ function equalAttr(a: foodCard, b: foodCard) {
 
 
 
+
+
+
 const store = defineStore("cart", {
     state() {
+        window.cart = state;
         return state
     },
     getters: {
+        /** 是否全部打包 */
         allPack(): boolean {
-            return this.foodNum > 0 && this.foodNum === this.packNum;
+
+
+            let { foodNum, packNum } = this;
+
+            if (foodNum > 0) {
+
+                for (const [time, data] of this.data.entries()) {
+
+                    if (time.disabled) {
+                        const alldata = [].concat(...(data as any));
+
+
+                        alldata.forEach((elem:any)=>{
+
+                            packNum -= elem.pack ? 1: 0;
+                        })
+
+                        foodNum -= alldata.length;
+
+                    }
+
+                }
+
+
+            }
+
+
+            return foodNum > 0 && foodNum === packNum;
         },
 
         /** 平坦化所有已点的菜单 */
@@ -101,6 +147,7 @@ const store = defineStore("cart", {
         }
     },
     actions: {
+
         /** 设置全部打包的选中 */
         setAllPack(value: boolean) {
 
@@ -110,12 +157,12 @@ const store = defineStore("cart", {
 
             this.flattenFood.forEach((elem) => {
                 if (elem.pack != value) {
-                    elem.pack = value;
-                    elem.submit = false;
+                    this.changePackFood(elem, value);
                 }
             })
 
         },
+
         /** 设置全部菜品是否已提交 */
         setAllSubmit(value: boolean) {
 
@@ -129,9 +176,25 @@ const store = defineStore("cart", {
 
         },
 
+        /** 设置全部菜品是否新加入 */
+        setAllNewAdd(value: boolean) {
+
+            if (this.foodNum == 0) {
+                return;
+            }
+
+            this.flattenFood.forEach((elem) => {
+                elem.isNewAdd = value;
+            })
+
+        },
+
         /** 修改某个菜品的打包状态 */
         changePackFood(item: foodCard, value: boolean) {
+
+
             item.pack = value;
+            item.submit = false;
             this.packNum += value ? 1 : -1;
         },
 
@@ -149,13 +212,10 @@ const store = defineStore("cart", {
                 options = {};
             }
 
-
-
             /** 取出当天是否有加购过菜品 */
             let dateCart = this.data.get(YMD)!;
             if (!dateCart) {
                 dateCart = (getDefautlDayArray() as any);
-
 
                 this.data.set(YMD, dateCart);
             }
@@ -178,7 +238,9 @@ const store = defineStore("cart", {
                 price: addFood.showPrice,
                 name: getShowName(addFood.name, attributes, specFoods),
 
-                mealTime: Time
+                mealTime: Time,
+
+                isNewAdd: false
 
             }
 
@@ -187,6 +249,11 @@ const store = defineStore("cart", {
             if (oldFoodArr.length > 0) {
                 oldFoodItem = oldFoodArr.find((elem) => equalAttr(arrt, elem))
             }
+
+            if(oldFoodItem && options.oneOff){
+                return;
+            }
+
 
             if (oldFoodItem) {
                 /** 如果已经加购过这个菜，且菜的属性完全一直，那么只需要增加数量即可 */
@@ -201,20 +268,42 @@ const store = defineStore("cart", {
                     if (oldFoodItem.pack) {
                         this.changePackFood(oldFoodItem, false);
                     }
+
+                    /** 如果它不是在这一次新增的话，那么就加入删除列表中 */
+                    if (!oldFoodItem.isNewAdd) {
+
+                        let delCart = this.delData.get(YMD)!;
+                        if (!delCart) {
+                            delCart = (getDefautlDayArray() as any);
+                            this.delData.set(YMD, delCart);
+                        }
+
+                        delCart[Time].push(oldFoodItem);
+
+                    }
+
                 }
 
             } else {
+
+
+                if (!this.isCach) {
+                    arrt.isNewAdd = true;
+                }
 
                 /** 没有加购这个菜，或者加购其他输出，那么就添加进去 */
                 dateCart[Time] = dateCart[Time] || [];
                 dateCart[Time].push(arrt);
 
+
+
                 this.foodNum += 1;
                 if (arrt.pack) {
-                    this.changePackFood(arrt, arrt.pack);
+                    this.packNum += 1;
                 }
 
             }
+
 
             addFood.cartNum += addNum;
             if (addFood.cartNum == 0) {
@@ -231,9 +320,6 @@ const store = defineStore("cart", {
                 }
 
             }
-
-
-
 
         },
         findDateFoot(YMD: Time, Time: MealTime, addFood: reFood, attributes: attribute[], specFoods: SpecFood[]) {
@@ -270,9 +356,9 @@ const store = defineStore("cart", {
 
             this.data.forEach((dataItem, dayTime) => {
 
-                if (dayTime.disabled) {
-                    return;
-                }
+                // if (dayTime.disabled) {
+                //     return;
+                // }
 
                 saveObj[dayTime.YMD] = dataItem.map((elem) => {
 
@@ -306,6 +392,8 @@ const store = defineStore("cart", {
          */
         loadStorage(day: Time, foods: typeFood) {
 
+
+            this.isCach = true;
 
             try {
                 const tempCart = JSON.parse(localStorage.getItem(localKey)!)[day.YMD] as dateFoodCard
@@ -377,14 +465,21 @@ const store = defineStore("cart", {
 
 
             } catch {
-                return
+
+                const a = 100;
+
             }
 
+
+            this.isCach = false;
 
         },
 
         /** 把上一次的购物记录添加进来 */
         setHistory(day: Time, foods: typeFood, historyItem: historyFood) {
+
+
+            this.isCach = true;
 
 
             /** 分割名字，取出菜名和所有的属性 */
@@ -424,24 +519,36 @@ const store = defineStore("cart", {
 
                 } else {
 
-                    list.find((attItem) => {
+                    /** 
+                     * 
+                     * 这里从find改成forEach
+                     * 如果一个菜单有多个属性的话，使用find只会遍历了一个属性，导致添加的菜单会出问题
+                     * 
+                     */
+                    list.forEach((attItem) => {
 
                         const findIndex = attItem.details.findIndex((detailItem) => attr.indexOf(detailItem.name) > -1)
                         const retBool = findIndex > -1;
                         if (retBool) {
 
-                            const cloneAttributes = JSON.parse(JSON.stringify(attItem)) as typeof attItem
-
+                            /**
+                             * 要先把选中先处理
+                             * 因为有人会多选米饭的重量，比如在同一时间点了两份。二两和三两，三两和四两
+                             * 
+                             * 如果先克隆了 attItem 的话，就会出现第二个米饭没有选中的bug
+                             * 没有选中后添加到购物车，就只会有 "米饭" 的商品。提交的话就会出现菜品已下架的问题
+                             * 
+                             */
                             attItem.details.forEach((temp, index) => {
                                 temp.selected = index == findIndex;
                             })
 
+                            const cloneAttributes = JSON.parse(JSON.stringify(attItem)) as typeof attItem
                             cloneAttributes.details = [cloneAttributes.details[findIndex]]
                             addList.push(cloneAttributes)
 
                         }
 
-                        return retBool;
 
                     })
                 }
@@ -494,7 +601,146 @@ const store = defineStore("cart", {
 
             })
 
+
+            this.isCach = false;
+
+
         },
+
+        /** 餐餐有添加购物记录 */
+        ccySetHistory(day: Time, foods: typeFood, historyItem: historyFood) {
+
+
+            this.isCach = true;
+
+
+            /** 分割名字，取出菜名和所有的属性 */
+            function splitName(name: string) {
+                const retVal = {
+                    name,
+                    attr: [] as string[]
+                }
+
+                const search = name.match(/\((.*)\)/)
+                if (search) {
+                    retVal.attr = search[1].split("/");
+                    retVal.name = name.split(search[0])[0]
+                }
+
+                return retVal
+            }
+
+            /**
+             * 
+             * @param addList 要把属性添加进去的数组
+             * @param list 当天菜品中的属性
+             * @param attr 历史购物中的属性，是一个文本型数组
+             */
+            function findAttr(addList: attribute[], list: attribute[], attr: string[]) {
+
+
+                /** 如果没有属性的话，就是一个"正常"的，那就把所有的属性左边给选中 */
+                if (attr.length == 0) {
+                    list.map((elem) => {
+                        const cloneAttributes = JSON.parse(JSON.stringify(elem)) as typeof elem
+
+                        cloneAttributes.details = [cloneAttributes.details[0]];
+                        cloneAttributes.details[0].selected = true;
+                        addList.push(cloneAttributes)
+                    })
+
+                } else {
+
+                    /** 
+                     * 
+                     * 这里从find改成forEach
+                     * 如果一个菜单有多个属性的话，使用find只会遍历了一个属性，导致添加的菜单会出问题
+                     * 
+                     */
+                    list.forEach((attItem) => {
+
+                        const findIndex = attItem.details.findIndex((detailItem) => attr.indexOf(detailItem.name) > -1)
+                        const retBool = findIndex > -1;
+                        if (retBool) {
+
+                            /**
+                             * 要先把选中先处理
+                             * 因为有人会多选米饭的重量，比如在同一时间点了两份。二两和三两，三两和四两
+                             * 
+                             * 如果先克隆了 attItem 的话，就会出现第二个米饭没有选中的bug
+                             * 没有选中后添加到购物车，就只会有 "米饭" 的商品。提交的话就会出现菜品已下架的问题
+                             * 
+                             */
+                            attItem.details.forEach((temp, index) => {
+                                temp.selected = index == findIndex;
+                            })
+
+                            const cloneAttributes = JSON.parse(JSON.stringify(attItem)) as typeof attItem
+                            cloneAttributes.details = [cloneAttributes.details[findIndex]]
+                            addList.push(cloneAttributes)
+
+                        }
+
+
+                    })
+                }
+
+            }
+
+            
+
+            const allFoods = foods.map((item:any) => item.data ).flat() as reFood[];
+
+
+
+            historyItem.forEach((elem, mealTime) => {
+
+                if (elem.length == 0) {
+                    return;
+                }
+
+
+                elem.forEach((item) => {
+
+                    const attArr = splitName(item.name);
+
+                    /** 通过名字找到相同的菜品 */
+                    const findFoodItem = allFoods.find(elem => elem.name == attArr.name);
+                    if (findFoodItem) {
+
+                        const attributes = [] as attribute[];
+                        const specFoods = [] as SpecFood[];
+
+                        /** 找出点选的属性 */
+                        findAttr(attributes, findFoodItem.attributes, attArr.attr);
+
+                        /** 找出点选的会影响价格属性 */
+                        if (attArr.attr.length > 0) {
+                            findAttr(specFoods, findFoodItem.specFoods, attArr.attr);
+                        }
+
+                        /** 添加菜品 */
+                        this.addDateFoot(day, mealTime, findFoodItem, attributes, specFoods, item.weight, {
+                            pack: item.pack,
+                            submit: true
+                        });
+
+                    }
+
+
+                })
+
+            })
+
+
+            this.isCach = false;
+
+
+        },
+
+
+
+
         /** 清空某一天的历史记录 */
         clearDayStorage(day: Time) {
             try {
@@ -508,10 +754,52 @@ const store = defineStore("cart", {
                 return;
             }
 
+        },
+
+        /** 获取全部的待删除 */
+        getDelData() {
+
+            const retObj: any = {};
+            for (const [time, data] of this.delData.entries()) {
+
+
+                const dateObg = retObj[time.YMD] = retObj[time.YMD] || {};
+
+
+                data.forEach((elem, timeIndex) => {
+
+                    if (elem.length == 0) {
+                        return;
+                    }
+
+
+                    timeIndex += 1;
+                    const dataArr = dateObg[timeIndex] = dateObg[timeIndex] || new Set();
+
+                    elem.forEach((item) => {
+                        dataArr.add(item.name);
+                    })
+
+                    dateObg[timeIndex] = [...dataArr];
+
+                })
+
+            }
+
+            return retObj;
+
+        },
+
+        /** 清空待删除的数据 */
+        clearDelData() {
+
+            this.delData.clear();
         }
 
     }
 })
+
+
 
 
 export default store;
@@ -519,3 +807,4 @@ export default store;
 export function addFoodchange(call: any) {
     eventList.push(call);
 }
+

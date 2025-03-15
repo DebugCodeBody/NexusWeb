@@ -29,7 +29,9 @@ async function produGet() {
 
     const sendData = { "all": true, "search": [], "filter": [], "track": [], "comm": [], "create": [], "value": "", "result": [], "isSync": true, "isFollow": false, "isTenDay": false, "filterLong": false, "noGroup": true, "haveGroup": true, "outTime": true, "isLeave": false, "isHectic": false };
 
-    const { data } = await getProdu(sendData);
+    const { data , total } = await getProdu(sendData) as any;
+
+    (data as any).total = total
 
     return data;
 
@@ -41,7 +43,9 @@ async function listGet() {
     const sendData = { "all": true, "search": [], "filter": [], "track": [], "comm": [], "create": [], "value": "", "result": [], "isSync": true, "isFollow": false, "isTenDay": false, "filterLong": false, "noGroup": true, "haveGroup": true, "outTime": false, "isLeave": false, "isHectic": false };
 
 
-    const { data } = await getList(sendData);
+    const { data, total } = await getList(sendData) as any;
+
+    (data as any).total = total
 
     return data;
 
@@ -74,9 +78,10 @@ async function followGet() {
     }
 
 
-    const { data } = await getFollow(sendData);
+    const { data  , total } = await getFollow(sendData) as any;
 
-
+    (data as any).total = total
+    
     return data;
 
 
@@ -277,6 +282,7 @@ export function toHandle() {
 
 
 export async function getNextCount() {
+    debugger;
 
     const allRun = getArr.map((item) => {
 
@@ -298,13 +304,14 @@ export async function getNextCount() {
 
     const result = allResult.map((item, index) => {
 
+
         const [err, data] = item;
 
         getArr[index].data = err ? [] : data;
 
         return {
             name: item.name,
-            count: getArr[index].data.length
+            count: (getArr[index].data as any).total
         }
 
     })

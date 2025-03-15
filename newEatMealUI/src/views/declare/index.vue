@@ -6,39 +6,9 @@
             <template v-if="!loadError">
 
                 <template v-if="foodDataType.length">
-                    <div class="w-full p-10px mb-10px rounded-10px flex flex-wrap overflow-y-auto food-block "
-                        v-for="foodType in foodDataType" :key="foodType.name" :class="{
-                            'food-odd-block': foodType.data.length % 2 == 1
-                        }">
-
-                        <div class="w-1/2 mb-10px food-item-block " v-for="foodItem in foodType.data"
-                            :key="foodItem.name" @click="onClickFoodItem(foodItem)">
-                            <div class="rounded-5px p-5px h-full food-item">
-                                <div class="mb-10px text-16px overflow-hidden show-name">
-                                    <span>{{ foodItem.showName }}</span>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between items-end">
-                                        <span>
-                                            <span class="text-0.85em price">{{ foodItem.showPrice }}</span>
-                                        </span>
-                                        <div>
-                                            <div class="raw-container"
-                                                v-if="foodItem.cartNum == 0 && foodItem.raw.length > 0">
-                                                <p v-for="(rowItem, index) in foodItem.raw" :key="index">{{ rowItem }}
-                                                </p>
-                                            </div>
-                                            <span class="text-16px" v-if="foodItem.cartNum > 0">
-                                                <van-tag plain type="primary">已选购：{{ foodItem.cartNum }}</van-tag>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
+                    <dishes-type v-for="foodType in foodDataType" :key="foodType.name" :class="{
+                        'food-odd-block': foodType.data.length % 2 == 1
+                    }" :food-list="foodType.data" @click="onClickFoodItem" />
                 </template>
                 <van-empty v-else-if="!loadList" description="当天未排餐" />
 
@@ -52,29 +22,8 @@
 
         <div class="h-105px w-full navbar flex flex-col">
 
-            <div class="p-10px flex justify-between navbar_time ">
-
-                <div class="time-item" v-for="(item, index) in time.MealTimeArr" :key="item.value"
-                    @click="time.setMealTime(item.value)">
-                    <van-badge :dot="!!utipTime[index]">
-                        <van-button plain size="small" :type="item.value == time.selectMealTime ? 'primary' : 'default'
-                        ">{{ item.key }}</van-button>
-                    </van-badge>
-                </div>
-
-                <div class="time-item">
-                    <van-badge :dot="false">
-                        <van-button plain type="default" size="small" @click="view.toView('details')">已点</van-button>
-                    </van-badge>
-                </div>
-
-                <div class="time-item">
-                    <van-badge :dot="cart.dot">
-                        <van-button plain type="default" size="small" @click="view.toView('orderCart')">提交</van-button>
-                    </van-badge>
-                </div>
-
-            </div>
+            <meal-time :time-list="MealTimeArr" :utip-time="utipTime" :select="time.selectMealTime"
+                @click="onClickMealTime" />
 
             <div class="flex-1 flex justify-between navbar_date">
 
@@ -85,19 +34,25 @@
                         </div>
                     </van-badge>
                 </div>
-                <div class="flex-1 text-center navbar_date-item" v-for="dateItem in time.getActivaWeekTime"
-                    @click="time.setSelectTime(dateItem)" :key="dateItem.YMD" :class="{
-                        disabled: dateItem.disabled,
-                        select: dateItem.select
-                    }">
-                    <van-badge :dot="getUtipYMD(dateItem)">
-                        <div class="flex flex-col content-center text-12px">
-                            <p>{{ dateItem.week }}</p>
-                            <p class="mt-5px">{{ dateItem.MD }}</p>
-                        </div>
-                    </van-badge>
-                    <time-stop v-if="dateItem.disabled"></time-stop>
-                </div>
+                
+                <template v-for="dateItem in time.getActivaWeekTime" :key="dateItem.YMD">
+                    <div class="flex-1 text-center navbar_date-item" v-if="dateItem.show"
+                        @click="time.setSelectTime(dateItem)" :class="{
+                            disabled: dateItem.disabled,
+                            select: dateItem.select
+                        }">
+                        <van-badge :dot="getUtipYMD(dateItem)">
+                            <div class="flex flex-col content-center text-12px">
+                                <p>{{ dateItem.week }}</p>
+                                <p class="mt-5px">{{ dateItem.MD }}</p>
+                            </div>
+                        </van-badge>
+                        <time-stop v-if="dateItem.disabled"></time-stop>
+                    </div>
+
+
+                </template>
+
                 <div class="flex-1 text-center navbar_date-item" v-if="time.isNow" @click="onClickSetSelectWeek(false)">
                     <van-badge :dot="utip.next">
                         <div class="flex flex-col content-center text-12px">
@@ -117,13 +72,20 @@ import to from "await-to-js"
 import { debounce } from "@/utils/other"
 
 import propertySelector from "./propertySelector.vue"
+import dishesType from "@/components/dishesType/index.vue"
+import mealTime from "@/components/mealTime/index.vue"
+
+
+
 
 import timeStop from "@/components/stop.vue"
 
 
-import { getDateFood, getUtip } from "@/api"
+import { getDateFood, getUtip, getSundayShow } from "@/api"
 import { timeStore, viewStore, cartStore, foodListStore, utipStore } from "@/store"
 import { getShowName, getDefautlDayArray } from "@/utils/other"
+
+
 
 /**
 * 生成一个ref的菜单
@@ -206,25 +168,68 @@ const foodDataType = $computed(() => {
 /** 某一天中四个时间段的红点显示，默认不显示 */
 const utipTime = $computed(() => {
 
-    let retVal = utip[time.getActiveWeekDay.YMD];
+    let retVal = [...utip[time.getActiveWeekDay.YMD]];
     if (!retVal || time.getActiveWeekDay.disabled) {
         retVal = [0, 0, 0, 0];
     }
 
+    retVal.push(0);
+    retVal.push(cart.dot);
+
+
     return retVal
 })
+
+
+const MealTimeArr = $computed(() => {
+
+    const retVal = [...time.MealTimeArr];
+
+    retVal.push({
+        key: "已点",
+        dot: false,
+        value: "details" as any
+    });
+    retVal.push({
+        key: "提交",
+        dot: false,
+        value: "orderCart" as any
+    });
+
+    return retVal;
+
+})
+
 
 
 function getUtipYMD(week: Time) {
     return !week.disabled && (utip[week.YMD] || [0, 0, 0, 0]).some((elem: number) => elem == 1)
 }
 
+/** 选中某个菜品 */
 function onClickFoodItem(value: any) {
     if (!dayDisabled) {
         foodList.setSelect(value);
     }
 }
 
+/** 选中某个时间段或者其他 */
+function onClickMealTime(value: any) {
+
+    const findItem = MealTimeArr.slice(-2).find((elem) => elem.value == value)
+    if (findItem) {
+        view.toView(value)
+    } else {
+        time.setMealTime(value)
+    }
+
+
+}
+
+/**
+ * 切换周
+ * @param value 是否选中当前周
+ */
 function onClickSetSelectWeek(value: boolean) {
     time.setSelectWeek(value);
 }
@@ -270,6 +275,15 @@ watch(cart.data, (value) => {
 
 async function getDataList(value: string) {
 
+
+    if (!time.order.getSundayShow) {
+
+        const val = await getSundayShow(time.isNow);
+        time.setSundayShow(val);
+
+    }
+
+
     if (!foodList.date[value]) {
 
         loadList = true;
@@ -304,7 +318,10 @@ async function getDataList(value: string) {
 
         stopStorage = true;
 
-        cart.setHistory(time.getActiveWeekDay, foodList.date[value], response.shop)
+
+        /** 添加历史记录 */
+        cart.setHistory(time.getActiveWeekDay, foodList.date[value], response.shop);
+
         if (time.getActiveWeekDay.disabled) {
             cart.clearDayStorage(time.getActiveWeekDay)
         } else {
@@ -330,9 +347,9 @@ async function init() {
     utip.nextWeek = response[0].nextWeek
 
     const { allTime } = time;
-    for (const [key, value]  of Object.entries(Object.assign({}, utip.nowWeek, utip.nextWeek))) {
+    for (const [key, value] of Object.entries(Object.assign({}, utip.nowWeek, utip.nextWeek))) {
 
-        if (allTime[key].disabled) {
+        if (allTime[key] && allTime[key].disabled) {
             (value as any[]).forEach((elem, index) => {
                 (value as any[])[index] = 0
             })
@@ -340,8 +357,6 @@ async function init() {
 
         utip[key] = value
     }
-
-
 
 }
 
@@ -370,6 +385,7 @@ export default {
 </script>
 
 <style lang="scss">
+
 .price {
     font-weight: 400;
     color: rgb(238, 10, 36);
@@ -435,27 +451,6 @@ export default {
 }
 
 .navbar {
-    background-color: white;
-    border-top: 1px solid rgb(240, 241, 242);
-
-    .navbar_time {
-
-        .time-item {
-            width: 20%;
-            display: flex;
-            justify-content: center;
-            text-align: center;
-
-            .van-badge__wrapper {
-                width: 80%;
-
-                button {
-                    width: 100%;
-                }
-            }
-
-        }
-    }
 
     .navbar_date {
         border-top: 1px solid #ebedf0;

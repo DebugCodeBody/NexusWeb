@@ -25,14 +25,23 @@ class order {
     /** 购物车列表 */
     shopp: any[] = [];
 
+    /** 上一次选中的时间 */
     lastTime: Time = {} as Time;
+
+    /** 当前选中的时间 */
     nowTime: Time = {} as Time;
+    /** 当前选中的时间 年月份 字符串 */
     selectYMD = "";
+
+    /** 是否获取了周日是否显示 */
+    getSundayShow = false;
+
 
     constructor(date: Dayjs) {
 
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 7; i++) {
             const thisDay = date.add(i, 'day');
+
             this.time.push({
                 day: thisDay,
                 YMD: thisDay.format('YYYY-MM-DD'),
@@ -40,11 +49,13 @@ class order {
                 week: thisDay.format('ddd'),
                 select: false,
                 dot: false,
-                disabled: false
+                disabled: false,
+                show: i != 6
             });
         }
 
         this.activateTime(this.time[0]);
+
 
     }
 
@@ -63,10 +74,13 @@ class order {
 }
 
 
-const nowDate = dayjs(getSearch("day") || undefined).startOf('day');
+
+let nowDate = dayjs(getSearch("day") || undefined).startOf('day');
+
+/** 是否周日 */
 const isSunday = nowDate.day() === 0;
 if (isSunday) {
-    nowDate.add(1, "day",);
+    nowDate = nowDate.add(1, "day",);
 }
 
 const noewWeekDate = nowDate.startOf('week');
@@ -87,6 +101,7 @@ if (!isSunday) {
         elem.disabled = elem.day.diff(nowDate, "day") <= 0;
         elem.dot = !elem.disabled;
     });
+    
 }
 
 
@@ -129,8 +144,8 @@ const state = {
             value: MealTime.supper
         }
 
-    ]
-
+    ] as timeItem[]
+ 
 }
 
 
@@ -215,9 +230,41 @@ const timeStore = defineStore("time", {
 
             }) as Time[]
 
+        },
+
+        setSundayShow(value:boolean){
+            this.order.getSundayShow = true;
+            this.getActivaWeekTime[this.getActivaWeekTime.length - 1].show = value;
+        },
+
+        getNowOrderTime(value:string){
+
+
+            const findItem = nowOrder.time.find((item) => {
+
+                return item.YMD === value
+
+            })!;
+
+            return findItem;
+
+
+        },
+
+        getOrderTime(value:string){
+
+
+            const findItem = this.order.time.find((item) => {
+
+                return item.YMD === value
+
+            })!;
+
+            return findItem;
 
 
         }
+
     }
 
 })

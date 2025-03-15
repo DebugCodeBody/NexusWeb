@@ -1,10 +1,9 @@
 <template>
-
-    <collapse-item :data="item">
+    <collapse-item :data="item" :resize="onResize" :drag="draggable">
         <template #default="{ foodItem, MealTime }">
-            <div class="flex justify-between">
-                <van-checkbox v-model="foodItem.pack" shape="square"
-                    @change="onFoodCPackChange(foodItem, foodItem.pack)" :label-disabled="submitDone">{{
+            <div class="flex justify-between" draggable="true">
+                <van-checkbox v-model="foodItem.pack" shape="square" @click="onFoodCPackChange(foodItem, foodItem.pack)"
+                    :label-disabled="submitDone">{{
                         foodItem.name
                     }}</van-checkbox>
                 <div class="absolute right-1/3 reminder-tab">
@@ -19,10 +18,10 @@
         </template>
 
     </collapse-item>
-
 </template>
 
 <script setup lang="ts">
+import { Resize } from "global@/Draggable/index.vue"
 import { cartStore } from "@/store";
 
 import collapseItem from "@/views/components/collapseItem.vue"
@@ -34,19 +33,37 @@ const Props = withDefaults(defineProps<{
 
     mdTime: Time,
     item: dateFoodCard,
-    submitDone?: boolean
+    submitDone?: boolean,
+    draggable?: boolean,
+    disabledPack?: boolean
 }>(), {
-    submitDone: false
+    submitDone: false,
+    draggable: false,
+    disabledPack: false
 })
 
 const cart = cartStore();
 
 function onFoodCPackChange(item: foodCard, value: boolean) {
+    if(Props.disabledPack){
+        return;
+    }
     cart.changePackFood(item, value);
 }
 function onNumChange(time: MealTime, item: foodCard, num: number) {
     cart.addDateFoot(Props.mdTime, time, item.food, item.attributes, item.specFoods, num);
 }
+
+function onResize(item: Resize<dateFoodCard>) {
+
+
+
+
+    return false;
+
+
+}
+
 
 
 </script>
@@ -57,6 +74,4 @@ export default {
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

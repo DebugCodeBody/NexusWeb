@@ -17,6 +17,7 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "warn",
     "vue/multi-word-component-names":"off",
     "no-inner-declarations":"warn",
+    "no-async-promise-executor":"warn",
     "no-undef":"warn"
   },
 };

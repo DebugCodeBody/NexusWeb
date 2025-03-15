@@ -87,6 +87,6 @@ export function getShowName(name: string, atts: attribute[], spatts: attribute[]
 
 
 export function getDefautlDayArray() {
-    return [[], [], [], []] as dateFoodCard 
+    return [[], [], [], []] as dateFoodCard
 }
 

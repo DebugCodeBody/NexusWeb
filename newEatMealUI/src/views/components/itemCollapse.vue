@@ -10,7 +10,10 @@
                 <van-collapse v-model="activeNames" ref="collapse">
                     <van-collapse-item v-for="[key, value] in dataList" :key="key.YMD">
                         <template #title>
-                            <div>{{ key.MD }} {{ key.week }}</div>
+                            <div v-if="Slots.title">
+                                <slot name="title" :item="key"></slot>
+                            </div>
+                            <div v-else>{{ key.MD }} {{ key.week }}</div>
                         </template>
                         <slot :mdTime="key" :item="value"></slot>
                     </van-collapse-item>
@@ -31,6 +34,7 @@
 
 <script setup lang="ts">
 
+const Slots = useSlots();
 
 const Props = withDefaults(defineProps<{
     dataList: Array<[Time, dateFoodCard]>,

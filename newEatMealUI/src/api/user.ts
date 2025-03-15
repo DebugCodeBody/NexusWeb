@@ -37,3 +37,10 @@ export function tokenLogin(user: string) {
         }
     }) as unknown as Promise<userInfo>
 }
+
+export function getCorpId() {
+    return request({
+        url: `${baseUrl}/auth/corpid`,
+    }) as unknown as Promise<string[]>
+}
+

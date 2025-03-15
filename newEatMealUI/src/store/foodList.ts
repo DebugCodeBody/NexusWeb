@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
 
+import { getCcy } from "@/api/ccy"
+
+import { getShop } from "@/api"
+
+import dayjs from "dayjs"
+
 /**
  * 取出被选中的列表
  * @param atts 
@@ -58,3 +64,29 @@ export default defineStore("foodList", {
         }
     }
 })
+
+
+export const getCcyData =  (function () {
+
+
+    let data: any = undefined, shopResult:any = undefined;
+
+    return async function () {
+
+        
+        if(data == undefined){
+
+            data = await getCcy()
+
+            shopResult = await getShop(data.date[0])
+
+        }
+
+
+        return [data, shopResult];
+
+    }
+
+})();
+
+

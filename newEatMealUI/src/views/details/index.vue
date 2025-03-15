@@ -14,9 +14,8 @@
                         <div class="content">
                             <div>{{ foodItem.name }}</div>
                             <div class="mt-5px">
-                                <span>{{ foodItem.weight }}</span>
-                                <span class="ml-5px"><van-tag plain type="primary"
-                                        v-if="foodItem.pack">打包</van-tag></span>
+                                <span>{{ foodItem.weight! }}</span>
+                                <span class="ml-5px"><van-tag plain type="primary" v-if="foodItem.pack">打包</van-tag></span>
                             </div>
                         </div>
                     </template>
@@ -24,7 +23,7 @@
             </template>
 
             <template #empty>
-                <van-empty description="本周暂未点餐" > </van-empty>
+                <van-empty description="本周暂未点餐"> </van-empty>
             </template>
 
             <template #footer>
@@ -55,12 +54,12 @@ async function init() {
 
     try {
 
-        const allResult = await Promise.all([getTotleCost(), getWeekOrder(time.getActiveWeekDateYMD)]) as any;
+        const allResult = await Promise.all([getTotleCost(), getWeekOrder(time.getActiveWeekDateYMD)]);
 
-        amount = (allResult[0] as any).cost;
+        amount = allResult[0].cost;
 
         time.getActivaWeekTime.forEach((elem) => {
-            if(allResult[1][elem.YMD]){
+            if (allResult[1][elem.YMD]) {
                 dataList.push([elem, allResult[1][elem.YMD]]);
             }
         })
@@ -69,14 +68,9 @@ async function init() {
             collapse.toggleAll();
         })
 
-
     } catch (error) {
         console.log(error);
-
     }
-
-
-
 
 }
 
@@ -98,13 +92,16 @@ export default {
 <style lang="scss">
 #details {
     .details-list {
+
+
+
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
 
         .item {
 
-            width: 50%;
+            width: 100%;
 
 
             &:nth-child(odd) {
@@ -122,6 +119,20 @@ export default {
                 border-radius: 10px;
                 color: black;
 
+
+            }
+        }
+
+        .draggable-content {
+            width: 100%;
+
+            .draggable-list {
+                display: flex;
+                flex-wrap: wrap;
+
+                .drag-item {
+                    width: 50%;
+                }
 
             }
         }

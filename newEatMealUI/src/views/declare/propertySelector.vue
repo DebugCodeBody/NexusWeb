@@ -1,5 +1,9 @@
 <template>
-    <van-popup v-model:show="foodList.propertySelector" round position="bottom" class=" p-10px pt-20px "
+    <van-popup 
+        v-model:show="foodList.propertySelector" 
+        round 
+        position="bottom" 
+        class=" p-10px pt-20px "
         @open="onPopupOpen" @closed="onPopupClose">
         <div class="flex flex-col popup-attribute-select" ref="popupSelect">
 

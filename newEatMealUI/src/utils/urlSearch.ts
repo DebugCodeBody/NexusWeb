@@ -29,8 +29,6 @@ export function getUserToken(): string {
 }
 
 
-
-
 export default function getSearch(key: string): string {
     return urlSearch[key] as string || String.Empty;
 }

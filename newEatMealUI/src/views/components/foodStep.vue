@@ -1,5 +1,5 @@
 <template>
-    <van-stepper v-model="value" :before-change="beforeChange" :min="min" :disable-input="true" :long-press="false" />
+    <van-stepper v-model="value" :before-change="beforeChange" :min="min" :disable-input="true" :long-press="false" :disabled="disabled" />
 </template>
 
 <script setup lang="ts">
@@ -13,11 +13,14 @@ interface Emits {
 
 
 const Emit = defineEmits<Emits>();
-const Props = defineProps<{
+const Props = withDefaults(defineProps<{
     modelValue: number,
     data: reFood,
-    min: number
-}>();
+    min: number,
+    disabled?: boolean
+}>(), {
+    disabled: false
+});
 
 
 const value = $computed({

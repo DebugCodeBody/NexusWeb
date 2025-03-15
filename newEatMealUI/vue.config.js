@@ -39,7 +39,8 @@ module.exports = defineConfig({
 	productionSourceMap: false,
 	devServer: {
 		proxy: getDevServerProxy({
-			"/api/auto": "/ding/auto",
+			"/api/auto/": "/ding/auto/",
+			"/api/auth": "/ding/auth",
 			"/api": `/ding/${getApiPath()}`
 		})
 	},
@@ -56,11 +57,9 @@ module.exports = defineConfig({
 				}
 			});
 
-		const globalComponentsPath = path.join(__dirname, "../globalComponents") 
-
 		config.resolve.alias
 			.set('@', path.join(__dirname, './src'))
-			.set('global@', globalComponentsPath);
+			.set('global@', 'H:/private/globalComponents');
 
 		if (process.env.NODE_ENV == "production") {
 			// config.plugin('compiler').use(HtmlWebpackInjectorPlugin)

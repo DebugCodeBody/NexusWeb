@@ -1,36 +1,73 @@
 <template>
-
     <div class="food-list">
         <template v-for="(item, index) in data" :key="index">
             <div class="mb-5px meal-time-container" v-if="item.length">
                 <div class="mb-5px" style="color:black">
-                    <div></div>
                     <span>{{ time.MealTimeArr[index].key }}</span>
                 </div>
                 <div :class="listClass">
-                    <div v-for="food in item" :key="food.name + index" class="py-5px relative item">
-                        <slot :foodItem="food" :MealTime="index"></slot>
-                        
-                    </div>
+
+                    <draggable :data="item" :itemkey="'name'" :bind="item" :resize="onResize" v-if="drag">
+                        <template #default="{ element }">
+                            <div class="py-5px relative item">
+                                <slot :foodItem="element" :MealTime="index"></slot>
+                            </div>
+                        </template>
+
+                    </draggable>
+                    
+                    <template v-for="(dataItem,dataIndex) in item" :key="dataIndex" v-else>
+                        <div class="py-5px relative item" >
+                            <slot :foodItem="dataItem" :MealTime="index"></slot>
+                        </div>
+                    </template>
+
+
+                    
+    
+
                 </div>
             </div>
         </template>
     </div>
-
 </template>
 
 <script setup lang="ts">
+import Draggable, { Resize } from "global@/Draggable/index.vue"
+
 import { timeStore } from "@/store";
+
+
 
 
 const Props = withDefaults(defineProps<{
     data: dateFoodCard,
-    listClass?: string
+    listClass?: string,
+    /**  */
+    drag?:boolean
 }>(), {
-
+    drag: false
 });
 
 const time = timeStore();
+
+
+function onResize(item: Resize<dateFoodCard>) {
+
+
+    let retVal = false; 
+    if(window.itemResize){
+        retVal = !!window.itemResize(item);
+    }
+
+    return retVal;
+    
+    
+    
+
+
+
+}
 
 
 
@@ -43,5 +80,7 @@ export default {
 </script>
 
 <style lang="scss">
-
+#app {
+    position: relative;
+}
 </style>

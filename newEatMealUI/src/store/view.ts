@@ -5,7 +5,10 @@ import { getPathSearch } from "@/utils/urlSearch"
 
 
 const state = {
-    path: getPathSearch() || "declare"
+    last: "",
+    path: getPathSearch() || "declare",
+    fcardid: "",
+    license: false
 }
 
 
@@ -17,7 +20,14 @@ export default defineStore("view", {
     actions: {
 
         toView(toPath: string) {
+            
+            this.last = this.path;
             this.path = toPath;
+            
+        },
+        toLast(){
+
+            this.path = this.last;
         }
     }
 

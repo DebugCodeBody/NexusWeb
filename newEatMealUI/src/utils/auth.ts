@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import { getCorpId } from "@/utils/urlSearch"
+import { getCorpId } from "@/api/user"
 
 
 const TokenKey = 'appToken'
@@ -29,18 +29,49 @@ export function isDing(): boolean {
  * 检查钉钉免登code是否可用
  * @returns 
  */
-export function checkDingArg() {
+export function checkDingArg(): Promise<{ code: string, corpId: string }> {
 
-    const corpId = getCorpId();
 
-    return dd.runtime.permission.requestAuthCode({
-        corpId
-    }).then((result: any) => {
-        const { code } = result;
-        return {
-            corpId,
-            code
-        };
+    return new Promise(async (resoleve, reject) => {
+
+
+        let corpIdArr: string[];
+        try {
+            corpIdArr = await getCorpId();
+        } catch {
+            reject();
+            return;
+        }
+
+
+
+        let errInfo: any;
+        const nextGet = (index: number) => {
+            if (index > (corpIdArr.length - 1)) {
+                reject();
+                return;
+            }
+
+            const corpId = corpIdArr[index]
+
+            dd.runtime.permission.requestAuthCode({
+                corpId
+            }).then((result: any) => {
+
+                const { code } = result;
+                resoleve({
+                    corpId,
+                    code
+                });
+
+            }).catch((err: Error) => {
+                errInfo = err;
+                nextGet(index + 1);
+            })
+        }
+
+        nextGet(0);
+
     })
 
 }

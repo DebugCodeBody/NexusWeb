@@ -127,7 +127,7 @@
                             <template #label>
                                 <span>
                                     <span>{{ item.label }}</span>
-                                    <span class="view-number ml-5px" v-if="nowActive == item.id">{{ list.length
+                                    <span class="view-number ml-5px" v-if="nowActive == item.id">{{ totalLengt
                                         }}</span>
                                 </span>
                             </template>
@@ -135,7 +135,7 @@
 
                         <div class="prepare-content relative" v-loading="loading" element-loading-text="正在操作中"
                             element-loading-background="rgba(0, 0, 0, 0.7)" v-if="nowActive != settingId">
-                            <collapse-list :data="list">
+                            <collapse-list :data="list" >
 
                                 <template #item="{ item }">
                                     <meet-item :item="item" :type="nowActive" :refresh="refresh" :cancel="cancelUser"
@@ -281,6 +281,7 @@
 </template>
 
 <script setup lang="ts">
+
 import collapseList from "@/components/collapseList.vue"
 import meetItem from "@/components/meetItem.vue"
 import admin from "../admin/index.vue"
@@ -337,7 +338,7 @@ const hecticListEl = $ref<any>();
 
 const list = $ref<mettItems>([]);
 const hectic = $ref<string[]>([]);
-
+let totalLengt = $ref(0)
 
 
 let activeName = $ref(0);
@@ -353,6 +354,8 @@ let viewChange = false;
 let viewId = $ref(getSearch("id"));
 
 let all = $ref(true);
+
+let userInfo = [] as any[];
 
 const whereIdTable = {
 
@@ -699,9 +702,12 @@ async function getData(value: number) {
     dialogSearch.syncList.push(...result.filter);
     
 
+    totalLengt = (result as any).total;
+    userInfo = (result as any).userInfo;
+
     exportData.statistic(result.data);
 
-
+    
 
 
     nowActive = value;
@@ -949,7 +955,6 @@ function onOpenSearchHandle(key: string) {
 
     userList.length = 0;
 
-
     if (nowActive == 2) {
 
         userList.push(...dataList);
@@ -958,40 +963,25 @@ function onOpenSearchHandle(key: string) {
     }
 
 
-    const actorUser = list.map((elem) => elem[key as keyof mettItem]);
 
-    const flatList = actorUser.flat() as any as string[];
+    const tempList = [] as any[];
 
-    const countMap = {} as any;
+    userInfo.forEach((item) => {
 
-    flatList.forEach((elem) => {
-
-        countMap[elem] = countMap[elem] || 0;
-
-        countMap[elem] += 1;
-
-    })
-
-    const userSet = Object.keys(countMap);
-
-    const tempList = [] as userItem[];
-
-    dataList.forEach((elem) => {
-
-        const { name } = elem;
-
-        if (userSet.includes(name)) {
+        const count = item[key];
+        if(count){
 
             tempList.push({
-                name,
-                py: elem.py,
-                count: countMap[name]
-            });
+                name: item.name,
+                py: item.py,
+                count
+            })
 
         }
 
-    })
 
+
+    })
 
 
     userList.push(...tempList);
@@ -1003,20 +993,20 @@ function onOpenSearchHandle(key: string) {
 /** 打开参与人员搜索 */
 function onOpenSearch() {
 
-    onOpenSearchHandle("actor_user");
+    onOpenSearchHandle("actor");
 
 }
 
 /** 打开创建人搜索 */
 function onOpenCreate() {
 
-    onOpenSearchHandle("create_user");
+    onOpenSearchHandle("create");
 
 }
 
 /** 打开执行人搜索 */
 function onOpenTrackUser() {
-    onOpenSearchHandle("track_user");
+    onOpenSearchHandle("track");
 }
 
 function onOpenResult() {
@@ -1133,6 +1123,18 @@ function onClickCloseDrawer() {
 function onClickOpenDrawer() {
     
     drawer = true;
+
+}
+
+function infiniteLoad() {
+
+
+// v-infinite-scroll="infiniteLoad"
+
+    console.log(123)
+
+
+
 
 }
 

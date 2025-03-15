@@ -193,6 +193,8 @@ enum MealTime {
 
 /** 一天的封装对象 */
 interface Time {
+  /** 是否显示 */
+  show: boolean,
   /** dayjs对象 */
   day: dayjs,
   /** 2012-10-1的时间字符串 */
@@ -236,6 +238,13 @@ type foodCard = {
   /** 这个菜的时间段 */
   mealTime: MealTime
 
+
+  /** 为了兼容以前的数量，先暂时保留 */
+  weight?: number
+
+  /** 是否新增的菜，这个用来判断从服务端拉取下来的数据是否有这个菜， */
+  isNewAdd: boolean
+
 }
 
 /**
@@ -271,3 +280,12 @@ type historyFood = dayArray<{
 }>
 
 
+
+
+type timeItem = {
+  key: string;
+  dot: boolean;
+  value: MealTime;
+  disabled?: boolean,
+  event?: () => void
+}

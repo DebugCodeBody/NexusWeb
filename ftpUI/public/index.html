@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #box{
+            margin-top: 100px;
+            text-align: center;
+        }
+        #box h1{
+            margin-bottom: 10px;
+        }
+        #box ul{
+            margin-top: 10px;
+        }
+        #box.hidden{
+          display: none;
+        }
+        li{
+          list-style: none;
+        }
+    </style>
+    <script>
+      function isIE() {
+        const ua = window.navigator.userAgent;
+        return ua.indexOf('MSIE') > -1 || ua.indexOf('Trident') > -1;
+      }
+
+      if(isIE()){
+
+        window.onload=function(){
+          var box = document.getElementById("box");
+        box.removeAttribute("class")
+        }
+      }
+
+
+
+    </script>
+
+    
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.13.42/dingtalk.open.js"></script>
+    
+    <% if(process.env.NODE_ENV == "production")  {%>
+
+      <% eval("debugger;") %>
+      
+
+      <link href="/ding/media/static/element-plus/2.2.6/index.css" rel="stylesheet">
+      <script src="/ding/media/static/axios/0.27.2/axios.min.js"></script>
+      <script src="/ding/media/static/vue/3.2.37/vue.global.prod.min.js"></script>
+      <script src="/ding/media/static/element-plus/2.2.6/index.full.js"></script>
+
+    <% } %>
+    
+  </head>
+  <body>
+      <div id="box" class="hidden">
+        <h1>暂不支持IE浏览器</h1>
+        <div><span>请安装以下浏览器后重新打开本页面</span></div>
+        <ul>
+            <li>
+                <a href="https://dlie.sogoucdn.com/se/sogou_explorer_11.0.1.34700_0000.exe">搜狗浏览器</a>
+            </li>
+            <li>
+                <a href="http://down.360safe.com/se/360se9.1.0.410.exe">360浏览器</a>
+            </li>
+            <li>
+                <a href="https://pdds-c1-cdn.quark.cn/82-4/stfile/2304/7cc9afd03be13bb24c1713003b177946/QuarkCloudDrive-v2.5.25-release-pckk%40other_ch-20230425171601.exe?auth_key=1683603916-0-0-d8ab6f6b44dae2b22be67ecb39e9346d&SESSID=9e12c56e64d906bac8bacdb28c7ca163&ext=uc.exe">夸克浏览器</a>
+            </li>
+        </ul>
+
+    </div>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

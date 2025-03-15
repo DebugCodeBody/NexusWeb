@@ -12,6 +12,8 @@ let loading: any = undefined;
 
 
 function clearLoadIng() {
+
+
     requestLen -= 1;
     if (requestLen <= 0) {
 
@@ -62,6 +64,7 @@ service.interceptors.request.use(res => {
 
         if (!loading) {
             loading = Toast.loading({
+                duration: 0,
                 message: '正在操作',
                 forbidClick: true,
                 loadingType: 'spinner',
