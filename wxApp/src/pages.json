@@ -1,0 +1,68 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index",
+			"style": {
+				"navigationBarTitleText": "耐萨斯工单扫描",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/getToScan/index",
+			"style": {
+				"navigationBarTitleText": "精板到货扫描"
+				// "app-plus": {
+				// 	"titleNView": false
+				// },
+				// "navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/startToScan/index",
+			"style": {
+				"navigationBarTitleText": "加工开工扫描"
+				// "app-plus": {
+				// 	"titleNView": false
+				// },
+				// "navigationStyle": "custom"
+			}
+		}, 
+		{
+			"path": "pages/ospDetaile/index",
+			"style": {
+				"navigationBarTitleText": "清单"
+				// "app-plus": {
+				// 	"titleNView": false
+				// },
+				// "navigationStyle": "custom"
+			}
+		}, 
+		{
+			"path": "pages/ospAboacc/index",
+			"style": {
+				"navigationBarTitleText": "精板结账"
+				// "app-plus": {
+				// 	"titleNView": false
+				// },
+				// "navigationStyle": "custom"
+			}
+		}  
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "耐萨斯工单扫描",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
